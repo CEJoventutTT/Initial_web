@@ -1,7 +1,12 @@
+'use client'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Trophy, Calendar, MapPin } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function CompetitionResults() {
+  const { t } = useTranslation()
+
   const recentMatches = [
     {
       date: '2024-01-15',
@@ -34,7 +39,7 @@ export default function CompetitionResults() {
   ]
 
   const standings = [
-    { position: 1, team: 'Thunder TT Club', played: 12, won: 10, lost: 2, points: 30 },
+    { position: 1, team: 'Club Esportiu Joventut', played: 12, won: 10, lost: 2, points: 30 },
     { position: 2, team: 'City Champions TTC', played: 12, won: 9, lost: 3, points: 27 },
     { position: 3, team: 'Elite Ping Pong Academy', played: 12, won: 8, lost: 4, points: 24 },
     { position: 4, team: 'Metro Table Tennis Club', played: 12, won: 6, lost: 6, points: 18 },
@@ -45,9 +50,9 @@ export default function CompetitionResults() {
     <section id="teams" className="py-20 bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4">Competition & Results</h2>
-          <p className="text-gray-300 text-lg">
-            Follow our teams' journey through leagues and tournaments
+          <h2 className="text-4xl font-black text-white mb-4">{t('teams.title')}</h2>
+          <p className="text-gray-300 text-lg font-thin">
+            {t('teams.description')}
           </p>
         </div>
 
@@ -55,9 +60,9 @@ export default function CompetitionResults() {
           {/* Recent Matches */}
           <Card className="bg-gray-900 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white flex items-center">
-                <Calendar className="mr-2 h-5 w-5 text-orange-500" />
-                Recent Matches
+              <CardTitle className="text-white flex items-center font-medium">
+                <Calendar className="mr-2 h-5 w-5 text-teal-600" />
+                {t('teams.recentMatches')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -72,7 +77,7 @@ export default function CompetitionResults() {
                         {match.venue}
                       </div>
                       <div className="text-white font-medium">{match.opponent}</div>
-                      <div className="text-xs text-orange-400">{match.type}</div>
+                      <div className="text-xs text-teal-400">{match.type}</div>
                     </div>
                     <div className={`text-lg font-bold px-3 py-1 rounded ${
                       match.result.startsWith('W') 
@@ -90,9 +95,9 @@ export default function CompetitionResults() {
           {/* League Standings */}
           <Card className="bg-gray-900 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white flex items-center">
-                <Trophy className="mr-2 h-5 w-5 text-orange-500" />
-                League Standings
+              <CardTitle className="text-white flex items-center font-medium">
+                <Trophy className="mr-2 h-5 w-5 text-teal-600" />
+                {t('teams.leagueStandings')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -111,14 +116,14 @@ export default function CompetitionResults() {
                   <tbody>
                     {standings.map((team, index) => (
                       <tr key={index} className={`border-b border-gray-800 ${
-                        team.position === 1 ? 'bg-orange-500/10' : ''
+                        team.position === 1 ? 'bg-teal-600/10' : ''
                       }`}>
                         <td className="py-2 text-white font-medium">{team.position}</td>
                         <td className="py-2 text-white">{team.team}</td>
                         <td className="py-2 text-center text-gray-300">{team.played}</td>
                         <td className="py-2 text-center text-green-400">{team.won}</td>
                         <td className="py-2 text-center text-red-400">{team.lost}</td>
-                        <td className="py-2 text-center text-orange-400 font-bold">{team.points}</td>
+                        <td className="py-2 text-center text-teal-400 font-bold">{team.points}</td>
                       </tr>
                     ))}
                   </tbody>

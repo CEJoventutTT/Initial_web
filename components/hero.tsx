@@ -1,8 +1,13 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import { Play, Users } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 
 export default function Hero() {
+  const { t } = useTranslation()
+
   return (
     <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -17,25 +22,25 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
-        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white">
-          Master Your
-          <span className="text-orange-500 block">Table Tennis</span>
+        <h1 className="text-5xl md:text-7xl font-black mb-6 text-white">
+          {t('hero.title')}
+          <span className="text-teal-400 block">{t('hero.subtitle')}</span>
         </h1>
-        <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
-          Join Thunder TT Club and unleash your potential. From beginners to champions, we train them all.
+        <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto font-thin">
+          {t('hero.description')}
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link href="/join">
-            <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 text-lg">
+            <Button size="lg" className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 text-lg font-medium">
               <Users className="mr-2 h-5 w-5" />
-              Join the Club
+              {t('hero.joinClub')}
             </Button>
           </Link>
           <Link href="/trainings">
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg">
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg font-medium">
               <Play className="mr-2 h-5 w-5" />
-              Explore Trainings
+              {t('hero.exploreTrainings')}
             </Button>
           </Link>
         </div>

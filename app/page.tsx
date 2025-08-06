@@ -1,3 +1,5 @@
+'use client'
+
 import Navigation from '@/components/navigation'
 import Hero from '@/components/hero'
 import WhoWeAre from '@/components/who-we-are'

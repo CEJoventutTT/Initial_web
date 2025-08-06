@@ -1,8 +1,13 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function NewsEvents() {
+  const { t } = useTranslation()
+
   const news = [
     {
       title: 'Annual Championship Tournament 2024',
@@ -42,15 +47,15 @@ export default function NewsEvents() {
     <section id="news" className="py-20 bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4">News & Events</h2>
-          <p className="text-gray-300 text-lg">
-            Stay updated with the latest news, events, and achievements from our club
+          <h2 className="text-4xl font-black text-white mb-4">{t('news.title')}</h2>
+          <p className="text-gray-300 text-lg font-thin">
+            {t('news.description')}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
           {news.map((article, index) => (
-            <Card key={index} className="bg-gray-800 border-gray-700 hover:border-orange-500 transition-all duration-300 group overflow-hidden">
+            <Card key={index} className="bg-gray-800 border-gray-700 hover:border-teal-600 transition-all duration-300 group overflow-hidden">
               <div className="relative overflow-hidden">
                 <img
                   src={article.image || "/placeholder.svg"}
@@ -58,7 +63,7 @@ export default function NewsEvents() {
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  <span className="bg-teal-600 text-white px-3 py-1 rounded-full text-xs font-medium">
                     {article.category}
                   </span>
                 </div>
@@ -71,17 +76,17 @@ export default function NewsEvents() {
                   <Clock className="ml-4 mr-1 h-4 w-4" />
                   {article.readTime}
                 </div>
-                <CardTitle className="text-white group-hover:text-orange-400 transition-colors duration-300">
+                <CardTitle className="text-white group-hover:text-teal-400 transition-colors duration-300 font-medium">
                   {article.title}
                 </CardTitle>
-                <CardDescription className="text-gray-300">
+                <CardDescription className="text-gray-300 font-thin">
                   {article.description}
                 </CardDescription>
               </CardHeader>
               
               <CardContent>
-                <Button variant="ghost" className="text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 p-0">
-                  Read More
+                <Button variant="ghost" className="text-teal-400 hover:text-teal-300 hover:bg-teal-600/10 p-0 font-medium">
+                  {t('news.readMore')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </CardContent>
@@ -90,8 +95,8 @@ export default function NewsEvents() {
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="outline" className="border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white">
-            View All News
+          <Button variant="outline" className="border-teal-600 text-teal-400 hover:bg-teal-600 hover:text-white font-medium">
+            {t('news.viewAllNews')}
           </Button>
         </div>
       </div>

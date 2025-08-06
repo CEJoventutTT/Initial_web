@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function MediaGallery() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const { t } = useTranslation()
 
   const photos = [
     '/placeholder-hoxca.png',
@@ -27,16 +29,16 @@ export default function MediaGallery() {
     <section id="gallery" className="py-20 bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4">Media Gallery</h2>
-          <p className="text-gray-300 text-lg">
-            Capture the excitement and energy of our club through photos and videos
+          <h2 className="text-4xl font-black text-white mb-4">{t('gallery.title')}</h2>
+          <p className="text-gray-300 text-lg font-thin">
+            {t('gallery.description')}
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Photo Slider */}
           <div className="relative">
-            <h3 className="text-2xl font-bold text-white mb-6">Photo Gallery</h3>
+            <h3 className="text-2xl font-medium text-white mb-6">{t('gallery.photoGallery')}</h3>
             <div className="relative overflow-hidden rounded-lg bg-gray-900">
               <div 
                 className="flex transition-transform duration-300 ease-in-out"
@@ -73,7 +75,7 @@ export default function MediaGallery() {
                     key={index}
                     onClick={() => setCurrentSlide(index)}
                     className={`w-3 h-3 rounded-full transition-colors ${
-                      index === currentSlide ? 'bg-orange-500' : 'bg-white/50'
+                      index === currentSlide ? 'bg-teal-600' : 'bg-white/50'
                     }`}
                   />
                 ))}
@@ -83,7 +85,7 @@ export default function MediaGallery() {
 
           {/* Video Section */}
           <div>
-            <h3 className="text-2xl font-bold text-white mb-6">Featured Video</h3>
+            <h3 className="text-2xl font-medium text-white mb-6">{t('gallery.featuredVideo')}</h3>
             <div className="relative rounded-lg overflow-hidden bg-gray-900">
               <img
                 src="/placeholder.svg?height=320&width=600"
@@ -91,15 +93,15 @@ export default function MediaGallery() {
                 className="w-full h-80 object-cover"
               />
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-6">
+                <Button size="lg" className="bg-teal-600 hover:bg-teal-700 text-white rounded-full p-6">
                   <Play className="h-8 w-8" />
                 </Button>
               </div>
               <div className="absolute bottom-4 left-4 right-4">
-                <h4 className="text-white font-semibold text-lg mb-2">
+                <h4 className="text-white font-medium text-lg mb-2">
                   Advanced Serving Techniques
                 </h4>
-                <p className="text-gray-300 text-sm">
+                <p className="text-gray-300 text-sm font-thin">
                   Learn professional serving techniques from our head coach in this comprehensive training video.
                 </p>
               </div>
@@ -119,7 +121,7 @@ export default function MediaGallery() {
                 </div>
                 <div className="flex-1">
                   <h5 className="text-white font-medium">Championship Match Highlights</h5>
-                  <p className="text-gray-400 text-sm">Best moments from our recent tournament victory</p>
+                  <p className="text-gray-400 text-sm font-thin">Best moments from our recent tournament victory</p>
                 </div>
               </div>
               
@@ -136,7 +138,7 @@ export default function MediaGallery() {
                 </div>
                 <div className="flex-1">
                   <h5 className="text-white font-medium">Club Facility Tour</h5>
-                  <p className="text-gray-400 text-sm">Take a virtual tour of our modern facilities</p>
+                  <p className="text-gray-400 text-sm font-thin">Take a virtual tour of our modern facilities</p>
                 </div>
               </div>
             </div>

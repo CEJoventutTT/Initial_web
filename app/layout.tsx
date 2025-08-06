@@ -1,12 +1,10 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
+import { TranslationProvider } from '@/lib/i18n'
 
 export const metadata: Metadata = {
-  title: 'Thunder TT Club - Table Tennis Excellence',
-  description: 'Premier table tennis club offering training for all skill levels',
+  title: 'Club Esportiu Joventut - Excelencia en Tenis de Mesa',
+  description: 'Club de tenis de mesa premier ofreciendo entrenamiento para todos los niveles de habilidad',
     generator: 'v0.dev'
 }
 
@@ -16,8 +14,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="es">
+      <body className="font-inter">
+        <TranslationProvider>
+          {children}
+        </TranslationProvider>
+      </body>
     </html>
   )
 }
