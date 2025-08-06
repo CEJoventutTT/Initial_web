@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -5,6 +8,45 @@ import { Textarea } from '@/components/ui/textarea'
 import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    // Mock form submission - in a real app, you'd send this to your backend
+    console.log('Contact form submitted:', formData)
+    
+    // Simulate API call
+    setTimeout(() => {
+      alert('Thank you for your message! We will get back to you within 24 hours.')
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      })
+      setIsSubmitting(false)
+    }, 1000)
+  }
+
   return (
     <section className="py-20 bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -116,13 +158,16 @@ export default function Contact() {
               <CardTitle className="text-white">Send us a Message</CardTitle>
             </CardHeader>
             <CardContent>
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       First Name
                     </label>
                     <Input 
+                      required
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
                       className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500"
                       placeholder="John"
                     />
@@ -132,6 +177,9 @@ export default function Contact() {
                       Last Name
                     </label>
                     <Input 
+                      required
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
                       className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500"
                       placeholder="Doe"
                     />
@@ -144,6 +192,9 @@ export default function Contact() {
                   </label>
                   <Input 
                     type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
                     className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500"
                     placeholder="john.doe@example.com"
                   />
@@ -155,6 +206,8 @@ export default function Contact() {
                   </label>
                   <Input 
                     type="tel"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
                     className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500"
                     placeholder="+1 (555) 123-4567"
                   />
@@ -165,6 +218,9 @@ export default function Contact() {
                     Subject
                   </label>
                   <Input 
+                    required
+                    value={formData.subject}
+                    onChange={(e) => handleInputChange('subject', e.target.value)}
                     className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500"
                     placeholder="I'm interested in joining the club"
                   />
@@ -175,13 +231,20 @@ export default function Contact() {
                     Message
                   </label>
                   <Textarea 
+                    required
+                    value={formData.message}
+                    onChange={(e) => handleInputChange('message', e.target.value)}
                     className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500 min-h-[120px]"
                     placeholder="Tell us about your table tennis experience and what you're looking for..."
                   />
                 </div>
 
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                  Send Message
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                 </Button>
               </form>
             </CardContent>

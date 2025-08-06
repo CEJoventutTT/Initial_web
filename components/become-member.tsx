@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Users, Trophy, Heart } from 'lucide-react'
+import Link from 'next/link'
 
 export default function BecomeMember() {
   return (
@@ -50,9 +51,11 @@ export default function BecomeMember() {
           </div>
         </div>
 
-        <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100 px-12 py-4 text-xl font-semibold">
-          Become a Member Today
-        </Button>
+        <Link href="/join">
+          <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100 px-12 py-4 text-xl font-semibold">
+            Become a Member Today
+          </Button>
+        </Link>
         
         <p className="text-white/70 text-sm mt-4">
           Special offer: First month free for new members!

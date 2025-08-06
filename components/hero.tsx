@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Play, Users } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Hero() {
   return (
@@ -25,14 +26,18 @@ export default function Hero() {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 text-lg">
-            <Users className="mr-2 h-5 w-5" />
-            Join the Club
-          </Button>
-          <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg">
-            <Play className="mr-2 h-5 w-5" />
-            Explore Trainings
-          </Button>
+          <Link href="/join">
+            <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 text-lg">
+              <Users className="mr-2 h-5 w-5" />
+              Join the Club
+            </Button>
+          </Link>
+          <Link href="/trainings">
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg">
+              <Play className="mr-2 h-5 w-5" />
+              Explore Trainings
+            </Button>
+          </Link>
         </div>
       </div>
 
