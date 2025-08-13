@@ -4,7 +4,7 @@ import { Award, Heart, Target, Users, Trophy, Calendar } from 'lucide-react'
 
 export default function AboutPage() {
   const stats = [
-    { label: 'Years of Excellence', value: '28+', icon: Calendar },
+    { label: 'Years of Excellence', value: '365', icon: Calendar },
     { label: 'Active Members', value: '250+', icon: Users },
     { label: 'Tournaments Won', value: '45+', icon: Trophy },
     { label: 'Training Programs', value: '8', icon: Target }
@@ -90,8 +90,8 @@ export default function AboutPage() {
               </div>
               <div className="relative">
                 <img
-                  src="/table-tennis-club.png"
-                  alt="Thunder TT Club founders"
+                  src="/logo.png"
+                  alt="logo CE Joventut TT"
                   className="rounded-lg shadow-2xl w-full h-auto"
                 />
               </div>

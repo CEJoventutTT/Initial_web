@@ -30,15 +30,15 @@ export default function Navigation() {
           <Link href="/" className="flex items-center space-x-3">
             <div className="relative w-10 h-10">
               <Image
-                src="/logo.png"
+                src="/sol.png"
                 alt="Club Esportiu Joventut"
                 fill
                 className="object-contain"
               />
             </div>
-            <span className="text-xl font-black text-white">
+     {/*       <span className="text-xl font-black text-white">
               Club Esportiu Joventut
-            </span>
+            </span> */}
           </Link>
 
           {/* Desktop Navigation */}

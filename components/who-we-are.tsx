@@ -47,12 +47,12 @@ export default function WhoWeAre() {
           {/* Image */}
           <div className="relative">
             <img
-              src="/table-tennis-club.png"
-              alt="Club Esportiu Joventut team"
-              className="rounded-lg shadow-2xl w-full h-auto"
+              src="/logo.png"
+              alt="Club Esportiu Joventut logo"
+              className="rounded-lg w-full h-auto"
             />
             <div className="absolute -bottom-6 -right-6 bg-teal-600 text-white p-6 rounded-lg shadow-lg">
-              <div className="text-3xl font-black">28+</div>
+              <div className="text-3xl font-black">365</div>
               <div className="text-sm font-thin">{t('about.yearsExcellence')}</div>
             </div>
           </div>
