@@ -11,7 +11,7 @@ export default function Hero() {
   const { t } = useTranslation()
 
   return (
-    <section id="home" className="relative overflow-hidden">
+    <section id="home" className="relative min-h-screen overflow-hidden">
       {/* Imagen de fondo */}
       <div className="absolute inset-0">
         <Image
@@ -19,17 +19,17 @@ export default function Hero() {
           alt="Table tennis player in action at Club Esportiu Joventut, Sant Josep de sa Talaia"
           priority
           fill
-          className="object-cover"
+          className="object-cover translate-y-[20px]"
           style={{ objectPosition: 'left center' }}
           sizes="100vw"
         />
 
-        {/* Capa de lectura (oscurece y se funde con el nav) */}
+        {/* Funde con el nav (oscurece arriba) */}
         <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/55 to-transparent pointer-events-none" />
-        {/* Viñeteado lateral para el texto */}
+        {/* Viñeteado lateral para lectura del texto */}
         <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/85 via-brand-dark/35 to-transparent md:from-brand-dark/80 md:via-brand-dark/30 md:to-transparent pointer-events-none" />
-        {/* “Rema” verde muy sutil para tono de marca */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-brand-teal/15 via-transparent to-transparent mix-blend-normal pointer-events-none" />
+        {/* Tinte verde sutil en todo el hero */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-brand-green/18 via-transparent to-brand-teal/14 pointer-events-none" />
         {/* Borde suave */}
         <div className="absolute inset-0 ring-1 ring-black/10 pointer-events-none" />
       </div>
@@ -42,12 +42,10 @@ export default function Hero() {
             text-4xl sm:text-5xl md:text-[56px] lg:text-[64px]
           "
         >
-          {/* Título principal */}
           <span className="block mb-2">
             {t('hero.title')}
           </span>
 
-          {/* Subtítulo en verde con ligera transparencia para integrarlo */}
           <span
             className="
               block md:mt-1 lg:mt-2
@@ -100,10 +98,9 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Sol fijo en BLANCO (no cambia de color) */}
+      {/* Sol fijo en BLANCO */}
       <div className="fixed bottom-8 right-8 z-50">
         <a href="#about" aria-label="Scroll to content" className="inline-flex text-white">
-          {/* SunBouncing debe heredar el color vía currentColor; si no, añade prop/color interno */}
           <SunBouncing className="text-white" />
         </a>
       </div>

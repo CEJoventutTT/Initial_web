@@ -110,17 +110,22 @@ export default function Contact() {
             </div>
 
             {/* Map */}
-            <Card className="bg-brand-dark border border-white/10">
-              <CardContent className="p-0">
-                <div className="h-64 bg-white/5 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="h-12 w-12 text-brand-teal mx-auto mb-4" />
-                    <p className="text-white font-medium">Interactive Map</p>
-                    <p className="text-white/70 text-sm font-thin">Club Esportiu Joventut Location</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+<Card className="bg-brand-dark border border-white/10">
+  <CardContent className="p-0">
+    <div className="h-64 rounded-lg overflow-hidden">
+      <iframe
+        title="Club Esportiu Joventut Location"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3104.1939318490176!2d1.302067774867495!3d38.91954467171931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129946b9e686a4ab%3A0x8c31162d212170ec!2sC.P.%20L'Urgell!5e0!3m2!1ses-419!2ses!4v1755185883113!5m2!1ses-419!2ses"
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+  </CardContent>
+</Card>
 
             {/* Social Media */}
             <div className="text-center">
