@@ -12,7 +12,7 @@ export default function Hero() {
 
   return (
     <section id="home" className="relative overflow-hidden">
-      {/* Background image bajo la navbar */}
+      {/* Imagen de fondo */}
       <div className="absolute inset-0">
         <Image
           src="/10.jpg"
@@ -23,38 +23,75 @@ export default function Hero() {
           style={{ objectPosition: 'left center' }}
           sizes="100vw"
         />
-        {/* overlays para lectura */}
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/85 via-brand-dark/30 to-transparent md:from-brand-dark/80 md:via-brand-dark/25 md:to-transparent pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+
+        {/* Capa de lectura (oscurece y se funde con el nav) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/55 to-transparent pointer-events-none" />
+        {/* Viñeteado lateral para el texto */}
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/85 via-brand-dark/35 to-transparent md:from-brand-dark/80 md:via-brand-dark/30 md:to-transparent pointer-events-none" />
+        {/* “Rema” verde muy sutil para tono de marca */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-brand-teal/15 via-transparent to-transparent mix-blend-normal pointer-events-none" />
+        {/* Borde suave */}
+        <div className="absolute inset-0 ring-1 ring-black/10 pointer-events-none" />
       </div>
 
-      {/* Contenido (padding-top para no quedar bajo la navbar) */}
+      {/* Contenido */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-36 pb-20 md:pb-28 text-center">
-        <h1 className="text-white font-black tracking-tight leading-[1.05] text-balance text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
-          <span className="block mb-2">{t('hero.title')}</span>
-          <span className="block text-brand-teal md:mt-1 lg:mt-2 lg:text-[0.94em]">{t('hero.subtitle')}</span>
+        <h1
+          className="
+            text-white font-black tracking-tight leading-[1.05] text-balance
+            text-4xl sm:text-5xl md:text-[56px] lg:text-[64px]
+          "
+        >
+          {/* Título principal */}
+          <span className="block mb-2">
+            {t('hero.title')}
+          </span>
+
+          {/* Subtítulo en verde con ligera transparencia para integrarlo */}
+          <span
+            className="
+              block md:mt-1 lg:mt-2
+              text-brand-teal/85
+              text-[0.82em] sm:text-[0.9em] lg:text-[0.95em]
+            "
+          >
+            {t('hero.subtitle')}
+          </span>
         </h1>
 
-        <p className="mx-auto mt-8 text-lg md:text-xl leading-relaxed text-white/85 max-w-2xl md:max-w-3xl">
+        <p className="mx-auto mt-7 md:mt-8 text-base sm:text-lg md:text-xl leading-relaxed text-white/85 max-w-2xl md:max-w-3xl">
           {t('hero.description')}
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+        {/* CTAs */}
+        <div className="mt-9 md:mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+          {/* Secundario: explorar */}
           <Link href="/trainings" aria-label="Explore trainings">
             <Button
               size="lg"
               variant="outline"
-              className="rounded-xl border border-white/30 text-white hover:border-white hover:bg-white hover:text-brand-dark px-6 md:px-8 py-3.5 md:py-4 text-base md:text-lg font-semibold transition-transform duration-150 hover:scale-[1.02]"
+              className="
+                rounded-xl border border-white/30 text-white
+                hover:border-white hover:bg-white hover:text-brand-dark
+                px-6 md:px-8 py-3.5 md:py-4 text-base md:text-lg font-semibold
+                transition-transform duration-150 hover:scale-[1.02]
+              "
             >
               <Play className="mr-2 h-5 w-5" />
               {t('hero.exploreTrainings')}
             </Button>
           </Link>
 
+          {/* Primario: unirse */}
           <Link href="/join" aria-label="Join the club">
             <Button
               size="lg"
-              className="rounded-xl bg-brand-red text-white hover:opacity-90 px-6 md:px-8 py-3.5 md:py-4 text-base md:text-lg font-semibold shadow-brand transition-transform duration-150 hover:scale-[1.02]"
+              className="
+                rounded-xl bg-brand-red text-white
+                hover:bg-brand-red/90 px-6 md:px-8 py-3.5 md:py-4
+                text-base md:text-lg font-semibold shadow-lg
+                transition-transform duration-150 hover:scale-[1.02]
+              "
             >
               <Users className="mr-2 h-5 w-5" />
               {t('hero.joinClub')}
@@ -63,10 +100,11 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator (sol) — fijo y SIEMPRE blanco */}
-      <div className="fixed bottom-8 right-8 z-50 text-white">
-        <a href="#about" aria-label="Scroll to content" className="inline-flex">
-          <SunBouncing />
+      {/* Sol fijo en BLANCO (no cambia de color) */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <a href="#about" aria-label="Scroll to content" className="inline-flex text-white">
+          {/* SunBouncing debe heredar el color vía currentColor; si no, añade prop/color interno */}
+          <SunBouncing className="text-white" />
         </a>
       </div>
     </section>

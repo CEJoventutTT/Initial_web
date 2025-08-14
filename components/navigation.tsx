@@ -28,7 +28,7 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3">
-            <div className="relative w-20 h-20">
+            <div className="absolute top-[0.5rem] left-4 z-50 w-28 h-28">
               <Image src="/logo.png" alt="Club Esportiu Joventut" fill className="object-contain" />
             </div>
           </Link>
