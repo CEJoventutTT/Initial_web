@@ -51,10 +51,10 @@ export default function WhoWeAre() {
               alt="Club Esportiu Joventut logo"
               className="rounded-lg w-full h-auto"
             />
-            <div className="absolute -bottom-6 -right-6 bg-teal-600 text-white p-6 rounded-lg shadow-lg">
+         {/*}   <div className="absolute -bottom-6 -right-6 bg-teal-600 text-white p-6 rounded-lg shadow-lg">
               <div className="text-3xl font-black">365</div>
               <div className="text-sm font-thin">{t('about.yearsExcellence')}</div>
-            </div>
+            </div>*/}
           </div>
         </div>
       </div>

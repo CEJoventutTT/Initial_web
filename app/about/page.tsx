@@ -4,7 +4,7 @@ import { Award, Heart, Target, Users, Trophy, Calendar } from 'lucide-react'
 
 export default function AboutPage() {
   const stats = [
-    { label: 'Years of Excellence', value: 'La fuerza está en tu enfoque, no en tu brazo.', icon: Calendar },
+    { label: 'Years of Excellence', value: '16', icon: Calendar },
     { label: 'Active Members', value: '250+', icon: Users },
     { label: 'Tournaments Won', value: '45+', icon: Trophy },
     { label: 'Training Programs', value: '8', icon: Target }
