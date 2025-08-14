@@ -13,22 +13,32 @@ export default function TrainingsActivities() {
       title: t('trainings.beginnerLevel'),
       description: t('trainings.beginnerDesc'),
       icon: Users,
-      features: ['Basic stroke techniques', 'Game rules and scoring', 'Equipment guidance', 'Fun group activities'],
+      features: [
+      t('trainings.personalizedTraining'),
+      t('trainings.flexSchedule'),
+      t('trainings.improve')
+  ],
       schedule: t('trainings.price1')
     },
     {
       title: t('trainings.competitionLevel'),
       description: t('trainings.competitionDesc'),
       icon: Trophy,
-      features: ['Advanced techniques', 'Match strategy', 'Tournament prep', 'Video analysis'],
-      schedule: t('trainings.price2')
+      features: [
+      t('trainings.personalizedTraining'),
+      t('trainings.flexSchedule'),
+      t('trainings.steadyProgress')
+  ],      schedule: t('trainings.price2')
     },
     {
       title: t('trainings.adultsProgram'),
       description: t('trainings.adultsDesc'),
       icon: Zap,
-      features: ['Flexible scheduling', 'Fitness focused', 'Social matches', 'Stress relief'],
-      schedule: t('trainings.price3')
+      features: [
+      t('trainings.personalizedTraining'),
+      t('trainings.completeTraining'),
+      t('trainings.freeTshirt')
+  ],      schedule: t('trainings.price3')
     }
   ]
 
@@ -59,7 +69,7 @@ export default function TrainingsActivities() {
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <h4 className="text-teal-400 font-medium mb-2">What you'll learn:</h4>
+                      <h4 className="text-teal-400 font-medium mb-2">{t('trainings.includes')}</h4>
                       <ul className="text-gray-300 text-sm space-y-1">
                         {training.features.map((feature, idx) => (
                           <li key={idx} className="flex items-center">

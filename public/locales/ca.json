@@ -42,8 +42,8 @@
     "beginnerDesc": "Comença al tennis de taula sense presses, però amb ganes.",
     "competitionLevel": "Joc en Marxa",
     "competitionDesc": "Nota la millora setmana rere setmana i puja de nivell.",
-    "adultsProgram": "Mode Campió",
-    "adultsDesc": "Entrena al màxim i prepara’t per guanyar.",
+    "adultsProgram": "A Potència Màxima",
+    "adultsDesc": "Entrena intensament i assoleix la teva millor versió.",
     "schedule": "Horari",
     "whatsIncluded": "Què està inclòs",
     "maxStudents": "Màx {count} estudiants",
@@ -64,7 +64,14 @@
     "seeMore": "Veure Més",
     "price1": "29€/mes – 1 dia a la setmana",
     "price2": "39€/mes – 2 dies a la setmana",
-    "price3": "49€/mes – 3 dies a la setmana"
+    "price3": "49€/mes – 3 dies a la setmana",
+    "includes": "Així és el teu entrenament:",
+    "personalizedTraining": "Programa d’entrenament personalitzat",
+    "flexSchedule": "Tria l’horari que més et convingui entre els entrenaments disponibles (flexible)",
+    "improve": "Millora la tècnica, la coordinació i la condició física",
+    "steadyProgress": "Progrés constant amb sessions dinàmiques",
+    "completeTraining": "Entrenaments complets amb treball tècnic, tàctic i físic",
+    "freeTshirt": "Inclou samarreta oficial del club"
   },
   "teams": {
     "title": "Competició i Resultats",

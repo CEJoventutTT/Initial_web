@@ -42,8 +42,8 @@
     "beginnerDesc": "Empieza en el tenis de mesa sin prisas, pero con ganas.",
     "competitionLevel": "Juego en Marcha",
     "competitionDesc": "Siente la mejora semana a semana y sube tu nivel.",
-    "adultsProgram": "Modo Campeón",
-    "adultsDesc": "Entrena al máximo y prepárate para ganar.",
+    "adultsProgram": "A Potencia Máxima",
+    "adultsDesc": "Entrena intensamente y alcanza tu mejor versión.",
     "schedule": "Horario",
     "whatsIncluded": "Qué está incluido",
     "maxStudents": "Máx {count} estudiantes",
@@ -64,7 +64,14 @@
     "seeMore": "Ver Más",
     "price1": "€29/mes – 1 día a la semana",
     "price2": "€39/mes - 2 días a la semana",
-    "price3": "€49/mes - 3 días a la semana"
+    "price3": "€49/mes - 3 días a la semana",
+    "includes": "Así es tu entrenamiento:",
+    "personalizedTraining": "Programa de entrenamiento personalizado",
+    "flexSchedule": "Escoge el horario que más te convenga entre los entrenamientos disponibles (flexible)",
+    "improve": "Mejora tu técnica, coordinación y condición física",
+    "steadyProgress": "Progreso constante con sesiones dinámicas",
+    "completeTraining": "Entrenamientos completos con trabajo técnico, táctico y físico",
+    "freeTshirt": "Incluye camiseta oficial del club"
   },
   "teams": {
     "title": "Competición y Resultados",
