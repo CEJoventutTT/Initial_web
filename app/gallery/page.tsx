@@ -41,7 +41,7 @@ export default function GalleryPage() {
       <Navigation />
       <div className="pt-16">
         {/* Hero */}
-        <section className="py-20 bg-gradient-to-r from-brand-red to-brand-teal">
+        <section className="py-20 bg-gradient-to-r from-brand-green/90 to-brand-teal/90">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-5xl font-black text-white mb-6">Media Gallery</h1>
             <p className="text-xl text-white/90 max-w-3xl mx-auto font-thin">

@@ -3,9 +3,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useTranslation } from '@/lib/i18n';
 
 const FRAMES = [
-  '/sun/sol6.png',
-  '/sun/sol5.png',
-  '/sun/sol3.png',
+  '/sun/sol6.png'
 ];
 
 export default function SunBouncing() {

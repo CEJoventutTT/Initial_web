@@ -21,6 +21,11 @@
       "static/chunks/main-app.js",
       "static/chunks/app/trainings/page.js"
     ],
+    "/join/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/join/page.js"
+    ],
     "/teams/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -40,11 +45,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/login/page.js"
-    ],
-    "/join/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/join/page.js"
     ],
     "/dashboard/page": [
       "static/chunks/webpack.js",

@@ -35,7 +35,7 @@ export default function AboutPage() {
       <Navigation />
       <div className="pt-16">
         {/* Hero Section */}
-        <section className="py-20 bg-gradient-to-r from-brand-red to-brand-teal">
+        <section className="relative py-20 bg-gradient-to-r from-brand-green via-brand-teal to-brand-green">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-5xl font-black text-white mb-6">About Thunder TT Club</h1>
             <p className="text-xl text-white/90 max-w-3xl mx-auto font-thin">

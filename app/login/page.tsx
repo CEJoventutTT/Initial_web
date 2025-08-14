@@ -45,7 +45,7 @@ export default function LoginPage() {
       <Navigation />
       <div className="pt-16">
         {/* Hero */}
-        <section className="py-20 bg-gradient-to-r from-brand-red to-brand-teal">
+        <section className="relative py-20 bg-gradient-to-r from-brand-green via-brand-teal to-brand-green">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="flex items-center justify-center mb-6">
               <div className="bg-white/20 p-4 rounded-full border border-white/25">

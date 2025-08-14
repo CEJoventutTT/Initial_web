@@ -18,7 +18,7 @@ export default function BecomeMember() {
         }}
       >
         {/* Overlay con degradado corporativo */}
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-red/95 to-brand-teal/95"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-green/95 to-brand-teal/95"></div>
       </div>
 
       {/* Content */}

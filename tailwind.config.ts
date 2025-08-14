@@ -16,9 +16,10 @@ const config: Config = {
       colors: {
         // Brand tokens
         brand: {
-          teal: '#5D8C87',   // superficies / elementos “calm”
-          dark: '#262425',   // fondo principal
-          red:  '#BF0F30',   // CTA / acentos
+          teal: '#5D8C87',    // superficies / elementos “calm”
+          dark: '#262425',    // fondo principal
+          red:  '#BF0F30',    // CTA / acentos
+          green:'#6BBFA0',    // nuevo color para gradientes
           white:'#FFFFFF',
         },
 
@@ -27,7 +28,7 @@ const config: Config = {
         foreground: '#FFFFFF',
         border: '#343233',
         input:  '#343233',
-        ring:   '#BF0F30',
+        ring:   '#6BBFA0',  // Antes rojo, ahora verde para los focos
 
         primary: {
           DEFAULT: '#BF0F30',   // CTA rojo
@@ -38,7 +39,7 @@ const config: Config = {
           foreground: '#262425'
         },
         accent: {
-          DEFAULT: '#5D8C87',
+          DEFAULT: '#6BBFA0',   // ahora verde para acentos
           foreground: '#262425'
         },
         muted: {
@@ -55,7 +56,7 @@ const config: Config = {
         },
       },
       boxShadow: {
-        brand: '0 10px 30px -10px rgba(191,15,48,.35)', // glow rojo para CTA
+        brand: '0 10px 30px -10px rgba(107,191,160,.35)', // glow verde para CTA
       },
       borderRadius: {
         lg: '0.75rem',

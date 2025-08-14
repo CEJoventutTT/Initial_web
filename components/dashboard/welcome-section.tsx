@@ -6,7 +6,7 @@ export default function WelcomeSection() {
   const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 
   return (
-    <Card className="bg-gradient-to-r from-[#BF0F30] via-[#5D8C87] to-[#2C6DFF] border-none">
+    <Card className="bg-gradient-to-r from-brand-green via-brand-teal to-brand-green border-none">
       <CardContent className="p-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
