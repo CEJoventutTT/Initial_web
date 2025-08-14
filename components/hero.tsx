@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Play, Users } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
+import SunBouncing from '@/components/SunBouncing';
 
 export default function Hero() {
   const { t } = useTranslation()
@@ -46,12 +47,12 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white rounded-full mt-2"></div>
-        </div>
-      </div>
+{/* Scroll indicator */}
+<div className="fixed bottom-8 right-8 z-50">
+  <a href="#about" aria-label="Scroll to content" className="inline-flex">
+    <SunBouncing />
+  </a>
+</div>
     </section>
   )
 }

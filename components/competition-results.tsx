@@ -39,9 +39,9 @@ export default function CompetitionResults() {
   ]
 
   const standings = [
-    { position: 1, team: 'Club Esportiu Joventut', played: 12, won: 10, lost: 2, points: 30 },
-    { position: 2, team: 'City Champions TTC', played: 12, won: 9, lost: 3, points: 27 },
-    { position: 3, team: 'Elite Ping Pong Academy', played: 12, won: 8, lost: 4, points: 24 },
+    { position: 1, team: 'Alicante TM', played: 0, won: 0, lost: 0, points: 0 },
+    { position: 2, team: 'Arteal Santiago', played: 0, won: 0, lost: 0, points: 0 },
+    { position: 3, team: 'Atlético San Sebastián', played: 0, won: 0, lost: 0, points: 0 },
     { position: 4, team: 'Metro Table Tennis Club', played: 12, won: 6, lost: 6, points: 18 },
     { position: 5, team: 'Riverside TT Club', played: 12, won: 3, lost: 9, points: 9 }
   ]
