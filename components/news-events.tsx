@@ -44,7 +44,7 @@ export default function NewsEvents() {
   ]
 
   return (
-    <section id="news" className="py-20 bg-gray-900">
+    <section id="news" className="py-20" style={{ backgroundColor: '#262425' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-black text-white mb-4">{t('news.title')}</h2>
@@ -55,7 +55,14 @@ export default function NewsEvents() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
           {news.map((article, index) => (
-            <Card key={index} className="bg-gray-800 border-gray-700 hover:border-teal-600 transition-all duration-300 group overflow-hidden">
+            <Card 
+              key={index} 
+              className="border hover:scale-[1.01] transition-transform duration-300 overflow-hidden"
+              style={{ 
+                backgroundColor: '#2F2C2D', 
+                borderColor: '#5D8C87' 
+              }}
+            >
               <div className="relative overflow-hidden">
                 <img
                   src={article.image || "/placeholder.svg"}
@@ -63,7 +70,10 @@ export default function NewsEvents() {
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="bg-teal-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  <span 
+                    className="px-3 py-1 rounded-full text-xs font-medium text-white"
+                    style={{ backgroundColor: '#BF0F30' }}
+                  >
                     {article.category}
                   </span>
                 </div>
@@ -76,7 +86,10 @@ export default function NewsEvents() {
                   <Clock className="ml-4 mr-1 h-4 w-4" />
                   {article.readTime}
                 </div>
-                <CardTitle className="text-white group-hover:text-teal-400 transition-colors duration-300 font-medium">
+                <CardTitle 
+                  className="transition-colors duration-300 font-medium"
+                  style={{ color: 'white' }}
+                >
                   {article.title}
                 </CardTitle>
                 <CardDescription className="text-gray-300 font-thin">
@@ -85,7 +98,11 @@ export default function NewsEvents() {
               </CardHeader>
               
               <CardContent>
-                <Button variant="ghost" className="text-teal-400 hover:text-teal-300 hover:bg-teal-600/10 p-0 font-medium">
+                <Button 
+                  variant="ghost" 
+                  className="p-0 font-medium"
+                  style={{ color: '#2C6DFF' }}
+                >
                   {t('news.readMore')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -95,7 +112,22 @@ export default function NewsEvents() {
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="outline" className="border-teal-600 text-teal-400 hover:bg-teal-600 hover:text-white font-medium">
+          <Button 
+            variant="outline" 
+            className="font-medium"
+            style={{ 
+              borderColor: '#BF0F30', 
+              color: '#BF0F30' 
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = '#BF0F30'
+              e.currentTarget.style.color = '#fff'
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.color = '#BF0F30'
+            }}
+          >
             {t('news.viewAllNews')}
           </Button>
         </div>

@@ -11,13 +11,14 @@ export default function BecomeMember() {
   return (
     <section className="py-20 relative overflow-hidden">
       {/* Background */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url('/placeholder.svg?height=600&width=1920')`
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-teal-600/90 to-teal-800/90"></div>
+        {/* Overlay con degradado corporativo */}
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-red/95 to-brand-teal/95"></div>
       </div>
 
       {/* Content */}
@@ -30,37 +31,43 @@ export default function BecomeMember() {
         </p>
 
         <div className="grid md:grid-cols-3 gap-8 mb-12">
+          {/* Card 1 */}
           <div className="text-center">
-            <div className="bg-white/20 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-white/15 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
               <Users className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-white font-medium text-lg mb-2">{t('join.joinCommunity')}</h3>
+            <h3 className="text-white font-semibold text-lg mb-2">{t('join.joinCommunity')}</h3>
             <p className="text-white/80 text-sm font-thin">{t('join.joinCommunityDesc')}</p>
           </div>
-          
+
+          {/* Card 2 */}
           <div className="text-center">
-            <div className="bg-white/20 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-white/15 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
               <Trophy className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-white font-medium text-lg mb-2">{t('join.competeWin')}</h3>
+            <h3 className="text-white font-semibold text-lg mb-2">{t('join.competeWin')}</h3>
             <p className="text-white/80 text-sm font-thin">{t('join.competeWinDesc')}</p>
           </div>
-          
+
+          {/* Card 3 */}
           <div className="text-center">
-            <div className="bg-white/20 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-white/15 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
               <Heart className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-white font-medium text-lg mb-2">{t('join.loveGame')}</h3>
+            <h3 className="text-white font-semibold text-lg mb-2">{t('join.loveGame')}</h3>
             <p className="text-white/80 text-sm font-thin">{t('join.loveGameDesc')}</p>
           </div>
         </div>
 
         <Link href="/join">
-          <Button size="lg" className="bg-white text-teal-600 hover:bg-gray-100 px-12 py-4 text-xl font-medium">
+          <Button
+            size="lg"
+            className="bg-brand-red text-white hover:bg-brand-red/90 px-12 py-4 text-xl font-semibold transition-colors"
+          >
             {t('join.becomeMember')}
           </Button>
         </Link>
-        
+
         <p className="text-white/70 text-sm mt-4 font-thin">
           {t('join.specialOffer')}
         </p>

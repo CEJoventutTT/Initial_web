@@ -14,40 +14,42 @@ export default function TrainingsActivities() {
       description: t('trainings.beginnerDesc'),
       icon: Users,
       features: [
-      t('trainings.personalizedTraining'),
-      t('trainings.flexSchedule'),
-      t('trainings.improve')
-  ],
-      schedule: t('trainings.price1')
+        t('trainings.personalizedTraining'),
+        t('trainings.flexSchedule'),
+        t('trainings.improve'),
+      ],
+      schedule: t('trainings.price1'),
     },
     {
       title: t('trainings.competitionLevel'),
       description: t('trainings.competitionDesc'),
       icon: Trophy,
       features: [
-      t('trainings.personalizedTraining'),
-      t('trainings.flexSchedule'),
-      t('trainings.steadyProgress')
-  ],      schedule: t('trainings.price2')
+        t('trainings.personalizedTraining'),
+        t('trainings.flexSchedule'),
+        t('trainings.steadyProgress'),
+      ],
+      schedule: t('trainings.price2'),
     },
     {
       title: t('trainings.adultsProgram'),
       description: t('trainings.adultsDesc'),
       icon: Zap,
       features: [
-      t('trainings.personalizedTraining'),
-      t('trainings.completeTraining'),
-      t('trainings.freeTshirt')
-  ],      schedule: t('trainings.price3')
-    }
+        t('trainings.personalizedTraining'),
+        t('trainings.completeTraining'),
+        t('trainings.freeTshirt'),
+      ],
+      schedule: t('trainings.price3'),
+    },
   ]
 
   return (
-    <section id="trainings" className="py-20 bg-gray-900">
+    <section id="trainings" className="py-20 bg-brand-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-black text-white mb-4">{t('trainings.title')}</h2>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto font-thin">
+          <p className="text-white/80 text-lg max-w-2xl mx-auto font-thin">
             {t('trainings.description')}
           </p>
         </div>
@@ -56,34 +58,41 @@ export default function TrainingsActivities() {
           {trainings.map((training, index) => {
             const IconComponent = training.icon
             return (
-              <Card key={index} className="bg-gray-800 border-gray-700 hover:border-teal-600 transition-colors duration-300">
+              <Card
+                key={index}
+                className="bg-brand-dark border border-white/10 hover:border-brand-teal transition-colors duration-300"
+              >
                 <CardHeader className="text-center">
-                  <div className="bg-teal-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border border-white/15 bg-brand-teal/25">
                     <IconComponent className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="text-white text-xl font-medium">{training.title}</CardTitle>
-                  <CardDescription className="text-gray-300 font-thin">
+                  <CardDescription className="text-white/80 font-thin">
                     {training.description}
                   </CardDescription>
                 </CardHeader>
+
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     <div>
-                      <h4 className="text-teal-400 font-medium mb-2">{t('trainings.includes')}</h4>
-                      <ul className="text-gray-300 text-sm space-y-1">
+                      <h4 className="text-brand-teal font-medium mb-2">
+                        {t('trainings.includes')}
+                      </h4>
+                      <ul className="text-white/85 text-sm space-y-2">
                         {training.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-center">
-                            <div className="w-1.5 h-1.5 bg-teal-600 rounded-full mr-2"></div>
+                          <li key={idx} className="flex items-start">
+                            <span className="mt-1 w-1.5 h-1.5 bg-brand-teal rounded-full mr-2" />
                             {feature}
                           </li>
                         ))}
                       </ul>
                     </div>
-                    <div className="border-t border-gray-700 pt-4">
-                      <p className="text-gray-400 text-sm mb-4">
-                        <span className="font-medium"></span> {training.schedule}
+
+                    <div className="border-t border-white/10 pt-4">
+                      <p className="text-white/70 text-sm mb-4">
+                        <span className="font-semibold text-brand-teal">{training.schedule}</span>
                       </p>
-                      <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium">
+                      <Button className="w-full bg-brand-red hover:bg-brand-red/90 text-white font-semibold">
                         {t('trainings.seeMore')}
                       </Button>
                     </div>

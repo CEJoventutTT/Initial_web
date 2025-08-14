@@ -21,42 +21,26 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }))
+    setFormData(prev => ({ ...prev, [field]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-
-    // Mock form submission - in a real app, you'd send this to your backend
     console.log('Contact form submitted:', formData)
-    
-    // Simulate API call
     setTimeout(() => {
       alert('Thank you for your message! We will get back to you within 24 hours.')
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
-      })
+      setFormData({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' })
       setIsSubmitting(false)
     }, 1000)
   }
 
   return (
-    <section className="py-20 bg-gray-900">
+    <section className="py-20 bg-brand-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-black text-white mb-4">{t('contact.title')}</h2>
-          <p className="text-gray-300 text-lg font-thin">
-            {t('contact.description')}
-          </p>
+          <p className="text-white/80 text-lg font-thin">{t('contact.description')}</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12">
@@ -64,57 +48,61 @@ export default function Contact() {
           <div className="space-y-8">
             {/* Contact Info */}
             <div className="grid sm:grid-cols-2 gap-6">
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className="bg-brand-dark border border-white/10">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className="bg-teal-600 p-3 rounded-lg mr-4">
+                    <div className="bg-brand-teal/25 p-3 rounded-lg mr-4 border border-white/10">
                       <MapPin className="h-6 w-6 text-white" />
                     </div>
                     <div>
                       <h3 className="text-white font-medium">{t('contact.address')}</h3>
-                      <p className="text-gray-300 text-sm font-thin">123 Sports Avenue<br />Thunder City, TC 12345</p>
+                      <p className="text-white/70 text-sm font-thin">
+                        123 Sports Avenue<br />Thunder City, TC 12345
+                      </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className="bg-brand-dark border border-white/10">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className="bg-teal-600 p-3 rounded-lg mr-4">
+                    <div className="bg-brand-teal/25 p-3 rounded-lg mr-4 border border-white/10">
                       <Phone className="h-6 w-6 text-white" />
                     </div>
                     <div>
                       <h3 className="text-white font-medium">{t('contact.phone')}</h3>
-                      <p className="text-gray-300 text-sm font-thin">+1 (555) 123-4567</p>
+                      <p className="text-white/70 text-sm font-thin">+1 (555) 123-4567</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className="bg-brand-dark border border-white/10">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className="bg-teal-600 p-3 rounded-lg mr-4">
+                    <div className="bg-brand-teal/25 p-3 rounded-lg mr-4 border border-white/10">
                       <Mail className="h-6 w-6 text-white" />
                     </div>
                     <div>
                       <h3 className="text-white font-medium">{t('contact.email')}</h3>
-                      <p className="text-gray-300 text-sm font-thin">info@clubesportiujoventut.com</p>
+                      <p className="text-white/70 text-sm font-thin">info@clubesportiujoventut.com</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className="bg-brand-dark border border-white/10">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className="bg-teal-600 p-3 rounded-lg mr-4">
+                    <div className="bg-brand-teal/25 p-3 rounded-lg mr-4 border border-white/10">
                       <Clock className="h-6 w-6 text-white" />
                     </div>
                     <div>
                       <h3 className="text-white font-medium">{t('contact.hours')}</h3>
-                      <p className="text-gray-300 text-sm font-thin">Mon-Fri: 6AM-10PM<br />Sat-Sun: 8AM-8PM</p>
+                      <p className="text-white/70 text-sm font-thin">
+                        Mon-Fri: 6AM-10PM<br />Sat-Sun: 8AM-8PM
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -122,13 +110,13 @@ export default function Contact() {
             </div>
 
             {/* Map */}
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className="bg-brand-dark border border-white/10">
               <CardContent className="p-0">
-                <div className="h-64 bg-gray-700 rounded-lg flex items-center justify-center">
+                <div className="h-64 bg-white/5 rounded-lg flex items-center justify-center">
                   <div className="text-center">
-                    <MapPin className="h-12 w-12 text-teal-600 mx-auto mb-4" />
-                    <p className="text-gray-300 font-medium">Interactive Map</p>
-                    <p className="text-gray-400 text-sm font-thin">Club Esportiu Joventut Location</p>
+                    <MapPin className="h-12 w-12 text-brand-teal mx-auto mb-4" />
+                    <p className="text-white font-medium">Interactive Map</p>
+                    <p className="text-white/70 text-sm font-thin">Club Esportiu Joventut Location</p>
                   </div>
                 </div>
               </CardContent>
@@ -137,17 +125,17 @@ export default function Contact() {
             {/* Social Media */}
             <div className="text-center">
               <h3 className="text-white font-medium mb-4">{t('contact.followUs')}</h3>
-              <div className="flex justify-center space-x-4">
-                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:border-teal-600 hover:text-teal-400">
+              <div className="flex justify-center gap-3">
+                <Button size="sm" variant="outline" className="border-white/20 text-white/80 hover:bg-brand-teal hover:text-brand-dark hover:border-brand-teal">
                   <Facebook className="h-4 w-4" />
                 </Button>
-                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:border-teal-600 hover:text-teal-400">
+                <Button size="sm" variant="outline" className="border-white/20 text-white/80 hover:bg-brand-teal hover:text-brand-dark hover:border-brand-teal">
                   <Twitter className="h-4 w-4" />
                 </Button>
-                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:border-teal-600 hover:text-teal-400">
+                <Button size="sm" variant="outline" className="border-white/20 text-white/80 hover:bg-brand-teal hover:text-brand-dark hover:border-brand-teal">
                   <Instagram className="h-4 w-4" />
                 </Button>
-                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:border-teal-600 hover:text-teal-400">
+                <Button size="sm" variant="outline" className="border-white/20 text-white/80 hover:bg-brand-teal hover:text-brand-dark hover:border-brand-teal">
                   <Youtube className="h-4 w-4" />
                 </Button>
               </div>
@@ -155,7 +143,7 @@ export default function Contact() {
           </div>
 
           {/* Contact Form */}
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-brand-dark border border-white/10">
             <CardHeader>
               <CardTitle className="text-white font-medium">{t('contact.sendMessage')}</CardTitle>
             </CardHeader>
@@ -163,88 +151,86 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                       {t('contact.firstName')}
                     </label>
-                    <Input 
+                    <Input
                       required
                       value={formData.firstName}
                       onChange={(e) => handleInputChange('firstName', e.target.value)}
-                      className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-teal-600"
+                      className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
                       placeholder="John"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                       {t('contact.lastName')}
                     </label>
-                    <Input 
+                    <Input
                       required
                       value={formData.lastName}
                       onChange={(e) => handleInputChange('lastName', e.target.value)}
-                      className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-teal-600"
+                      className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
                       placeholder="Doe"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Email
-                  </label>
-                  <Input 
+                  <label className="block text-sm font-medium text-white/80 mb-2">Email</label>
+                  <Input
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-teal-600"
+                    className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
                     placeholder="john.doe@example.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     {t('contact.phone')}
                   </label>
-                  <Input 
+                  <Input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-teal-600"
+                    className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
                     placeholder="+1 (555) 123-4567"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     {t('contact.subject')}
                   </label>
-                  <Input 
+                  <Input
                     required
                     value={formData.subject}
                     onChange={(e) => handleInputChange('subject', e.target.value)}
-                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-teal-600"
+                    className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
                     placeholder="I'm interested in joining the club"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     {t('contact.message')}
                   </label>
-                  <Textarea 
+                  <Textarea
                     required
                     value={formData.message}
                     onChange={(e) => handleInputChange('message', e.target.value)}
-                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-teal-600 min-h-[120px]"
+                    className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0 min-h-[120px]"
                     placeholder="Tell us about your table tennis experience and what you're looking for..."
                   />
                 </div>
 
-                <Button 
+                <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-teal-600 hover:bg-teal-700 text-white disabled:opacity-50 font-medium"
+                  className="w-full bg-brand-red hover:bg-brand-red/90 text-white disabled:opacity-50 font-semibold"
                 >
                   {isSubmitting ? t('contact.sending') : t('contact.sendMessageBtn')}
                 </Button>

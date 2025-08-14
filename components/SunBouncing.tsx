@@ -4,10 +4,9 @@ import { useTranslation } from '@/lib/i18n';
 
 const FRAMES = [
   '/sun/sol6.png',
-  '/sun/sol3.png',
-  '/sun/sol2.png',
   '/sun/sol5.png',
-  '/sun/sol4.png',
+  '/sun/sol3.png',
+  '/sun/sol1.png',
 ];
 
 export default function SunBouncing() {

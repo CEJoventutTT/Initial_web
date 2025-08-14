@@ -6,9 +6,9 @@ import { ChevronDown, Globe } from 'lucide-react'
 import { useTranslation, Language } from '@/lib/i18n'
 
 const languages = [
-  { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
-  { code: 'ca' as Language, name: 'Català', flag: '🏴󠁥󠁳󠁣󠁴󠁿' },
-  { code: 'en' as Language, name: 'English', flag: '🇬🇧' }
+  { code: 'es' as Language, name: 'Español', flag: 'ES' },
+  { code: 'ca' as Language, name: 'Català', flag: 'CA' },
+  { code: 'en' as Language, name: 'English', flag: 'GB' }
 ]
 
 export default function LanguageSelector() {
