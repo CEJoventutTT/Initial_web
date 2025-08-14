@@ -230,12 +230,13 @@
     "confirm": "Confirmar",
     "close": "Tancar"
   },
-  "footer": {
-    "description": "El Club Esportiu Joventut ha estat la destinació principal per a l'excel·lència en tennis de taula des de 1995.",
-    "quickLinks": "Enllaços Ràpids",
-    "contact": "Contacte",
-    "followUs": "Segueix-nos",
-    "allRightsReserved": "Tots els drets reservats."
-  },
+"footer": {
+  "description": "El Club Esportiu Joventut ha estat la destinació principal per a l'excel·lència en tennis de taula des de 1995.",
+  "quickLinks": "Enllaços Ràpids",
+  "contact": "Contacte",
+  "followUs": "Segueix-nos",
+  "allRightsReserved": "Tots els drets reservats.",
   "scrollHint": "Mira la pilota"
+}
+  
 }
