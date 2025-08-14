@@ -14,21 +14,21 @@ export default function TrainingsActivities() {
       description: t('trainings.beginnerDesc'),
       icon: Users,
       features: ['Basic stroke techniques', 'Game rules and scoring', 'Equipment guidance', 'Fun group activities'],
-      schedule: 'Mon, Wed, Fri - 6:00 PM'
+      schedule: t('trainings.price1')
     },
     {
       title: t('trainings.competitionLevel'),
       description: t('trainings.competitionDesc'),
       icon: Trophy,
       features: ['Advanced techniques', 'Match strategy', 'Tournament prep', 'Video analysis'],
-      schedule: 'Tue, Thu, Sat - 7:00 PM'
+      schedule: t('trainings.price2')
     },
     {
       title: t('trainings.adultsProgram'),
       description: t('trainings.adultsDesc'),
       icon: Zap,
       features: ['Flexible scheduling', 'Fitness focused', 'Social matches', 'Stress relief'],
-      schedule: 'Weekend sessions available'
+      schedule: t('trainings.price3')
     }
   ]
 
@@ -71,7 +71,7 @@ export default function TrainingsActivities() {
                     </div>
                     <div className="border-t border-gray-700 pt-4">
                       <p className="text-gray-400 text-sm mb-4">
-                        <span className="font-medium">Schedule:</span> {training.schedule}
+                        <span className="font-medium"></span> {training.schedule}
                       </p>
                       <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium">
                         {t('trainings.seeMore')}
