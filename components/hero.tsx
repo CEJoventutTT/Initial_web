@@ -20,7 +20,7 @@ export default function Hero() {
           priority
           fill
           className="object-cover translate-y-[20px]"
-          style={{ objectPosition: 'left center' }}
+          style={{ objectPosition: 'center top' }}
           sizes="100vw"
         />
 
