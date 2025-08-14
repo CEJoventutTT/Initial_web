@@ -97,56 +97,60 @@ export default function TeamsPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-dark text-white">
       <Navigation />
       <div className="pt-16">
-        {/* Hero Section */}
-        <section className="py-20 bg-gradient-to-r from-orange-600 to-red-600">
+        {/* Hero */}
+        <section className="py-20 bg-gradient-to-r from-primary to-accent1">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-5xl font-bold text-white mb-6">Our Teams</h1>
-            <p className="text-xl text-white/90 max-w-3xl mx-auto">
+            <h1 className="text-5xl font-black text-white mb-6">Our Teams</h1>
+            <p className="text-xl text-white/90 max-w-3xl mx-auto font-thin">
               Meet the talented players representing Thunder TT Club in leagues and tournaments across the region.
             </p>
           </div>
         </section>
 
         {/* Teams Overview */}
-        <section className="py-20 bg-gray-900">
+        <section className="py-20 bg-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">Team Roster</h2>
-              <p className="text-gray-300 text-lg">Our competitive teams across different divisions</p>
+              <h2 className="text-4xl font-black text-white mb-4">Team Roster</h2>
+              <p className="text-accent2/90 text-lg">Our competitive teams across different divisions</p>
             </div>
 
             <div className="space-y-8">
               {teams.map((team, index) => (
-                <Card key={index} className="bg-gray-800 border-gray-700">
+                <Card key={index} className="bg-white/5 border border-white/10">
                   <CardHeader>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                       <div>
                         <CardTitle className="text-white text-2xl mb-2">{team.name}</CardTitle>
-                        <p className="text-orange-400 font-semibold">{team.division}</p>
-                        <p className="text-gray-400">Captain: {team.captain}</p>
+                        <p className="text-primary font-semibold">{team.division}</p>
+                        <p className="text-accent2/80">Captain: {team.captain}</p>
                       </div>
                       <div className="mt-4 md:mt-0 text-right">
                         <div className="text-2xl font-bold text-white">
                           {team.record.wins}-{team.record.losses}-{team.record.draws}
                         </div>
-                        <p className="text-gray-400 text-sm">W-L-D Record</p>
+                        <p className="text-accent1/70 text-sm">W-L-D Record</p>
                       </div>
                     </div>
                   </CardHeader>
+
                   <CardContent>
                     <div className="grid lg:grid-cols-2 gap-8">
                       {/* Players */}
                       <div>
-                        <h4 className="text-orange-400 font-semibold mb-4 flex items-center">
+                        <h4 className="text-primary font-semibold mb-4 flex items-center">
                           <Users className="mr-2 h-4 w-4" />
                           Team Roster
                         </h4>
                         <div className="space-y-3">
                           {team.players.map((player, idx) => (
-                            <div key={idx} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div
+                              key={idx}
+                              className="flex items-center justify-between p-3 rounded-lg bg-dark/60 border border-white/10"
+                            >
                               <div className="flex items-center space-x-3">
                                 <img
                                   src="/placeholder.svg?height=40&width=40"
@@ -155,10 +159,10 @@ export default function TeamsPage() {
                                 />
                                 <div>
                                   <div className="text-white font-medium">{player.name}</div>
-                                  <div className="text-gray-400 text-sm">{player.position}</div>
+                                  <div className="text-accent2/80 text-sm">{player.position}</div>
                                 </div>
                               </div>
-                              <div className="text-orange-400 font-semibold">
+                              <div className="font-semibold text-brand-teal text-accent2">
                                 {player.rating}
                               </div>
                             </div>
@@ -168,21 +172,21 @@ export default function TeamsPage() {
 
                       {/* Next Match */}
                       <div>
-                        <h4 className="text-orange-400 font-semibold mb-4 flex items-center">
+                        <h4 className="text-primary font-semibold mb-4 flex items-center">
                           <Calendar className="mr-2 h-4 w-4" />
                           Next Match
                         </h4>
-                        <div className="bg-gray-700/50 rounded-lg p-6">
+                        <div className="rounded-lg p-6 bg-white/5 border border-white/10">
                           <div className="text-white font-semibold text-lg mb-2">
                             vs {team.nextMatch.opponent}
                           </div>
-                          <div className="space-y-2 text-gray-300">
+                          <div className="space-y-2 text-accent2">
                             <div className="flex items-center">
-                              <Calendar className="mr-2 h-4 w-4" />
+                              <Calendar className="mr-2 h-4 w-4 text-accent1" />
                               {new Date(team.nextMatch.date).toLocaleDateString()}
                             </div>
                             <div className="flex items-center">
-                              <MapPin className="mr-2 h-4 w-4" />
+                              <MapPin className="mr-2 h-4 w-4 text-accent1" />
                               {team.nextMatch.venue}
                             </div>
                           </div>
@@ -196,27 +200,27 @@ export default function TeamsPage() {
           </div>
         </section>
 
-        {/* Recent Results */}
-        <section className="py-20 bg-gray-800">
+        {/* Recent Results & Achievements */}
+        <section className="py-20 bg-white/5 border-t border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12">
               {/* Results */}
               <div>
-                <h2 className="text-3xl font-bold text-white mb-8">Recent Results</h2>
+                <h2 className="text-3xl font-black text-white mb-8">Recent Results</h2>
                 <div className="space-y-4">
                   {recentResults.map((result, index) => (
-                    <Card key={index} className="bg-gray-900 border-gray-700">
+                    <Card key={index} className="bg-dark/70 border border-white/10">
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
-                            <div className="text-sm text-gray-400 mb-2">
+                            <div className="text-sm text-accent2/80 mb-2">
                               {new Date(result.date).toLocaleDateString()} • {result.venue}
                             </div>
                             <div className="text-white font-medium">
                               {result.homeTeam} vs {result.awayTeam}
                             </div>
                           </div>
-                          <div className="text-2xl font-bold text-orange-400">
+                          <div className="text-2xl font-bold text-primary">
                             {result.homeScore} - {result.awayScore}
                           </div>
                         </div>
@@ -228,25 +232,25 @@ export default function TeamsPage() {
 
               {/* Achievements */}
               <div>
-                <h2 className="text-3xl font-bold text-white mb-8">Recent Achievements</h2>
+                <h2 className="text-3xl font-black text-white mb-8">Recent Achievements</h2>
                 <div className="space-y-4">
                   {achievements.map((achievement, index) => (
-                    <Card key={index} className="bg-gray-900 border-gray-700">
+                    <Card key={index} className="bg-dark/70 border border-white/10">
                       <CardContent className="p-6">
                         <div className="flex items-start space-x-4">
-                          <div className="bg-orange-500 p-3 rounded-lg">
-                            <Trophy className="h-6 w-6 text-white" />
+                          <div className="p-3 rounded-lg bg-primary/20 border border-primary/30">
+                            <Trophy className="h-6 w-6 text-primary" />
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-2">
-                              <span className="text-orange-400 font-bold">{achievement.year}</span>
-                              <Star className="h-4 w-4 text-orange-400" />
+                              <span className="text-primary font-bold">{achievement.year}</span>
+                              <Star className="h-4 w-4 text-primary" />
                             </div>
                             <h3 className="text-white font-semibold text-lg mb-1">
                               {achievement.title}
                             </h3>
-                            <p className="text-gray-400 text-sm mb-2">{achievement.team}</p>
-                            <p className="text-gray-300 text-sm">{achievement.description}</p>
+                            <p className="text-accent2/80 text-sm mb-2">{achievement.team}</p>
+                            <p className="text-white/90 text-sm">{achievement.description}</p>
                           </div>
                         </div>
                       </CardContent>

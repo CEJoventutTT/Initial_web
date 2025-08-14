@@ -1,6 +1,8 @@
 {
   "/page": "app/page.js",
-  "/join/page": "app/join/page.js",
-  "/about/page": "app/about/page.js",
-  "/trainings/page": "app/trainings/page.js"
+  "/trainings/page": "app/trainings/page.js",
+  "/news/page": "app/news/page.js",
+  "/teams/page": "app/teams/page.js",
+  "/login/page": "app/login/page.js",
+  "/dashboard/page": "app/dashboard/page.js"
 }

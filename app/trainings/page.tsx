@@ -89,52 +89,55 @@ export default function TrainingsPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-dark text-white">
       <Navigation />
       <div className="pt-16">
-        {/* Hero Section */}
-        <section className="py-20 bg-gradient-to-r from-orange-600 to-red-600">
+        {/* Hero */}
+        <section className="py-20 bg-gradient-to-r from-primary to-accent1">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-5xl font-bold text-white mb-6">Training Programs</h1>
-            <p className="text-xl text-white/90 max-w-3xl mx-auto">
-              Discover the perfect training program for your skill level and goals. 
-              From beginners to champions, we have something for everyone.
+            <h1 className="text-5xl font-black text-white mb-6">Training Programs</h1>
+            <p className="text-xl text-white/90 max-w-3xl mx-auto font-thin">
+              Discover the perfect training program for your skill level and goals. From beginners to committed players, we have something for everyone.
             </p>
           </div>
         </section>
 
         {/* Main Programs */}
-        <section className="py-20 bg-gray-900">
+        <section className="py-20 bg-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">Main Programs</h2>
-              <p className="text-gray-300 text-lg">Choose the program that matches your skill level and commitment</p>
+              <h2 className="text-4xl font-black text-white mb-4">Main Programs</h2>
+              <p className="text-accent2/90 text-lg">Choose the program that matches your skill level and commitment</p>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
               {programs.map((program, index) => {
                 const IconComponent = program.icon
                 return (
-                  <Card key={index} className="bg-gray-800 border-gray-700 hover:border-orange-500 transition-colors duration-300">
+                  <Card
+                    key={index}
+                    className="bg-white/5 border border-white/10 hover:border-primary transition-colors duration-300"
+                  >
                     <CardHeader className="text-center">
-                      <div className="bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                         <IconComponent className="h-8 w-8 text-white" />
                       </div>
-                      <CardTitle className="text-white text-xl">{program.title}</CardTitle>
-                      <CardDescription className="text-gray-300">
+                      <CardTitle className="text-white text-xl font-semibold">{program.title}</CardTitle>
+                      <CardDescription className="text-accent2">
                         {program.description}
                       </CardDescription>
                     </CardHeader>
+
                     <CardContent className="space-y-6">
                       {/* Schedule */}
                       <div>
-                        <h4 className="text-orange-400 font-semibold mb-3 flex items-center">
+                        <h4 className="text-primary font-semibold mb-3 flex items-center">
                           <Clock className="mr-2 h-4 w-4" />
                           Schedule
                         </h4>
                         <div className="space-y-2">
                           {program.schedule.map((session, idx) => (
-                            <div key={idx} className="flex justify-between text-sm text-gray-300">
+                            <div key={idx} className="flex justify-between text-sm text-accent2">
                               <span>{session.day}</span>
                               <span>{session.time}</span>
                             </div>
@@ -144,11 +147,11 @@ export default function TrainingsPage() {
 
                       {/* Features */}
                       <div>
-                        <h4 className="text-orange-400 font-semibold mb-3">What's Included</h4>
-                        <ul className="text-gray-300 text-sm space-y-1">
+                        <h4 className="text-primary font-semibold mb-3">What’s Included</h4>
+                        <ul className="text-accent2 text-sm space-y-1">
                           {program.features.map((feature, idx) => (
                             <li key={idx} className="flex items-center">
-                              <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mr-2"></div>
+                              <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
                               {feature}
                             </li>
                           ))}
@@ -156,26 +159,26 @@ export default function TrainingsPage() {
                       </div>
 
                       {/* Details */}
-                      <div className="space-y-2 text-sm text-gray-400">
+                      <div className="space-y-2 text-sm text-accent2/90">
                         <div className="flex items-center">
-                          <Users className="mr-2 h-4 w-4" />
+                          <Users className="mr-2 h-4 w-4 text-accent1" />
                           Max {program.maxStudents} students
                         </div>
                         <div className="flex items-center">
-                          <MapPin className="mr-2 h-4 w-4" />
+                          <MapPin className="mr-2 h-4 w-4 text-accent1" />
                           Coach: {program.coach}
                         </div>
                       </div>
 
-                      {/* Price and CTA */}
-                      <div className="border-t border-gray-700 pt-4">
+                      {/* Price & CTA */}
+                      <div className="border-t border-white/10 pt-4">
                         <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center text-orange-400 font-bold text-lg">
+                          <div className="flex items-center text-primary font-bold text-lg">
                             <DollarSign className="mr-1 h-5 w-5" />
                             {program.price.replace('$', '')}
                           </div>
                         </div>
-                        <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
+                        <Button className="w-full bg-primary hover:opacity-90 text-white font-semibold">
                           Enroll Now
                         </Button>
                       </div>
@@ -188,33 +191,36 @@ export default function TrainingsPage() {
         </section>
 
         {/* Special Programs */}
-        <section className="py-20 bg-gray-800">
+        <section className="py-20 bg-white/5 border-t border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">Special Programs</h2>
-              <p className="text-gray-300 text-lg">Additional training options for specific needs</p>
+              <h2 className="text-4xl font-black text-white mb-4">Special Programs</h2>
+              <p className="text-accent2/90 text-lg">Additional training options for specific needs</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
               {specialPrograms.map((program, index) => (
-                <Card key={index} className="bg-gray-900 border-gray-700">
+                <Card key={index} className="bg-dark/70 border border-white/10">
                   <CardHeader>
                     <CardTitle className="text-white">{program.title}</CardTitle>
-                    <CardDescription className="text-gray-300">
+                    <CardDescription className="text-accent2">
                       {program.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      <div className="flex items-center text-sm text-gray-400">
-                        <Clock className="mr-2 h-4 w-4" />
+                      <div className="flex items-center text-sm text-accent2/90">
+                        <Clock className="mr-2 h-4 w-4 text-accent1" />
                         {program.schedule}
                       </div>
-                      <div className="flex items-center text-orange-400 font-semibold">
+                      <div className="flex items-center text-primary font-semibold">
                         <DollarSign className="mr-1 h-4 w-4" />
                         {program.price}
                       </div>
-                      <Button variant="outline" className="w-full border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white">
+                      <Button
+                        variant="outline"
+                        className="w-full border-primary text-primary hover:bg-primary hover:text-white"
+                      >
                         Learn More
                       </Button>
                     </div>

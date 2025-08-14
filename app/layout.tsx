@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 import { TranslationProvider } from '@/lib/i18n'
 
 export const metadata: Metadata = {
-  title: 'Club Esportiu Joventut - Excelencia en Tenis de Mesa',
-  description: 'Club de tenis de mesa premier ofreciendo entrenamiento para todos los niveles de habilidad',
+  title: 'Club Esportiu Joventut - Sant Josep de sa Talaia, Ibiza, Baleares',
+  description: 'Club de tenis de mesa inclusivo en Baleares',
     generator: 'v0.dev'
 }
 

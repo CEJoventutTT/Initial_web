@@ -6,7 +6,6 @@ const FRAMES = [
   '/sun/sol6.png',
   '/sun/sol5.png',
   '/sun/sol3.png',
-  '/sun/sol1.png',
 ];
 
 export default function SunBouncing() {

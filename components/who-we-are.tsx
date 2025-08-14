@@ -64,8 +64,8 @@ export default function WhoWeAre() {
           {/* Image */}
           <div className="relative">
             <img
-              src="/table-tennis-action.png"
-              alt="Club Esportiu Joventut logo"
+              src="/her.jpg"
+              alt="Club Esportiu Joventut"
               className="rounded-lg w-full h-auto border border-white/10 bg-white/5 p-6"
               draggable={false}
             />

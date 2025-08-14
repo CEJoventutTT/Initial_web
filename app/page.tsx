@@ -12,7 +12,7 @@ import Contact from '@/components/contact'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-dark text-white">
       <Navigation />
       <Hero />
       <WhoWeAre />
