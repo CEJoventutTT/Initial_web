@@ -8,10 +8,13 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Users, Trophy, Zap, Check, Star, Clock, MapPin } from 'lucide-react'
+import { Users, Trophy, Zap, Check, MapPin } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function JoinPage() {
-  const [selectedPlan, setSelectedPlan] = useState('basic')
+  const { t } = useTranslation()
+
+  const [selectedPlan, setSelectedPlan] = useState<'basic' | 'premium' | 'elite'>('basic')
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -26,59 +29,6 @@ export default function JoinPage() {
     agreeNewsletter: false
   })
 
-  const membershipPlans = [
-    {
-      id: 'basic',
-      name: 'Basic Membership',
-      price: '29€',
-      period: '/mes',
-      icon: Users,
-      popular: false,
-      features: [
-        'Acceso a instalaciones en horario estándar',
-        'Sesiones grupales básicas',
-        'Material incluido (básico)',
-        'Taquillas',
-        'Eventos sociales mensuales'
-      ]
-    },
-    {
-      id: 'premium',
-      name: 'Premium Membership',
-      price: '39€',
-      period: '/mes',
-      icon: Trophy,
-      popular: true,
-      features: [
-        'Acceso ilimitado a instalaciones',
-        'Todas las sesiones grupales',
-        '1 sesión privada/mes',
-        'Reserva prioritaria',
-        'Descuentos en torneos',
-        'Asesoría básica de nutrición',
-        '2 pases de invitado/mes'
-      ]
-    },
-    {
-      id: 'elite',
-      name: 'Elite Membership',
-      price: '49€',
-      period: '/mes',
-      icon: Zap,
-      popular: false,
-      features: [
-        'Todo lo de Premium',
-        '2 sesiones privadas/mes',
-        'Plan de entrenamiento personalizado',
-        'Sesiones de video-análisis',
-        'Elegibilidad equipo competición',
-        'Entradas a torneos del club',
-        'Pases de invitado ampliados',
-        'Eventos exclusivos'
-      ]
-    }
-  ]
-
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
@@ -86,8 +36,55 @@ export default function JoinPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log('Membership application submitted:', { ...formData, plan: selectedPlan })
-    alert('Thank you for your application! We will contact you within 24 hours.')
+    alert(t('join.reviewMessage'))
   }
+
+  // Planes con textos sacados de trainings.*
+  const membershipPlans = [
+    {
+      id: 'basic' as const,
+      // Golpes Iniciales
+      name: t('trainings.beginnerLevel'),
+      desc: t('trainings.beginnerDesc'),
+      // Línea de precio completa
+      priceLine: t('trainings.price1'),
+      icon: Users,
+      popular: false,
+      features: [
+        t('trainings.personalizedTraining'),
+        t('trainings.flexSchedule'),
+        t('trainings.improve'),
+      ],
+    },
+    {
+      id: 'premium' as const,
+      // Juego en Marcha
+      name: t('trainings.competitionLevel'),
+      desc: t('trainings.competitionDesc'),
+      priceLine: t('trainings.price2'),
+      icon: Trophy,
+      popular: true,
+      features: [
+        t('trainings.personalizedTraining'),
+        t('trainings.flexSchedule'),
+        t('trainings.steadyProgress'),
+      ],
+    },
+    {
+      id: 'elite' as const,
+      // A Potencia Máxima
+      name: t('trainings.adultsProgram'),
+      desc: t('trainings.adultsDesc'),
+      priceLine: t('trainings.price3'),
+      icon: Zap,
+      popular: false,
+      features: [
+        t('trainings.personalizedTraining'),
+        t('trainings.completeTraining'),
+        t('trainings.freeTshirt'),
+      ],
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-brand-dark text-white">
@@ -96,9 +93,9 @@ export default function JoinPage() {
         {/* Hero */}
         <section className="relative py-20 bg-gradient-to-r from-brand-green via-brand-teal to-brand-green">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-5xl font-black text-white mb-6">Join Club Esportiu Joventut</h1>
+            <h1 className="text-5xl font-black text-white mb-6">{t('join.title')}</h1>
             <p className="text-xl text-white/90 max-w-3xl mx-auto font-thin">
-              Elige el plan que encaje contigo y empieza a entrenar con un equipo experto y un ambiente motivador.
+              {t('join.description')}
             </p>
           </div>
         </section>
@@ -107,8 +104,8 @@ export default function JoinPage() {
         <section className="py-20 bg-brand-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-black text-white mb-4">Choose Your Plan</h2>
-              <p className="text-white/80 text-lg">Selecciona la membresía que mejor se ajuste a tus objetivos</p>
+              <h2 className="text-4xl font-black text-white mb-4">{t('join.choosePlan')}</h2>
+              <p className="text-white/80 text-lg">{t('join.choosePlanDesc')}</p>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8 mb-16">
@@ -127,9 +124,8 @@ export default function JoinPage() {
                   >
                     {plan.popular && (
                       <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                        <div className="bg-brand-red text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center">
-                          <Star className="mr-1 h-3 w-3" />
-                          Most Popular
+                        <div className="bg-brand-red text-white px-4 py-1 rounded-full text-sm font-semibold">
+                          {t('join.mostPopular')}
                         </div>
                       </div>
                     )}
@@ -139,14 +135,23 @@ export default function JoinPage() {
                         <IconComponent className="h-8 w-8 text-white" />
                       </div>
                       <CardTitle className="text-white text-2xl">{plan.name}</CardTitle>
-                      <div className="flex items-baseline justify-center">
-                        <span className="text-4xl font-black text-brand-teal">{plan.price}</span>
-                        <span className="text-white/70 ml-1">{plan.period}</span>
+                      {plan.desc && (
+                        <CardDescription className="text-white/80">
+                          {plan.desc}
+                        </CardDescription>
+                      )}
+                      {/* Línea de precio completa (ej. “29€/mes – 1 día a la semana”) */}
+                      <div className="mt-3 text-brand-teal font-semibold">
+                        {plan.priceLine}
                       </div>
                     </CardHeader>
 
                     <CardContent>
-                      <ul className="space-y-3 mb-6">
+                      {/* “Así es tu entrenamiento:” */}
+                      <div className="text-white/80 text-sm mb-3">
+                        {t('trainings.includes')}
+                      </div>
+                      <ul className="space-y-3 mb-2">
                         {plan.features.map((feature, index) => (
                           <li key={index} className="flex items-start">
                             <Check className="h-5 w-5 text-brand-teal mr-3 mt-0.5 flex-shrink-0" />
@@ -154,16 +159,6 @@ export default function JoinPage() {
                           </li>
                         ))}
                       </ul>
-
-                      <div className="text-center">
-                        <div
-                          className={`w-4 h-4 rounded-full border-2 mx-auto ${
-                            active ? 'bg-brand-teal border-brand-teal' : 'border-white/40'
-                          }`}
-                        >
-                          {active && <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />}
-                        </div>
-                      </div>
                     </CardContent>
                   </Card>
                 )
@@ -176,15 +171,15 @@ export default function JoinPage() {
         <section className="py-20 bg-white/5">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-black text-white mb-4">Complete Your Application</h2>
-              <p className="text-white/80 text-lg">Rellena el formulario para unirte al club</p>
+              <h2 className="text-4xl font-black text-white mb-4">{t('join.completeApplication')}</h2>
+              <p className="text-white/80 text-lg">{t('join.applicationDesc')}</p>
             </div>
 
             <Card className="bg-brand-dark border border-white/10">
               <CardHeader>
-                <CardTitle className="text-white text-2xl">Membership Application</CardTitle>
+                <CardTitle className="text-white text-2xl">{t('join.membershipApplication')}</CardTitle>
                 <CardDescription className="text-white/80">
-                  Selected Plan:{' '}
+                  {t('join.selectedPlan')}: {' '}
                   <span className="text-brand-teal font-semibold">
                     {membershipPlans.find(p => p.id === selectedPlan)?.name}
                   </span>
@@ -195,10 +190,12 @@ export default function JoinPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Personal Information */}
                   <div>
-                    <h3 className="text-white font-semibold text-lg mb-4">Personal Information</h3>
+                    <h3 className="text-white font-semibold text-lg mb-4">{t('join.personalInfo')}</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">First Name *</label>
+                        <label className="block text-sm font-medium text-white/80 mb-2">
+                          {t('join.firstName')} *
+                        </label>
                         <Input
                           required
                           value={formData.firstName}
@@ -208,7 +205,9 @@ export default function JoinPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">Last Name *</label>
+                        <label className="block text-sm font-medium text-white/80 mb-2">
+                          {t('join.lastName')} *
+                        </label>
                         <Input
                           required
                           value={formData.lastName}
@@ -222,10 +221,12 @@ export default function JoinPage() {
 
                   {/* Contact Information */}
                   <div>
-                    <h3 className="text-white font-semibold text-lg mb-4">Contact Information</h3>
+                    <h3 className="text-white font-semibold text-lg mb-4">{t('join.contactInfo')}</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">Email Address *</label>
+                        <label className="block text-sm font-medium text-white/80 mb-2">
+                          {t('join.email')}
+                        </label>
                         <Input
                           type="email"
                           required
@@ -236,7 +237,9 @@ export default function JoinPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">Phone Number *</label>
+                        <label className="block text-sm font-medium text-white/80 mb-2">
+                          {t('join.phone')}
+                        </label>
                         <Input
                           type="tel"
                           required
@@ -251,10 +254,12 @@ export default function JoinPage() {
 
                   {/* Additional Information */}
                   <div>
-                    <h3 className="text-white font-semibold text-lg mb-4">Additional Information</h3>
+                    <h3 className="text-white font-semibold text-lg mb-4">{t('join.additionalInfo')}</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">Date of Birth *</label>
+                        <label className="block text-sm font-medium text-white/80 mb-2">
+                          {t('join.dateOfBirth')} *
+                        </label>
                         <Input
                           type="date"
                           required
@@ -265,27 +270,31 @@ export default function JoinPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">Table Tennis Experience</label>
+                        <label className="block text-sm font-medium text-white/80 mb-2">
+                          {t('join.experience')}
+                        </label>
                         <Select onValueChange={(value) => handleInputChange('experience', value)}>
                           <SelectTrigger className="bg-white/5 border-white/10 text-white focus:ring-0">
-                            <SelectValue placeholder="Select your experience level" />
+                            <SelectValue placeholder={t('trainings.learnMore')} />
                           </SelectTrigger>
                           <SelectContent className="bg-brand-dark border border-white/10 text-white">
-                            <SelectItem value="beginner">Beginner (0-1 years)</SelectItem>
-                            <SelectItem value="intermediate">Intermediate (1-3 years)</SelectItem>
-                            <SelectItem value="advanced">Advanced (3-5 years)</SelectItem>
-                            <SelectItem value="expert">Expert (5+ years)</SelectItem>
+                            <SelectItem value="beginner">{t('trainings.beginnerLevel')} (0-1)</SelectItem>
+                            <SelectItem value="intermediate">Intermediate (1-3)</SelectItem>
+                            <SelectItem value="advanced">Advanced (3-5)</SelectItem>
+                            <SelectItem value="expert">Expert (5+)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">Goals and Expectations</label>
+                        <label className="block text-sm font-medium text-white/80 mb-2">
+                          {t('join.goals')}
+                        </label>
                         <Textarea
                           value={formData.goals}
                           onChange={(e) => handleInputChange('goals', e.target.value)}
                           className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
-                          placeholder="Tell us about your table tennis goals and what you hope to achieve..."
+                          placeholder={t('join.goals')}
                           rows={3}
                         />
                       </div>
@@ -294,10 +303,12 @@ export default function JoinPage() {
 
                   {/* Emergency Contact */}
                   <div>
-                    <h3 className="text-white font-semibold text-lg mb-4">Emergency Contact</h3>
+                    <h3 className="text-white font-semibold text-lg mb-4">{t('join.emergencyContact')}</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">Emergency Contact Name *</label>
+                        <label className="block text-sm font-medium text-white/80 mb-2">
+                          {t('join.emergencyContactName')} *
+                        </label>
                         <Input
                           required
                           value={formData.emergencyContact}
@@ -307,7 +318,9 @@ export default function JoinPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">Emergency Contact Phone *</label>
+                        <label className="block text-sm font-medium text-white/80 mb-2">
+                          {t('join.emergencyContactPhone')} *
+                        </label>
                         <Input
                           type="tel"
                           required
@@ -330,7 +343,7 @@ export default function JoinPage() {
                         className="border-white/30 data-[state=checked]:bg-brand-red data-[state=checked]:border-brand-red"
                       />
                       <label htmlFor="terms" className="text-sm text-white/85 leading-relaxed">
-                        I agree to the <span className="text-brand-teal hover:underline cursor-pointer">Terms and Conditions</span> and <span className="text-brand-teal hover:underline cursor-pointer">Privacy Policy</span> of the Club. *
+                        {t('join.agreeTerms')}
                       </label>
                     </div>
 
@@ -342,7 +355,7 @@ export default function JoinPage() {
                         className="border-white/30 data-[state=checked]:bg-brand-teal data-[state=checked]:border-brand-teal"
                       />
                       <label htmlFor="newsletter" className="text-sm text-white/85">
-                        I would like to receive newsletters and updates about club events and activities.
+                        {t('join.agreeNewsletter')}
                       </label>
                     </div>
                   </div>
@@ -354,10 +367,10 @@ export default function JoinPage() {
                       disabled={!formData.agreeTerms}
                       className="w-full bg-brand-red hover:bg-brand-red/90 text-white py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Submit Application
+                      {t('join.submitApplication')}
                     </Button>
                     <p className="text-center text-white/70 text-sm mt-4">
-                      We'll review your application and contact you within 24 hours.
+                      {t('join.reviewMessage')}
                     </p>
                   </div>
                 </form>
@@ -370,8 +383,8 @@ export default function JoinPage() {
         <section className="py-20 bg-brand-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-black text-white mb-4">Why Join Club Esportiu Joventut?</h2>
-              <p className="text-white/80 text-lg">Beneficios de formar parte de nuestra comunidad</p>
+              <h2 className="text-4xl font-black text-white mb-4">{t('join.whyJoin')}</h2>
+              <p className="text-white/80 text-lg">{t('join.whyJoinDesc')}</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
@@ -379,30 +392,24 @@ export default function JoinPage() {
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/15 bg-brand-teal/25">
                   <Users className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-white font-semibold text-xl mb-4">Expert Coaching</h3>
-                <p className="text-white/80">
-                  Aprende con entrenadores con experiencia competitiva y métodos probados.
-                </p>
+                <h3 className="text-white font-semibold text-xl mb-4">{t('join.expertCoaching')}</h3>
+                <p className="text-white/80">{t('join.expertCoachingDesc')}</p>
               </div>
 
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/15 bg-brand-teal/25">
                   <MapPin className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-white font-semibold text-xl mb-4">Modern Facilities</h3>
-                <p className="text-white/80">
-                  Entrena con material profesional y condiciones óptimas de juego.
-                </p>
+                <h3 className="text-white font-semibold text-xl mb-4">{t('join.modernFacilities')}</h3>
+                <p className="text-white/80">{t('join.modernFacilitiesDesc')}</p>
               </div>
 
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/15 bg-brand-teal/25">
                   <Trophy className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-white font-semibold text-xl mb-4">Competitive Opportunities</h3>
-                <p className="text-white/80">
-                  Participa en ligas y torneos y sigue progresando a tu ritmo.
-                </p>
+                <h3 className="text-white font-semibold text-xl mb-4">{t('join.competitiveOpportunities')}</h3>
+                <p className="text-white/80">{t('join.competitiveOpportunitiesDesc')}</p>
               </div>
             </div>
           </div>

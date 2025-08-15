@@ -90,8 +90,8 @@
     "neutral": "Neutral",
     "recentMatches": "Partits Recents",
     "leagueStandings": "Classificació de Lliga",
-    "maleLeague": "Lliga Masculina",
-    "femaleLeague": "Lliga Femenina"
+    "femaleLeague": "Lliga Femenina",
+    "maleLeague": "Lliga Masculina"
   },
   "news": {
     "title": "Notícies i Esdeveniments",
@@ -133,7 +133,7 @@
     "featuredVideo": "Vídeo Destacat"
   },
   "join": {
-    "title": "Llest per Unir-te a la Nostra Família?",
+    "title": "Llest per Unir-te a la Nostra Comunitat?",
     "description": "Converteix-te en part del Club Esportiu Joventut i experimenta l'emoció del tennis de taula en un ambient de suport i competitiu. El teu viatge cap a l'excel·lència comença aquí.",
     "choosePlan": "Tria el Teu Pla",
     "choosePlanDesc": "Selecciona la membresía que coincideixi amb el teu compromís i objectius",
@@ -232,13 +232,12 @@
     "confirm": "Confirmar",
     "close": "Tancar"
   },
-"footer": {
-  "description": "El Club Esportiu Joventut ha estat la destinació principal per a l'excel·lència en tennis de taula des de 1995.",
-  "quickLinks": "Enllaços Ràpids",
-  "contact": "Contacte",
-  "followUs": "Segueix-nos",
-  "allRightsReserved": "Tots els drets reservats.",
-  "scrollHint": "Mira la pilota"
-}
-  
+  "footer": {
+    "description": "El Club Esportiu Joventut ha estat la destinació principal per a l'excel·lència en tennis de taula des de 1995.",
+    "quickLinks": "Enllaços Ràpids",
+    "contact": "Contacte",
+    "followUs": "Segueix-nos",
+    "allRightsReserved": "Tots els drets reservats.",
+    "scrollHint": "Mira la pilota"
+  }
 }
