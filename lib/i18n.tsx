@@ -1,88 +1,51 @@
 'use client'
 
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
+import { createContext, useContext, ReactNode, useMemo } from 'react'
 
 export type Language = 'es' | 'ca' | 'en'
 
+type TFn = (key: string, params?: Record<string, string | number>) => string
+
 interface TranslationContextType {
   language: Language
-  setLanguage: (lang: Language) => void
-  t: (key: string, params?: Record<string, string | number>) => string
-  translations: Record<string, any>
+  t: TFn
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(undefined)
 
 export const useTranslation = () => {
-  const context = useContext(TranslationContext)
-  if (!context) {
-    throw new Error('useTranslation must be used within a TranslationProvider')
-  }
-  return context
+  const ctx = useContext(TranslationContext)
+  if (!ctx) throw new Error('useTranslation must be used within a TranslationProvider')
+  return ctx
 }
 
-interface TranslationProviderProps {
+export function TranslationProvider({
+  children,
+  initialLanguage,
+  dictionary,
+}: {
   children: ReactNode
-}
+  initialLanguage: Language
+  dictionary: Record<string, any>
+}) {
+  const t = useMemo<TFn>(() => {
+    return (key: string, params?: Record<string, string | number>) => {
+      const value = key
+        .split('.')
+        .reduce<any>((acc, k) => (acc && typeof acc === 'object' ? acc[k] : undefined), dictionary)
 
-export const TranslationProvider = ({ children }: TranslationProviderProps) => {
-  const [language, setLanguageState] = useState<Language>('es')
-  const [translations, setTranslations] = useState<Record<string, any>>({})
-
-  useEffect(() => {
-    // Load saved language from localStorage
-    const savedLanguage = localStorage.getItem('language') as Language
-    if (savedLanguage && ['es', 'ca', 'en'].includes(savedLanguage)) {
-      setLanguageState(savedLanguage)
-    }
-  }, [])
-
-  useEffect(() => {
-    // Load translations for current language
-    const loadTranslations = async () => {
-      try {
-        const response = await fetch(`/locales/${language}.json`)
-        const data = await response.json()
-        setTranslations(data)
-      } catch (error) {
-        console.error('Failed to load translations:', error)
+      let out = typeof value === 'string' ? value : key
+      if (params) {
+        for (const [k, v] of Object.entries(params)) {
+          out = out.replace(`{${k}}`, String(v))
+        }
       }
+      return out
     }
-
-    loadTranslations()
-  }, [language])
-
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang)
-    localStorage.setItem('language', lang)
-  }
-
-  const t = (key: string, params?: Record<string, string | number>): string => {
-    const keys = key.split('.')
-    let value = translations
-
-    for (const k of keys) {
-      if (value && typeof value === 'object' && k in value) {
-        value = value[k]
-      } else {
-        return key // Return key if translation not found
-      }
-    }
-
-    let result = typeof value === 'string' ? value : key
-
-    // Replace parameters in the translation
-    if (params) {
-      Object.entries(params).forEach(([paramKey, paramValue]) => {
-        result = result.replace(`{${paramKey}}`, String(paramValue))
-      })
-    }
-
-    return result
-  }
+  }, [dictionary])
 
   return (
-    <TranslationContext.Provider value={{ language, setLanguage, t, translations }}>
+    <TranslationContext.Provider value={{ language: initialLanguage, t }}>
       {children}
     </TranslationContext.Provider>
   )
