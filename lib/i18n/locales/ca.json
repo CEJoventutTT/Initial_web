@@ -177,7 +177,9 @@
     "loveGame": "Estima el Joc",
     "loveGameDesc": "Desenvolupa la teva passió pel tennis de taula amb orientació experta",
     "becomeMember": "Fes-te Membre Avui",
-    "specialOffer": "Oferta especial: Primer mes gratis per a nous membres!"
+    "specialOffer": "Oferta especial: Primer mes gratis per a nous membres!",
+    "signingIn": "Enviant sol·licitud..."
+
   },
   "login": {
     "title": "Benvingut de Tornada",

@@ -15,6 +15,7 @@ yarn-error.log
 # System
 Thumbs.db
 .log
+.env.local
 
 # Vercel
 .vercel

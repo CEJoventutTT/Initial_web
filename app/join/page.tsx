@@ -10,11 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox'
 import { Users, Trophy, Zap, Check, MapPin } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
+import emailjs from '@emailjs/browser'
 
 export default function JoinPage() {
   const { t } = useTranslation()
 
   const [selectedPlan, setSelectedPlan] = useState<'basic' | 'premium' | 'elite'>('basic')
+  const [submitting, setSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -33,20 +35,78 @@ export default function JoinPage() {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Membership application submitted:', { ...formData, plan: selectedPlan })
-    alert(t('join.reviewMessage'))
+
+    if (!formData.agreeTerms) return
+
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+
+    if (!serviceId || !templateId || !publicKey) {
+      console.error('EmailJS config missing. Check NEXT_PUBLIC_EMAILJS_* env vars.')
+      alert(t('common.error'))
+      return
+    }
+
+    try {
+      setSubmitting(true)
+
+      // Mapeo de parámetros esperados por la plantilla de EmailJS
+      const templateParams = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        dateOfBirth: formData.dateOfBirth,
+        experience: formData.experience,
+        goals: formData.goals,
+        emergencyContact: formData.emergencyContact,
+        emergencyPhone: formData.emergencyPhone,
+        agreeTerms: formData.agreeTerms ? 'Yes' : 'No',
+        agreeNewsletter: formData.agreeNewsletter ? 'Yes' : 'No',
+        plan:
+          selectedPlan === 'basic'
+            ? 'Golpes Iniciales'
+            : selectedPlan === 'premium'
+            ? 'Juego en Marcha'
+            : 'A Potencia Máxima',
+        createdAt: new Date().toISOString(),
+      }
+
+      await emailjs.send(serviceId, templateId, templateParams, { publicKey })
+
+      // Éxito
+      alert(t('join.reviewMessage'))
+      // Reset sencillo del formulario (mantenemos el plan seleccionado)
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        dateOfBirth: '',
+        experience: '',
+        goals: '',
+        emergencyContact: '',
+        emergencyPhone: '',
+        agreeTerms: false,
+        agreeNewsletter: false
+      })
+    } catch (err) {
+      console.error(err)
+      alert(t('common.error'))
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   // Planes con textos sacados de trainings.*
   const membershipPlans = [
     {
       id: 'basic' as const,
-      // Golpes Iniciales
-      name: t('trainings.beginnerLevel'),
+      name: t('trainings.beginnerLevel'), // Golpes Iniciales
       desc: t('trainings.beginnerDesc'),
-      // Línea de precio completa
       priceLine: t('trainings.price1'),
       icon: Users,
       popular: false,
@@ -58,8 +118,7 @@ export default function JoinPage() {
     },
     {
       id: 'premium' as const,
-      // Juego en Marcha
-      name: t('trainings.competitionLevel'),
+      name: t('trainings.competitionLevel'), // Juego en Marcha
       desc: t('trainings.competitionDesc'),
       priceLine: t('trainings.price2'),
       icon: Trophy,
@@ -72,8 +131,7 @@ export default function JoinPage() {
     },
     {
       id: 'elite' as const,
-      // A Potencia Máxima
-      name: t('trainings.adultsProgram'),
+      name: t('trainings.adultsProgram'), // A Potencia Máxima
       desc: t('trainings.adultsDesc'),
       priceLine: t('trainings.price3'),
       icon: Zap,
@@ -140,14 +198,12 @@ export default function JoinPage() {
                           {plan.desc}
                         </CardDescription>
                       )}
-                      {/* Línea de precio completa (ej. “29€/mes – 1 día a la semana”) */}
                       <div className="mt-3 text-brand-teal font-semibold">
                         {plan.priceLine}
                       </div>
                     </CardHeader>
 
                     <CardContent>
-                      {/* “Así es tu entrenamiento:” */}
                       <div className="text-white/80 text-sm mb-3">
                         {t('trainings.includes')}
                       </div>
@@ -318,7 +374,7 @@ export default function JoinPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">
+                        <label className="block text sm font-medium text-white/80 mb-2">
                           {t('join.emergencyContactPhone')} *
                         </label>
                         <Input
@@ -364,10 +420,10 @@ export default function JoinPage() {
                   <div className="pt-6">
                     <Button
                       type="submit"
-                      disabled={!formData.agreeTerms}
+                      disabled={!formData.agreeTerms || submitting}
                       className="w-full bg-brand-red hover:bg-brand-red/90 text-white py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {t('join.submitApplication')}
+                      {submitting ? t('login.signingIn') : t('join.submitApplication')}
                     </Button>
                     <p className="text-center text-white/70 text-sm mt-4">
                       {t('join.reviewMessage')}
