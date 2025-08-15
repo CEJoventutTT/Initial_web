@@ -4,9 +4,23 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Zap, Trophy, Users } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
+import { useRouter } from 'next/navigation'
 
 export default function TrainingsActivities() {
   const { t } = useTranslation()
+  const router = useRouter()
+
+  // Divide "29€/mes – 1 día a la semana" en precio (izq) y días (dcha)
+  const parsePrice = (line: string) => {
+    const parts = line.split('–') // EN DASH
+    if (parts.length >= 2) {
+      return {
+        price: parts[0].trim(),
+        days: parts.slice(1).join('–').trim(),
+      }
+    }
+    return { price: line, days: '' }
+  }
 
   const trainings = [
     {
@@ -18,7 +32,7 @@ export default function TrainingsActivities() {
         t('trainings.flexSchedule'),
         t('trainings.improve'),
       ],
-      schedule: t('trainings.price1'),
+      priceLine: t('trainings.price1'),
     },
     {
       title: t('trainings.competitionLevel'),
@@ -29,7 +43,7 @@ export default function TrainingsActivities() {
         t('trainings.flexSchedule'),
         t('trainings.steadyProgress'),
       ],
-      schedule: t('trainings.price2'),
+      priceLine: t('trainings.price2'),
     },
     {
       title: t('trainings.adultsProgram'),
@@ -40,9 +54,9 @@ export default function TrainingsActivities() {
         t('trainings.completeTraining'),
         t('trainings.freeTshirt'),
       ],
-      schedule: t('trainings.price3'),
+      priceLine: t('trainings.price3'),
     },
-  ]
+  ].map((tr) => ({ ...tr, parsed: parsePrice(tr.priceLine) }))
 
   return (
     <section id="trainings" className="py-20 bg-brand-dark">
@@ -60,20 +74,24 @@ export default function TrainingsActivities() {
             return (
               <Card
                 key={index}
-                className="bg-brand-dark border border-white/10 hover:border-brand-teal transition-colors duration-300"
+                className="relative flex flex-col justify-between bg-gradient-to-br from-brand-green/5 to-brand-teal/10 border border-white/10 hover:border-primary transition-colors duration-300relative flex flex-col justify-between bg-brand-green/10 border border-brand-green/30 hover:border-primary transition-colors duration-300"
               >
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border border-white/15 bg-brand-teal/25">
                     <IconComponent className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="text-white text-xl font-medium">{training.title}</CardTitle>
-                  <CardDescription className="text-white/80 font-thin">
-                    {training.description}
-                  </CardDescription>
+
+                  {/* Bloque con altura mínima común para alinear las tarjetas */}
+                  <div className="min-h-[40px] flex items-start justify-center">
+                    <CardDescription className="text-white/80 font-thin">
+                      {training.description}
+                    </CardDescription>
+                  </div>
                 </CardHeader>
 
-                <CardContent>
-                  <div className="space-y-5">
+                <CardContent className="flex flex-col grow">
+                  <div className="space-y-5 grow">
                     <div>
                       <h4 className="text-brand-teal font-medium mb-2">
                         {t('trainings.includes')}
@@ -88,11 +106,21 @@ export default function TrainingsActivities() {
                       </ul>
                     </div>
 
-                    <div className="border-t border-white/10 pt-4">
-                      <p className="text-white/70 text-sm mb-4">
-                        <span className="font-semibold text-brand-teal">{training.schedule}</span>
-                      </p>
-                      <Button className="w-full bg-brand-red hover:bg-brand-red/90 text-white font-semibold">
+                    {/* Footer fijo y alineado: precio y días en dos líneas, luego botón */}
+                    <div className="mt-auto border-t border-white/10 pt-4">
+                      <div className="text-brand-teal font-semibold leading-tight">
+                        {training.parsed.price}
+                      </div>
+                      {training.parsed.days && (
+                        <div className="text-white/70 text-sm mb-4 leading-tight">
+                          {training.parsed.days}
+                        </div>
+                      )}
+
+                      <Button
+                        className="w-full bg-brand-red hover:bg-brand-red/90 text-white font-semibold"
+                        onClick={() => router.push('/trainings')}
+                      >
                         {t('trainings.seeMore')}
                       </Button>
                     </div>

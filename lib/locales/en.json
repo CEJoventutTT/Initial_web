@@ -38,7 +38,7 @@
     "description": "Discover the training program that best fits your level and availability. At Club Esportiu Joventut TT in Sant Josep de sa Talaia we offer 1.5-hour table tennis sessions designed to improve technique, fitness, and game confidence. Choose your plan and enjoy motivating, inclusive, and effective training.",
     "mainPrograms": "Main Programs",
     "mainProgramsDesc": "Choose the program that matches your skill level and commitment",
-    "beginnerLevel": "First Shots",
+    "beginnerLevel": "First Serve",
     "beginnerDesc": "Start in table tennis without rushing, but with motivation.",
     "competitionLevel": "Game On",
     "competitionDesc": "Notice improvement week after week and level up.",
@@ -46,8 +46,11 @@
     "adultsDesc": "Train intensely and reach your best version.",
     "schedule": "Schedule",
     "whatsIncluded": "What's Included",
-    "maxStudents": "Max {count} students",
-    "coach": "Coach: {name}",
+    "maxLabel": "Max",
+    "studentsLabel": "students",
+    "coachLabel": "Coach:",
+    "locationLabel": "Location:",
+    "locationClub": "Cp L'Urgell",
     "enrollNow": "Enroll Now",
     "specialPrograms": "Special Programs",
     "specialProgramsDesc": "Additional training options for specific needs",
@@ -58,6 +61,7 @@
     "corporateTraining": "Corporate Training",
     "corporateDesc": "Team-building sessions for companies",
     "learnMore": "Learn More",
+    "hideInfo": "Hide details",
     "byAppointment": "By appointment",
     "contactForPricing": "Contact for pricing",
     "flexibleScheduling": "Flexible scheduling",
@@ -71,8 +75,21 @@
     "improve": "Improve technique, coordination, and fitness",
     "steadyProgress": "Steady progress with dynamic sessions",
     "completeTraining": "Complete training with technical, tactical, and physical work",
-    "freeTshirt": "Includes official club t-shirt"
+    "freeTshirt": "Includes official club t-shirt",
+    "youthSchedule": "Saturdays 9:00 - 12:00",
+    "youthPrice": "€100/month",
+    "privatePrice": "€60/hour",
+    "youthMore": "Solid technical fundamentals, coordination and agility through games and circuits, sports habits and goal-based tracking.",
+    "privateMore": "Technical diagnosis with immediate corrections, personal progression plan, video analysis and competition prep.",
+    "corporateMore": "Team dynamics to improve communication and cooperation. Inclusive, fun activities. Custom packages at your site or at our club."
   },
+  "levels": {
+  "beginner": "Beginner (0-1)",
+  "intermediate": "Intermediate (1-3)",
+  "advanced": "Advanced (3-5)",
+  "expert": "Expert (5+)"
+},
+
   "teams": {
     "title": "Competition and Results",
     "description": "Follow our teams' journey through leagues and tournaments",
@@ -233,12 +250,21 @@
     "confirm": "Confirm",
     "close": "Close"
   },
+   "days": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
   "footer": {
     "description": "Club Esportiu Joventut has been the premier destination for table tennis excellence since 1995.",
     "quickLinks": "Quick Links",
     "contact": "Contact",
     "followUs": "Follow Us",
     "allRightsReserved": "All rights reserved.",
-    "scrollHint": "Follow the ball"
+    "scrollHint": "Look at the ball"
   }
 }

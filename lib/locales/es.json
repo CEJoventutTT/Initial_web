@@ -33,12 +33,12 @@
     "ourValues": "Nuestros Valores",
     "valuesDesc": "Estos principios fundamentales guían todo lo que hacemos en el Club Deportivo Joventut"
   },
-  "trainings": {
+    "trainings": {
     "title": "Programas de Entrenamiento",
     "description": "Descubre el programa de entrenamiento que mejor se adapta a tu nivel y disponibilidad. En el Club Deportivo Joventut TT de Sant Josep de sa Talaia ofrecemos sesiones de tenis de mesa de 1 hora y media, diseñadas para mejorar la técnica, la condición física y la confianza en el juego. Elige tu plan y empieza a disfrutar de un entrenamiento motivador, inclusivo y efectivo.",
     "mainPrograms": "Programas Principales",
     "mainProgramsDesc": "Elige el programa que coincida con tu nivel de habilidad y compromiso",
-    "beginnerLevel": "Golpes Iniciales",
+    "beginnerLevel": "Golpe de Inicio",
     "beginnerDesc": "Comienza en el tenis de mesa sin prisas, pero con ganas.",
     "competitionLevel": "Juego en Marcha",
     "competitionDesc": "Nota la mejora semana tras semana y sube de nivel.",
@@ -46,8 +46,11 @@
     "adultsDesc": "Entrena intensamente y alcanza tu mejor versión.",
     "schedule": "Horario",
     "whatsIncluded": "Qué está incluido",
-    "maxStudents": "Máx {count} estudiantes",
-    "coach": "Entrenador: {name}",
+    "maxLabel": "Máx",
+    "studentsLabel": "estudiantes",
+    "coachLabel": "Entrenador:",
+    "locationLabel": "Ubicación:",
+    "locationClub": "Cp L'Urgell",
     "enrollNow": "Inscribirse Ahora",
     "specialPrograms": "Programas Especiales",
     "specialProgramsDesc": "Opciones de entrenamiento adicionales para necesidades específicas",
@@ -58,6 +61,7 @@
     "corporateTraining": "Entrenamiento Corporativo",
     "corporateDesc": "Sesiones de team building para empresas",
     "learnMore": "Saber Más",
+    "hideInfo": "Ocultar detalles",
     "byAppointment": "Con cita previa",
     "contactForPricing": "Contactar para precios",
     "flexibleScheduling": "Horarios flexibles",
@@ -71,8 +75,20 @@
     "improve": "Mejora la técnica, la coordinación y la condición física",
     "steadyProgress": "Progreso constante con sesiones dinámicas",
     "completeTraining": "Entrenamientos completos con trabajo técnico, táctico y físico",
-    "freeTshirt": "Incluye camiseta oficial del club"
+    "freeTshirt": "Incluye camiseta oficial del club",
+    "youthSchedule": "Sábados 9:00 - 12:00",
+    "youthPrice": "100€/mes",
+    "privatePrice": "60€/hora",
+    "youthMore": "Fundamentos técnicos sólidos, coordinación y agilidad con juegos y circuitos, hábitos deportivos y seguimiento por objetivos.",
+    "privateMore": "Diagnóstico técnico con correcciones inmediatas, plan de progresión personal, análisis en vídeo y preparación de competición.",
+    "corporateMore": "Dinámicas de equipo para mejorar comunicación y cooperación. Actividades inclusivas y divertidas. Paquetes personalizados en tu empresa o en nuestro club."
   },
+    "levels": {
+  "beginner": "Principiante (0-1)",
+  "intermediate": "Intermedio (1-3)",
+  "advanced": "Avanzado (3-5)",
+  "expert": "Experto (5+)"
+},
   "teams": {
     "title": "Competición y Resultados",
     "description": "Sigue el viaje de nuestros equipos a través de ligas y torneos",
@@ -232,6 +248,15 @@
     "delete": "Eliminar",
     "confirm": "Confirmar",
     "close": "Cerrar"
+  },
+   "days": {
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo"
   },
   "footer": {
     "description": "El Club Deportivo Joventut ha sido el destino principal para la excelencia en tenis de mesa desde 1995.",

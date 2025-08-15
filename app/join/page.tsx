@@ -344,13 +344,13 @@ export default function JoinPage() {
                         </label>
                         <Select onValueChange={(value) => handleInputChange('experience', value)}>
                           <SelectTrigger className="bg-white/5 border-white/10 text-white focus:ring-0">
-                            <SelectValue placeholder={t('trainings.learnMore')} />
+                            <SelectValue placeholder={t('join.experience')} />
                           </SelectTrigger>
                           <SelectContent className="bg-brand-dark border border-white/10 text-white">
-                            <SelectItem value="beginner">{t('trainings.beginnerLevel')} (0-1)</SelectItem>
-                            <SelectItem value="intermediate">Intermediate (1-3)</SelectItem>
-                            <SelectItem value="advanced">Advanced (3-5)</SelectItem>
-                            <SelectItem value="expert">Expert (5+)</SelectItem>
+                          <SelectItem value="beginner">{t('levels.beginner')}</SelectItem>
+                          <SelectItem value="intermediate">{t('levels.intermediate')}</SelectItem>
+                          <SelectItem value="advanced">{t('levels.advanced')}</SelectItem>
+                          <SelectItem value="expert">{t('levels.expert')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>

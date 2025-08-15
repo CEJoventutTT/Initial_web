@@ -18,8 +18,8 @@ export default function HomePage() {
       <WhoWeAre />
       <TrainingsActivities />
       <CompetitionResults />
-      <NewsEvents />
-      <MediaGallery />
+     {/* <NewsEvents />
+      <MediaGallery />*/}
       <BecomeMember />
       <Contact />
     </div>
