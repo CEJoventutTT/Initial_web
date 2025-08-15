@@ -11,9 +11,11 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Users, Trophy, Zap, Check, MapPin } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 import emailjs from '@emailjs/browser'
+import { useToast } from '@/hooks/use-toast'
 
 export default function JoinPage() {
   const { t } = useTranslation()
+  const { toast } = useToast()
 
   const [selectedPlan, setSelectedPlan] = useState<'basic' | 'premium' | 'elite'>('basic')
   const [submitting, setSubmitting] = useState(false)
@@ -37,8 +39,7 @@ export default function JoinPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (!formData.agreeTerms) return
+    if (!formData.agreeTerms || submitting) return
 
     const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
     const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
@@ -46,7 +47,11 @@ export default function JoinPage() {
 
     if (!serviceId || !templateId || !publicKey) {
       console.error('EmailJS config missing. Check NEXT_PUBLIC_EMAILJS_* env vars.')
-      alert(t('common.error'))
+      toast({
+        variant: 'destructive',
+        title: t('common.error'),
+        description: t('join.applicationDesc'),
+      })
       return
     }
 
@@ -68,17 +73,21 @@ export default function JoinPage() {
         agreeNewsletter: formData.agreeNewsletter ? 'Yes' : 'No',
         plan:
           selectedPlan === 'basic'
-            ? 'Golpes Iniciales'
+            ? t('trainings.beginnerLevel')
             : selectedPlan === 'premium'
-            ? 'Juego en Marcha'
-            : 'A Potencia Máxima',
+            ? t('trainings.competitionLevel')
+            : t('trainings.adultsProgram'),
         createdAt: new Date().toISOString(),
       }
 
       await emailjs.send(serviceId, templateId, templateParams, { publicKey })
 
-      // Éxito
-      alert(t('join.reviewMessage'))
+      // Éxito: toast con i18n
+      toast({
+        title: t('common.success'),
+        description: t('join.reviewMessage'),
+      })
+
       // Reset sencillo del formulario (mantenemos el plan seleccionado)
       setFormData({
         firstName: '',
@@ -95,7 +104,11 @@ export default function JoinPage() {
       })
     } catch (err) {
       console.error(err)
-      alert(t('common.error'))
+      toast({
+        variant: 'destructive',
+        title: t('common.error'),
+        description: t('join.applicationDesc'),
+      })
     } finally {
       setSubmitting(false)
     }
