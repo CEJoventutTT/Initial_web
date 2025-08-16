@@ -4,15 +4,16 @@ import Navigation from '@/components/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Heart, Target, Users, Trophy, Calendar, Activity } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
+import Image from 'next/image'
 
 export default function AboutPage() {
   const { t } = useTranslation()
 
   const stats = [
-    { label: t('about.yearsExcellence'), value: '1995–', icon: Calendar },
-    { label: t('about.programs'),        value: t('about.programsShort'), icon: Activity },
-    { label: t('about.communityReach'),  value: t('about.communityReachShort'), icon: Users },
-    { label: t('about.nationalPath'),    value: t('about.nationalPathShort'),  icon: Trophy },
+    { label: t('about.yearsExcellence'), value: t('about.since'), icon: Calendar },
+    { label: t('about.programs'), value: t('about.programsShort'), icon: Activity },
+    { label: t('about.communityReach'), value: t('about.communityReachShort'), icon: Users },
+    { label: t('about.nationalPath'), value: t('about.nationalPathShort'), icon: Trophy }
   ]
 
   const values = [
@@ -38,11 +39,9 @@ export default function AboutPage() {
       <Navigation />
 
       <div className="pt-16">
-        {/* Cartela/Hero Nosotros */}
+        {/* Hero */}
         <section className="relative py-20 bg-hero-gradient text-foreground">
-          {/* velo superior para fundirse con el logo de la nav */}
           <div className="pointer-events-none absolute inset-x-0 -top-6 h-10 bg-gradient-to-b from-black/35 to-transparent" />
-
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-5xl font-black text-white mb-6">{t('about.title')}</h1>
             <p className="text-xl text-white/90 max-w-3xl mx-auto font-thin">
@@ -62,7 +61,7 @@ export default function AboutPage() {
                     <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/15 bg-brand-teal/25">
                       <Icon className="h-8 w-8 text-white" />
                     </div>
-                    <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>
+                    <div className="text-2xl font-bold text-white mb-2">{stat.value}</div>
                     <div className="text-white/80">{stat.label}</div>
                   </div>
                 )
@@ -71,7 +70,27 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Misión / Visión / En qué creemos */}
+        {/* Nuestro equipo */}
+        <section className="py-20 bg-brand-dark">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-4xl font-black mb-6">{t('about.teamTitle')}</h2>
+              <p className="text-white/80 text-lg mb-6">{t('about.teamIntro')}</p>
+              <h3 className="text-2xl font-semibold mb-3">{t('about.coachName')}</h3>
+              <p className="text-white/80 font-thin">{t('about.coachDesc')}</p>
+            </div>
+            <div className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg">
+              <Image
+                src="/adrian-morato.webp"
+                alt={t('about.coachName')}
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Misión / Visión / Valores */}
         <section className="py-20 bg-brand-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-10">
             <div>
@@ -89,7 +108,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Nuestros Valores (tarjetas) */}
+        {/* Nuestros Valores */}
         <section className="py-20 bg-white/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">

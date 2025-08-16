@@ -26,43 +26,38 @@
     "sunday": "Diumenge"
   },
   "about": {
-    "title": "Qui Som",
-    "description": "El Club Esportiu Joventut TT promou la inclusió social a través del tennis de taula a Sant Josep de sa Talaia. Duem a terme activitats en escoles i espais municipals, apropant l’esport a infants, joves, majors i persones amb discapacitat per fomentar salut, comunitat i creixement personal.",
-    "excellence": "Excel·lència",
-    "excellenceDesc": "Busquem els més alts estàndards en entrenament i competició",
-    "community": "Comunitat",
-    "communityDesc": "Construïm amistats duradores i ens donem suport mútuament",
-    "growth": "Creixement",
-    "growthDesc": "Millora contínua i desenvolupament personal",
-    "yearsExcellence": "Anys en l’esport",
+    "title": "Sobre Nosaltres",
+    "description": "Formem part del teixit esportiu i social de Sant Josep des de 2025. El nostre club combina programes de base, competició i inclusió, essent un referent comunitari en tennis de taula.",
+    "yearsExcellence": "Anys d’experiència",
     "programs": "Programes anuals",
-    "programsShort": "Infantil · Majors · Inclusiu",
-    "communityReach": "Abast comunitari",
-    "communityReachShort": "Escoles i espais municipals",
-    "nationalPath": "Itinerari competitiu",
+    "programsShort": "+15 escoles i grups",
+    "communityReach": "Impacte comunitari",
+    "communityReachShort": "+500 participants",
+    "nationalPath": "Trajectòria competitiva",
     "nationalPathShort": "Circuit RFETM",
-    "ourStory": "La nostra història",
-    "storyP1": "El Club Esportiu Joventut va néixer d’una visió simple: crear un espai on els entusiastes del tennis de taula de tots els nivells poguessin reunir-se, aprendre i créixer. El que va començar com un petit grup de jugadors apassionats l’any 1995 s’ha convertit en una de les institucions més respectades de la regió.",
-    "storyP2": "Els nostres fundadors creien que el tennis de taula era més que un esport: era una manera de construir caràcter, disciplina i amistats per a tota la vida. Aquesta filosofia encara ens guia avui.",
-    "storyP3": "Al llarg dels anys, hem ajudat jugadors a assolir campionats regionals i nacionals, i estem igualment orgullosos d’aquells que troben alegria, salut i comunitat dins del club.",
-    "missionTitle": "Missió",
-    "mission": "Fer servir el tennis de taula com a eina d’inclusió i benestar, amb programes accessibles per a totes les edats i capacitats, prioritzant infants, majors i persones amb discapacitat.",
-    "visionTitle": "Visió",
-    "vision": "Ser referent a Eivissa en esport inclusiu i representar l’illa al circuit nacional, demostrant que l’esport transforma vides i reforça la comunitat.",
+    "missionTitle": "La nostra missió",
+    "mission": "Promoure el tennis de taula com a eina de salut, integració i desenvolupament personal, arribant a tots els sectors de la societat.",
+    "visionTitle": "La nostra visió",
+    "vision": "Ser un club referent a nivell regional i nacional, reconegut pel seu impacte esportiu, educatiu i social.",
     "valuesTitle": "En què creiem",
-    "valuesLead": "Treballem amb la comunitat i les institucions per crear un entorn actiu, saludable i inclusiu.",
-    "ourValues": "Els Nostres Valors",
-    "valuesDesc": "Principis que guien cada activitat del club",
+    "valuesLead": "Creiem en l’esport com a vehicle de valors i en el poder de la comunitat per créixer junts.",
+    "ourValues": "Els nostres Valors",
+    "valuesDesc": "Els principis que guien la nostra manera de treballar i d’entendre l’esport.",
     "values": {
-      "inclusionTitle": "Inclusió i Diversitat",
-      "inclusionDesc": "Accés sense barreres: edat, gènere o capacitat. Programes específics per a discapacitat i col·lectius vulnerables.",
-      "integrationTitle": "Integració Social",
-      "integrationDesc": "Activitats intergeneracionals que vinculen escola, família i comunitat.",
-      "developmentTitle": "Desenvolupament i Benestar",
-      "developmentDesc": "Creixement personal, salut física i mental, i hàbits actius amb pràctica regular."
-    }
+      "inclusionTitle": "Inclusió",
+      "inclusionDesc": "Creem un entorn on totes les persones, sense importar la seva edat o capacitat, troben el seu lloc en el tennis de taula.",
+      "integrationTitle": "Comunitat",
+      "integrationDesc": "El nostre club és un espai de trobada, aprenentatge i suport mutu per a joves, adults i famílies.",
+      "developmentTitle": "Creixement",
+      "developmentDesc": "Impulsem el desenvolupament personal i esportiu amb una metodologia adaptada a cada etapa."
+    },
+    "since": "16",
+    "teamTitle": "El Nostre Equip",
+    "teamIntro": "Darrere del Club Esportiu Joventut hi ha persones apassionades que fan possible cada entrenament, cada projecte i cada èxit.",
+    "coachName": "Adrián Morato · Entrenador Principal",
+    "coachDesc": "Amb una trajectòria consolidada en el tennis de taula, Adrián combina experiència, formació i passió per ensenyar. És el motor del nostre projecte esportiu, guiant tant a joves promeses com a jugadors veterans cap al seu màxim potencial."
   },
-"trainings": {
+  "trainings": {
     "title": "Programes d'Entrenament",
     "description": "Descobreix el programa d’entrenament que millor s’adapta al teu nivell i disponibilitat. Al Club Esportiu Joventut TT de Sant Josep de sa Talaia oferim sessions de tennis de taula d’1 hora i mitja, dissenyades per millorar la tècnica, la condició física i la confiança en el joc. Tria el teu pla i comença a gaudir d’un entrenament motivador, inclusiu i efectiu.",
     "mainPrograms": "Programes Principals",
@@ -110,15 +105,14 @@
     "privatePrice": "60€/hora",
     "youthMore": "Fundaments tècnics sòlids, coordinació i agilitat amb jocs i circuits, hàbits esportius i seguiment per objectius.",
     "privateMore": "Diagnosi tècnica amb correccions immediates, pla de progressió personal, anàlisi en vídeo i preparació de competició.",
-    "corporateMore": "Dinàmiques d’equip per millorar comunicació i cooperació. Activitats inclusives i divertides. Paquets personalitzats a la teva seu o al nostre club."
+    "corporateMore": "Dinàmiques d’equip per millorar comunicació i cooperació. Activitats inclusives i divertides. Paquets personalitzats a la tua seu o al nostre club."
   },
   "levels": {
-  "beginner": "Principiant (0-1)",
-  "intermediate": "Intermedi (1-3)",
-  "advanced": "Avançat (3-5)",
-  "expert": "Expert (5+)"
-},
-
+    "beginner": "Principiant (0-1)",
+    "intermediate": "Intermedi (1-3)",
+    "advanced": "Avançat (3-5)",
+    "expert": "Expert (5+)"
+  },
   "teams": {
     "title": "Competició i Resultats",
     "description": "Segueix el viatge dels nostres equips a través de lligues i tornejos",
@@ -280,7 +274,7 @@
     "close": "Tancar"
   },
   "footer": {
-    "description": "El Club Esportiu Joventut ha estat la destinació principal per a l'excel·lència en tennis de taula des de 1995.",
+    "description": "El Club Esportiu Joventut ha estat la destinació principal per a l'excel·lència en tennis de taula des de 2025.",
     "quickLinks": "Enllaços Ràpids",
     "contact": "Contacte",
     "followUs": "Segueix-nos",

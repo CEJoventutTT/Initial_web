@@ -17,21 +17,35 @@
     "exploreTrainings": "Explorar Entrenaments"
   },
   "about": {
-    "title": "Qui Som",
-    "description": "El Club Esportiu Joventut TT promou la inclusió social a través del tennis de taula a Sant Josep de sa Talaia. Enguany iniciem activitats extraescolars al CP L’Urgell, apropant l’esport a infants, joves, majors i persones amb discapacitat. El nostre objectiu: fomentar la salut, la convivència i el desenvolupament personal en un entorn accessible i motivador.",
-    "excellence": "Excel·lència",
-    "excellenceDesc": "Ens esforcem pels més alts estàndards en entrenament i competició",
-    "community": "Comunitat",
-    "communityDesc": "Construint amistats duradores i donant-nos suport mútuament",
-    "growth": "Creixement",
-    "growthDesc": "Millora contínua i desenvolupament personal",
-    "yearsExcellence": "Dies vivint aquest esport",
-    "ourStory": "La Nostra Història",
-    "storyP1": "El Club Esportiu Joventut va néixer d'una visió simple: crear un espai on els entusiastes del tennis de taula de tots els nivells poguessin reunir-se, aprendre i créixer. El que va començar com un petit grup de jugadors apassionats el 1995 ha evolucionat fins a convertir-se en una de les institucions de tennis de taula més respectades de la regió.",
-    "storyP2": "Els nostres fundadors, ex campions nacionals Sarah i Michael Chen, creien que el tennis de taula era més que un esport: era una manera de construir caràcter, disciplina i amistats de per vida. Aquesta filosofia continua guiant-nos avui.",
-    "storyP3": "Al llarg dels anys, hem produït nombrosos campions regionals i nacionals, però estem igualment orgullosos dels jugadors recreatius que han trobat alegria, forma física i comunitat dins les nostres parets.",
+    "title": "Sobre Nosaltres",
+    "description": "Més de 25 anys formant persones i esportistes a través del tennis de taula, amb programes educatius, inclusius i competitius que arriben a tota la comunitat.",
+    "yearsExcellence": "Anys d'experiència",
+    "programs": "Programes anuals",
+    "programsShort": "+15 escoles i grups",
+    "communityReach": "Impacte comunitari",
+    "communityReachShort": "+500 participants",
+    "nationalPath": "Trajectòria competitiva",
+    "nationalPathShort": "Circuit RFETM",
+    "missionTitle": "La nostra missió",
+    "mission": "Promoure el tennis de taula com a eina de salut, integració i desenvolupament personal, arribant a tots els sectors de la societat.",
+    "visionTitle": "La nostra visió",
+    "vision": "Ser un club referent a nivell regional i nacional, reconegut pel seu impacte esportiu, educatiu i social.",
+    "valuesTitle": "En què creiem",
+    "valuesLead": "Creiem en l’esport com a vehicle de valors i en el poder de la comunitat per créixer junts.",
     "ourValues": "Els Nostres Valors",
-    "valuesDesc": "Aquests principis fonamentals guien tot el que fem al Club Esportiu Joventut"
+    "valuesDesc": "Els principis que guien la nostra manera de treballar i entendre l’esport.",
+    "values": {
+      "inclusionTitle": "Inclusió",
+      "inclusionDesc": "Creem un entorn on totes les persones troben el seu lloc al tennis de taula.",
+      "integrationTitle": "Comunitat",
+      "integrationDesc": "El nostre club és un espai de trobada, aprenentatge i suport mutu.",
+      "developmentTitle": "Creixement",
+      "developmentDesc": "Impulsem el desenvolupament personal i esportiu en cada etapa."
+    },
+    "teamTitle": "El Nostre Equip",
+    "teamLead": "Darrere del Club Esportiu Joventut hi ha persones apassionades que fan possible cada entrenament, cada projecte i cada èxit.",
+    "coachName": "Adrián Morato · Entrenador Principal",
+    "coachBio": "Amb una trajectòria consolidada en el tennis de taula, Adrián combina experiència, formació i passió per ensenyar. És el motor del nostre projecte esportiu, guiant tant a joves promeses com a jugadors veterans cap al seu màxim potencial."
   },
   "trainings": {
     "title": "Programes d'Entrenament",
@@ -231,7 +245,7 @@
     "close": "Tancar"
   },
 "footer": {
-  "description": "El Club Esportiu Joventut ha estat la destinació principal per a l'excel·lència en tennis de taula des de 1995.",
+  "description": "El Club Esportiu Joventut ha estat la destinació principal per a l'excel·lència en tennis de taula des de 2025.",
   "quickLinks": "Enllaços Ràpids",
   "contact": "Contacte",
   "followUs": "Segueix-nos",
