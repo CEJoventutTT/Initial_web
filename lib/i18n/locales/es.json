@@ -125,6 +125,8 @@
     "nextMatch": "Próximo Partido",
     "recentResults": "Resultados Recientes",
     "recentAchievements": "Logros Recientes",
+    "emptyTitle": "Estamos ultimando nuestros equipos",
+    "emptySubtitle": "Muy pronto publicaremos la plantilla completa, calendarios y resultados.",
     "home": "Casa",
     "away": "Fuera",
     "neutral": "Neutral",
@@ -146,6 +148,10 @@
     "shareFacebook": "Compartir en Facebook",
     "copyLink": "Copiar Enlace",
     "relatedArticles": "Artículos Relacionados",
+    "emptyTitle": "A punto de arrancar",
+    "emptySubtitle": "Pronto verás aquí nuestras noticias, crónicas y próximos eventos.",
+    "notFoundTitle": "Artículo no encontrado",
+    "notFoundSubtitle": "El artículo que buscas no existe o todavía no está disponible.",
     "like": "Me gusta",
     "share": "Compartir",
     "comment": "Comentar",
@@ -169,6 +175,8 @@
     "videoGallery": "Galería de Vídeos",
     "watchNow": "Ver Ahora",
     "download": "Descargar",
+    "emptySubtitlePhotos": "Muy pronto subiremos nuestras mejores fotos.",
+    "emptySubtitleVideos": "Estamos preparando los vídeos destacados del club.",
     "like": "Me gusta",
     "featuredVideo": "Vídeo Destacado"
   },
@@ -280,5 +288,6 @@
     "followUs": "Síguenos",
     "allRightsReserved": "Todos los derechos reservados.",
     "scrollHint": "Mira la pelota"
-  }
+  },
+  "comingSoon": "Pronto activaremos la sección de {section}."
 }

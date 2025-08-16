@@ -120,6 +120,8 @@
     "teamRosterDesc": "Els nostres equips competitius en diferents divisions",
     "captain": "Capità",
     "viceCaptain": "Subcapità",
+    "emptyTitle": "Estem ultimant els nostres equips",
+    "emptySubtitle": "Ben aviat publicarem la plantilla completa, calendaris i resultats.",
     "player": "Jugador",
     "record": "Rècord G-P-E",
     "nextMatch": "Proper Partit",
@@ -143,6 +145,10 @@
     "backToNews": "Tornar a Notícies",
     "shareArticle": "Compartir aquest article",
     "shareTwitter": "Compartir a Twitter",
+    "emptyTitle": "A punt d’engegar",
+    "emptySubtitle": "Aviat veuràs aquí les nostres notícies, cròniques i propers esdeveniments.",
+    "notFoundTitle": "Article no trobat",
+    "notFoundSubtitle": "L’article que busques no existeix o encara no està disponible.",
     "shareFacebook": "Compartir a Facebook",
     "copyLink": "Copiar Enllaç",
     "relatedArticles": "Articles Relacionats",
@@ -168,6 +174,8 @@
     "photoGallery": "Galeria de Fotos",
     "videoGallery": "Galeria de Vídeos",
     "watchNow": "Veure Ara",
+    "emptySubtitlePhotos": "Ben aviat pujarem les millors fotos.",
+    "emptySubtitleVideos": "Estem preparant els vídeos destacats del club.",
     "download": "Descarregar",
     "like": "M'agrada",
     "featuredVideo": "Vídeo Destacat"
@@ -280,5 +288,6 @@
     "followUs": "Segueix-nos",
     "allRightsReserved": "Tots els drets reservats.",
     "scrollHint": "Mira la pilota"
-  }
+  },
+  "comingSoon": "Aviat activarem la secció de {section}."
 }

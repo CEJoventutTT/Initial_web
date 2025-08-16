@@ -121,6 +121,8 @@
     "captain": "Captain",
     "viceCaptain": "Vice-Captain",
     "player": "Player",
+    "emptyTitle": "We’re finalizing our teams",
+    "emptySubtitle": "Full roster, schedules and results will be available very soon.",
     "record": "W-L-D Record",
     "nextMatch": "Next Match",
     "recentResults": "Recent Results",
@@ -140,6 +142,10 @@
     "readFullStory": "Read Full Story",
     "readMore": "Read More",
     "loadMore": "Load More Articles",
+    "emptyTitle": "Launching shortly",
+    "emptySubtitle": "Club news, recaps and upcoming events will appear here soon.",
+    "notFoundTitle": "Article Not Found",
+    "notFoundSubtitle": "The article you’re looking for doesn’t exist or isn’t available yet.",
     "backToNews": "Back to News",
     "shareArticle": "Share this article",
     "shareTwitter": "Share on Twitter",
@@ -167,6 +173,8 @@
     "description": "Capture the excitement and energy of our club through photos and videos",
     "photoGallery": "Photo Gallery",
     "videoGallery": "Video Gallery",
+    "emptySubtitlePhotos": "We’ll upload our best photos shortly.",
+    "emptySubtitleVideos": "Featured club videos are on the way.",
     "watchNow": "Watch Now",
     "download": "Download",
     "like": "Like",
@@ -280,5 +288,7 @@
     "followUs": "Follow Us",
     "allRightsReserved": "All rights reserved.",
     "scrollHint": "Look at the ball"
-  }
+  },
+  "comingSoon": "We’ll be launching the {section} section soon."
+
 }
