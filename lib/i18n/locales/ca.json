@@ -33,6 +33,12 @@
     "programsShort": "+15 escoles i grups",
     "communityReach": "Impacte comunitari",
     "communityReachShort": "+500 participants",
+    "excellence": "Excel·lència",
+    "excellenceDesc": "Ens esforcem per oferir la màxima qualitat en tots els nostres entrenaments i activitats.",
+    "community": "Comunitat",
+    "communityDesc": "Fomentem un ambient proper on tots els membres s’ajuden i creixen junts.",
+    "growth": "Creixement",
+    "growthDesc": "Impulsem el desenvolupament personal i esportiu de cada persona al seu propi ritme.",
     "nationalPath": "Trajectòria competitiva",
     "nationalPathShort": "Circuit RFETM",
     "missionTitle": "La nostra missió",
@@ -120,20 +126,20 @@
     "teamRosterDesc": "Els nostres equips competitius en diferents divisions",
     "captain": "Capità",
     "viceCaptain": "Subcapità",
-    "emptyTitle": "Estem ultimant els nostres equips",
-    "emptySubtitle": "Ben aviat publicarem la plantilla completa, calendaris i resultats.",
     "player": "Jugador",
     "record": "Rècord G-P-E",
     "nextMatch": "Proper Partit",
     "recentResults": "Resultats Recents",
     "recentAchievements": "Assoliments Recents",
-    "home": "Casa",
-    "away": "Fora",
-    "neutral": "Neutral",
     "recentMatches": "Partits Recents",
     "leagueStandings": "Classificació de Lliga",
     "femaleLeague": "Lliga Femenina",
-    "maleLeague": "Lliga Masculina"
+    "maleLeague": "Lliga Masculina",
+    "home": "Casa",
+    "away": "Fora",
+    "neutral": "Neutral",
+    "emptyTitle": "Estem ultimant els nostres equips",
+    "emptySubtitle": "Ben aviat publicarem la plantilla completa, calendaris i resultats."
   },
   "news": {
     "title": "Notícies i Esdeveniments",
@@ -145,10 +151,6 @@
     "backToNews": "Tornar a Notícies",
     "shareArticle": "Compartir aquest article",
     "shareTwitter": "Compartir a Twitter",
-    "emptyTitle": "A punt d’engegar",
-    "emptySubtitle": "Aviat veuràs aquí les nostres notícies, cròniques i propers esdeveniments.",
-    "notFoundTitle": "Article no trobat",
-    "notFoundSubtitle": "L’article que busques no existeix o encara no està disponible.",
     "shareFacebook": "Compartir a Facebook",
     "copyLink": "Copiar Enllaç",
     "relatedArticles": "Articles Relacionats",
@@ -166,7 +168,11 @@
       "workshop": "Taller",
       "announcement": "Anunci"
     },
-    "viewAllNews": "Veure Totes les Notícies"
+    "viewAllNews": "Veure Totes les Notícies",
+    "emptyTitle": "A punt d’engegar",
+    "emptySubtitle": "Aviat veuràs aquí les nostres notícies, cròniques i propers esdeveniments.",
+    "notFoundTitle": "Article no trobat",
+    "notFoundSubtitle": "L’article que busques no existeix o encara no està disponible."
   },
   "gallery": {
     "title": "Galeria de Mitjans",
@@ -174,11 +180,11 @@
     "photoGallery": "Galeria de Fotos",
     "videoGallery": "Galeria de Vídeos",
     "watchNow": "Veure Ara",
-    "emptySubtitlePhotos": "Ben aviat pujarem les millors fotos.",
-    "emptySubtitleVideos": "Estem preparant els vídeos destacats del club.",
     "download": "Descarregar",
     "like": "M'agrada",
-    "featuredVideo": "Vídeo Destacat"
+    "featuredVideo": "Vídeo Destacat",
+    "emptySubtitlePhotos": "Ben aviat pujarem les millors fotos.",
+    "emptySubtitleVideos": "Estem preparant els vídeos destacats del club."
   },
   "join": {
     "title": "Llest per Unir-te a la Nostra Comunitat?",
@@ -225,8 +231,8 @@
     "loveGame": "Estima el Joc",
     "loveGameDesc": "Desenvolupa la teva passió pel tennis de taula amb orientació experta",
     "becomeMember": "Fes-te Membre Avui",
-"specialOffer": "🎉 Oferta de llançament: qualsevol programa per només 29€/mes durant 3 mesos. Entrena 1, 2 o 3 dies a la setmana al mateix preu."
-,    "signingIn": "Enviant sol·licitud..."
+    "specialOffer": "🎉 Oferta de llançament: qualsevol programa per només 29€/mes durant 3 mesos. Entrena 1, 2 o 3 dies a la setmana al mateix preu.",
+    "signingIn": "Enviant sol·licitud..."
   },
   "login": {
     "title": "Benvingut de Tornada",
@@ -265,7 +271,11 @@
     "subject": "Assumpte",
     "message": "Missatge",
     "sendMessageBtn": "Enviar Missatge",
-    "sending": "Enviant..."
+    "sending": "Enviant...",
+    "addressText": "C.P. L'Urgell | Avinguda del Diputat Josep Ribas, s/n\n07830 Sant Josep de sa Talaia, Illes Balears",
+    "phoneText": "+34 644 978 857",
+    "emailText": "ce.joventut.tt@gmail.com",
+    "hoursText": "Mon-Fri: 6AM-10PM\nSat-Sun: 8AM-8PM"
   },
   "common": {
     "month": "/mes",

@@ -33,6 +33,12 @@
     "programsShort": "+15 escuelas y grupos",
     "communityReach": "Impacto comunitario",
     "communityReachShort": "+500 participantes",
+    "excellence": "Excelencia",
+    "excellenceDesc": "Nos esforzamos por ofrecer la máxima calidad en todos nuestros entrenamientos y actividades.",
+    "community": "Comunidad",
+    "communityDesc": "Fomentamos un ambiente cercano donde todos los miembros se apoyan y crecen juntos.",
+    "growth": "Crecimiento",
+    "growthDesc": "Impulsamos el desarrollo personal y deportivo de cada persona a su propio ritmo.",
     "nationalPath": "Trayectoria competitiva",
     "nationalPathShort": "Circuito RFETM",
     "missionTitle": "Nuestra misión",
@@ -87,7 +93,7 @@
     "learnMore": "Saber Más",
     "hideInfo": "Ocultar detalles",
     "byAppointment": "Con cita previa",
-    "contactForPricing": "Contactar para precios",
+    "contactForPricing": "Contactar por precios",
     "flexibleScheduling": "Horarios flexibles",
     "seeMore": "Ver Más",
     "price1": "29€/mes – 1 día a la semana",
@@ -125,15 +131,15 @@
     "nextMatch": "Próximo Partido",
     "recentResults": "Resultados Recientes",
     "recentAchievements": "Logros Recientes",
-    "emptyTitle": "Estamos ultimando nuestros equipos",
-    "emptySubtitle": "Muy pronto publicaremos la plantilla completa, calendarios y resultados.",
-    "home": "Casa",
-    "away": "Fuera",
-    "neutral": "Neutral",
     "recentMatches": "Partidos Recientes",
     "leagueStandings": "Clasificación de Liga",
     "femaleLeague": "Liga Femenina",
-    "maleLeague": "Liga Masculina"
+    "maleLeague": "Liga Masculina",
+    "home": "Casa",
+    "away": "Fuera",
+    "neutral": "Neutral",
+    "emptyTitle": "Estamos ultimando nuestros equipos",
+    "emptySubtitle": "Muy pronto publicaremos la plantilla completa, calendarios y resultados."
   },
   "news": {
     "title": "Noticias y Eventos",
@@ -148,10 +154,6 @@
     "shareFacebook": "Compartir en Facebook",
     "copyLink": "Copiar Enlace",
     "relatedArticles": "Artículos Relacionados",
-    "emptyTitle": "A punto de arrancar",
-    "emptySubtitle": "Pronto verás aquí nuestras noticias, crónicas y próximos eventos.",
-    "notFoundTitle": "Artículo no encontrado",
-    "notFoundSubtitle": "El artículo que buscas no existe o todavía no está disponible.",
     "like": "Me gusta",
     "share": "Compartir",
     "comment": "Comentar",
@@ -166,7 +168,11 @@
       "workshop": "Taller",
       "announcement": "Anuncio"
     },
-    "viewAllNews": "Ver Todas las Noticias"
+    "viewAllNews": "Ver Todas las Noticias",
+    "emptyTitle": "A punto de arrancar",
+    "emptySubtitle": "Pronto verás aquí nuestras noticias, crónicas y próximos eventos.",
+    "notFoundTitle": "Artículo no encontrado",
+    "notFoundSubtitle": "El artículo que buscas no existe o todavía no está disponible."
   },
   "gallery": {
     "title": "Galería Multimedia",
@@ -175,10 +181,10 @@
     "videoGallery": "Galería de Vídeos",
     "watchNow": "Ver Ahora",
     "download": "Descargar",
-    "emptySubtitlePhotos": "Muy pronto subiremos nuestras mejores fotos.",
-    "emptySubtitleVideos": "Estamos preparando los vídeos destacados del club.",
     "like": "Me gusta",
-    "featuredVideo": "Vídeo Destacado"
+    "featuredVideo": "Vídeo Destacado",
+    "emptySubtitlePhotos": "Muy pronto subiremos nuestras mejores fotos.",
+    "emptySubtitleVideos": "Estamos preparando los vídeos destacados del club."
   },
   "join": {
     "title": "¿Listo para Unirte a Nuestra Comunidad?",
@@ -225,8 +231,8 @@
     "loveGame": "Ama el Juego",
     "loveGameDesc": "Desarrolla tu pasión por el tenis de mesa con orientación experta",
     "becomeMember": "Hazte Miembro Hoy",
-"specialOffer": "🎉 Oferta de lanzamiento: cualquier programa por solo 29€/mes durante 3 meses. Entrena 1, 2 o 3 días a la semana al mismo precio."
-,    "signingIn": "Enviando solicitud..."
+    "specialOffer": "🎉 Oferta de lanzamiento: cualquier programa por solo 29€/mes durante 3 meses. Entrena 1, 2 o 3 días a la semana al mismo precio.",
+    "signingIn": "Enviando solicitud..."
   },
   "login": {
     "title": "Bienvenido de Nuevo",
@@ -265,7 +271,11 @@
     "subject": "Asunto",
     "message": "Mensaje",
     "sendMessageBtn": "Enviar Mensaje",
-    "sending": "Enviando..."
+    "sending": "Enviando...",
+    "addressText": "C.P. L'Urgell | Avinguda del Diputat Josep Ribas, s/n\n07830 Sant Josep de sa Talaia, Illes Balears",
+    "phoneText": "+34 644 978 857",
+    "emailText": "ce.joventut.tt@gmail.com",
+    "hoursText": "Mon-Fri: 6AM-10PM\nSat-Sun: 8AM-8PM"
   },
   "common": {
     "month": "/mes",

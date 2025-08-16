@@ -25,47 +25,53 @@
     "saturday": "Saturday",
     "sunday": "Sunday"
   },
-   "about": {
+  "about": {
     "title": "About Us",
-    "description": "Since 2025, we’ve been part of the sports and social fabric of Sant Josep. Our club combines grassroots, competitive, and inclusive programs, making us a community reference in table tennis.",
+    "description": "We have been part of the sports and social fabric of Sant Josep since 2025. Our club combines grassroots, competitive and inclusive programs, being a community reference in table tennis.",
     "yearsExcellence": "Years of experience",
     "programs": "Annual programs",
     "programsShort": "+15 schools and groups",
-    "communityReach": "Community reach",
+    "communityReach": "Community impact",
     "communityReachShort": "+500 participants",
+    "excellence": "Excellence",
+    "excellenceDesc": "We strive to provide the highest quality in all our training and activities.",
+    "community": "Community",
+    "communityDesc": "We foster an environment where members support each other and grow together.",
+    "growth": "Growth",
+    "growthDesc": "We promote personal and sporting development at each person’s pace.",
     "nationalPath": "Competitive path",
     "nationalPathShort": "RFETM Circuit",
-    "missionTitle": "Our Mission",
-    "mission": "To promote table tennis as a tool for health, integration, and personal growth, reaching all sectors of society.",
-    "visionTitle": "Our Vision",
-    "vision": "To be a benchmark club at a regional and national level, recognized for its sporting, educational, and social impact.",
-    "valuesTitle": "What We Believe In",
+    "missionTitle": "Our mission",
+    "mission": "Promote table tennis as a tool for health, integration and personal development, reaching all sectors of society.",
+    "visionTitle": "Our vision",
+    "vision": "To be a benchmark club at regional and national levels, recognized for its sporting, educational and social impact.",
+    "valuesTitle": "What we believe in",
     "valuesLead": "We believe in sport as a vehicle for values and in the power of community to grow together.",
     "ourValues": "Our Values",
-    "valuesDesc": "The principles that guide our way of working and understanding sport.",
+    "valuesDesc": "The principles that guide our work and understanding of sport.",
     "values": {
       "inclusionTitle": "Inclusion",
-      "inclusionDesc": "We create an environment where everyone, regardless of age or ability, finds their place in table tennis.",
+      "inclusionDesc": "An environment where everyone, regardless of age or ability, finds their place in table tennis.",
       "integrationTitle": "Community",
-      "integrationDesc": "Our club is a space for meeting, learning, and mutual support for young people, adults, and families.",
+      "integrationDesc": "A meeting space for learning and mutual support for youth, adults and families.",
       "developmentTitle": "Growth",
-      "developmentDesc": "We promote personal and sporting development with a methodology adapted to each stage."
+      "developmentDesc": "Personal and sporting development with methods tailored to every stage."
     },
     "since": "16",
     "teamTitle": "Our Team",
-    "teamIntro": "Behind Club Esportiu Joventut are passionate people who make every training session, every project, and every achievement possible.",
+    "teamIntro": "Behind Club Esportiu Joventut are passionate people who make every training, project and achievement possible.",
     "coachName": "Adrián Morato · Head Coach",
-    "coachDesc": "With a solid track record in table tennis, Adrián combines experience, training, and a passion for teaching. He is the driving force of our sports project, guiding both young talents and veteran players to reach their full potential."
+    "coachDesc": "With a solid background in table tennis, Adrián combines experience, training and passion for teaching. He drives our sports project, guiding young talents and veteran players to their full potential."
   },
   "trainings": {
     "title": "Training Programs",
-    "description": "Discover the training program that best fits your level and availability. At Club Esportiu Joventut TT in Sant Josep de sa Talaia we offer 1.5-hour table tennis sessions designed to improve technique, fitness, and game confidence. Choose your plan and enjoy motivating, inclusive, and effective training.",
+    "description": "Discover the training program that best fits your level and availability. At Club Esportiu Joventut TT in Sant Josep de sa Talaia we offer 1.5-hour table tennis sessions designed to improve technique, fitness and game confidence. Choose your plan and enjoy motivating, inclusive and effective training.",
     "mainPrograms": "Main Programs",
     "mainProgramsDesc": "Choose the program that matches your skill level and commitment",
     "beginnerLevel": "First Serve",
-    "beginnerDesc": "Start in table tennis without rushing, but with motivation.",
+    "beginnerDesc": "Start table tennis at your own pace, with enthusiasm.",
     "competitionLevel": "Game On",
-    "competitionDesc": "Notice improvement week after week and level up.",
+    "competitionDesc": "See progress week after week and level up.",
     "adultsProgram": "Full Power",
     "adultsDesc": "Train intensely and reach your best version.",
     "schedule": "Schedule",
@@ -96,9 +102,9 @@
     "includes": "Your training includes:",
     "personalizedTraining": "Personalized training program",
     "flexSchedule": "Choose the schedule that suits you best among available sessions (flexible)",
-    "improve": "Improve technique, coordination, and fitness",
+    "improve": "Improve technique, coordination and fitness",
     "steadyProgress": "Steady progress with dynamic sessions",
-    "completeTraining": "Complete training with technical, tactical, and physical work",
+    "completeTraining": "Complete training with technical, tactical and physical work",
     "freeTshirt": "Includes official club t-shirt",
     "youthSchedule": "Saturdays 9:00 - 12:00",
     "youthPrice": "€100/month",
@@ -121,19 +127,19 @@
     "captain": "Captain",
     "viceCaptain": "Vice-Captain",
     "player": "Player",
-    "emptyTitle": "We’re finalizing our teams",
-    "emptySubtitle": "Full roster, schedules and results will be available very soon.",
     "record": "W-L-D Record",
     "nextMatch": "Next Match",
     "recentResults": "Recent Results",
     "recentAchievements": "Recent Achievements",
-    "home": "Home",
-    "away": "Away",
-    "neutral": "Neutral",
     "recentMatches": "Recent Matches",
     "leagueStandings": "League Standings",
     "femaleLeague": "Women's League",
-    "maleLeague": "Men's League"
+    "maleLeague": "Men's League",
+    "home": "Home",
+    "away": "Away",
+    "neutral": "Neutral",
+    "emptyTitle": "We’re finalizing our teams",
+    "emptySubtitle": "Full roster, schedules and results will be available very soon."
   },
   "news": {
     "title": "News and Events",
@@ -142,10 +148,6 @@
     "readFullStory": "Read Full Story",
     "readMore": "Read More",
     "loadMore": "Load More Articles",
-    "emptyTitle": "Launching shortly",
-    "emptySubtitle": "Club news, recaps and upcoming events will appear here soon.",
-    "notFoundTitle": "Article Not Found",
-    "notFoundSubtitle": "The article you’re looking for doesn’t exist or isn’t available yet.",
     "backToNews": "Back to News",
     "shareArticle": "Share this article",
     "shareTwitter": "Share on Twitter",
@@ -166,19 +168,23 @@
       "workshop": "Workshop",
       "announcement": "Announcement"
     },
-    "viewAllNews": "View All News"
+    "viewAllNews": "View All News",
+    "emptyTitle": "Launching shortly",
+    "emptySubtitle": "Club news, recaps and upcoming events will appear here soon.",
+    "notFoundTitle": "Article Not Found",
+    "notFoundSubtitle": "The article you’re looking for doesn’t exist or isn’t available yet."
   },
   "gallery": {
     "title": "Media Gallery",
     "description": "Capture the excitement and energy of our club through photos and videos",
     "photoGallery": "Photo Gallery",
     "videoGallery": "Video Gallery",
-    "emptySubtitlePhotos": "We’ll upload our best photos shortly.",
-    "emptySubtitleVideos": "Featured club videos are on the way.",
     "watchNow": "Watch Now",
     "download": "Download",
     "like": "Like",
-    "featuredVideo": "Featured Video"
+    "featuredVideo": "Featured Video",
+    "emptySubtitlePhotos": "We’ll upload our best photos shortly.",
+    "emptySubtitleVideos": "Featured club videos are on the way."
   },
   "join": {
     "title": "Ready to Join Our Community?",
@@ -225,8 +231,8 @@
     "loveGame": "Love the Game",
     "loveGameDesc": "Develop your passion for table tennis with expert guidance",
     "becomeMember": "Become a Member Today",
-"specialOffer": "🎉 Launch offer: any program for just €29/month for 3 months. Train 1, 2 or 3 days per week for the same price."
-,    "signingIn": "Sending request..."
+    "specialOffer": "🎉 Launch offer: any program for just €29/month for 3 months. Train 1, 2 or 3 days a week at the same price.",
+    "signingIn": "Sending request..."
   },
   "login": {
     "title": "Welcome Back",
@@ -265,7 +271,11 @@
     "subject": "Subject",
     "message": "Message",
     "sendMessageBtn": "Send Message",
-    "sending": "Sending..."
+    "sending": "Sending...",
+    "addressText": "C.P. L'Urgell | Avinguda del Diputat Josep Ribas, s/n\n07830 Sant Josep de sa Talaia, Illes Balears",
+    "phoneText": "+34 644 978 857",
+    "emailText": "ce.joventut.tt@gmail.com",
+    "hoursText": "Mon-Fri: 6AM-10PM\nSat-Sun: 8AM-8PM"
   },
   "common": {
     "month": "/month",
@@ -290,5 +300,4 @@
     "scrollHint": "Look at the ball"
   },
   "comingSoon": "We’ll be launching the {section} section soon."
-
 }

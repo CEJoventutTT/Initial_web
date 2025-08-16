@@ -210,6 +210,7 @@ export default function JoinPage() {
                 )
               })}
             </div>
+            <p className="text-foreground/70 text-sm mt-4 font-thin text-center">{t('join.specialOffer')}</p>
           </div>
         </section>
 
