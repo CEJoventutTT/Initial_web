@@ -122,13 +122,19 @@ export default function TrainingsPage() {
                     key={index}
                     className="relative flex flex-col justify-between bg-white/5 border border-white/10 hover:border-primary transition-colors duration-300"
                   >
-                    {/* Cartel superpuesto arriba-derecha con precio (rojo) y días (blanco) */}
-                    <div className="absolute top-3 right-3 z-10 rounded-lg border border-brand-red/60 bg-black/50 backdrop-blur-sm px-3 py-2 shadow">
-                      <div className="text-brand-red font-bold text-sm leading-tight">
+                    {/* Cartela flotante arriba-derecha (precio + días) armonizada */}
+                    <div
+                      className="absolute top-3 right-3 z-10 rounded-lg
+                                 border border-brand-teal/40
+                                 bg-gradient-to-r from-brand-teal/25 to-brand-green/25
+                                 backdrop-blur-sm px-3 py-2
+                                 shadow-[0_2px_14px_rgba(0,0,0,0.25)]"
+                    >
+                      <div className="text-white font-semibold text-sm leading-tight">
                         {program.parsed.price}
                       </div>
                       {program.parsed.days && (
-                        <div className="text-white/90 text-xs leading-tight">
+                        <div className="text-white/85 text-xs leading-tight">
                           {program.parsed.days}
                         </div>
                       )}
@@ -197,7 +203,7 @@ export default function TrainingsPage() {
                       </CardContent>
                     </div>
 
-                    {/* Footer: precio en rojo y días en blanco, botón debajo */}
+                    {/* Footer: precio y días + botón */}
                     <div className="border-t border-white/10 p-4 mt-auto text-center">
                       <div className="text-brand-red font-semibold">
                         {program.parsed.price}
