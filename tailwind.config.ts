@@ -60,6 +60,15 @@ const config: Config = {
         md: '0.6rem',
         sm: '0.45rem',
       },
+      backgroundImage: {
+        // De oscuro (se integra con el nav) a verde corporativo
+        'hero-gradient':
+          'linear-gradient(to bottom, #262425 0%, #262425 15%, #4e7a75 40%, #6BBFA0 100%)',
+
+        // Variante un poco más oscura (por si una foto de fondo es muy clara)
+        'hero-gradient-deep':
+          'linear-gradient(to bottom, rgba(38,36,37,0.95) 0%, #3f6561 32%, #5D8C87 100%)',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],

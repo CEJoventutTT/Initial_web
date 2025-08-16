@@ -6,7 +6,7 @@
     "teams": "Teams",
     "news": "News",
     "gallery": "Gallery",
-    "join": "Join Us",
+    "join": "Join",
     "login": "Login"
   },
   "hero": {
@@ -16,22 +16,51 @@
     "joinClub": "Join the Club",
     "exploreTrainings": "Explore Trainings"
   },
+  "days": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
   "about": {
-    "title": "About Us",
-    "description": "Club Esportiu Joventut TT promotes social inclusion through table tennis in Sant Josep de sa Talaia. This year we start extracurricular activities at CP L’Urgell, bringing the sport closer to children, youth, seniors, and people with disabilities. Our goal: to promote health, community, and personal development in an accessible and motivating environment.",
+    "title": "Who We Are",
+    "description": "Club Esportiu Joventut TT promotes social inclusion through table tennis in Sant Josep de sa Talaia. We run activities in schools and municipal spaces, bringing sport closer to children, youth, seniors and people with disabilities to foster health, community and personal growth.",
     "excellence": "Excellence",
-    "excellenceDesc": "We strive for the highest standards in training and competition",
+    "excellenceDesc": "We pursue the highest standards in training and competition",
     "community": "Community",
     "communityDesc": "Building lasting friendships and supporting each other",
     "growth": "Growth",
     "growthDesc": "Continuous improvement and personal development",
-    "yearsExcellence": "Days living this sport",
+    "yearsExcellence": "Years in sport",
+    "programs": "Annual programs",
+    "programsShort": "Youth · Seniors · Inclusive",
+    "communityReach": "Community reach",
+    "communityReachShort": "Schools and municipal spaces",
+    "nationalPath": "Competitive path",
+    "nationalPathShort": "RFETM Circuit",
     "ourStory": "Our Story",
-    "storyP1": "Club Esportiu Joventut was born from a simple vision: to create a space where table tennis enthusiasts of all levels could come together, learn, and grow. What began as a small group of passionate players in 1995 has evolved into one of the most respected table tennis institutions in the region.",
-    "storyP2": "Our founders, former national champions Sarah and Michael Chen, believed table tennis was more than a sport—it was a way to build character, discipline, and lifelong friendships. This philosophy still guides us today.",
-    "storyP3": "Over the years, we have produced numerous regional and national champions, but we are equally proud of recreational players who have found joy, fitness, and community within our walls.",
+    "storyP1": "Club Esportiu Joventut was born from a simple vision: create a space where table tennis enthusiasts of all levels could gather, learn and grow. What started as a small group of passionate players in 1995 has grown into one of the region’s most respected institutions.",
+    "storyP2": "Our founders believed table tennis was more than a sport: it was a way to build character, discipline and lifelong friendships. This philosophy still guides us today.",
+    "storyP3": "Over the years, we have helped players achieve regional and national championships, and we are equally proud of those who find joy, health and community within the club.",
+    "missionTitle": "Mission",
+    "mission": "Use table tennis as a tool for inclusion and well-being, with accessible programs for all ages and abilities, prioritizing children, seniors and people with disabilities.",
+    "visionTitle": "Vision",
+    "vision": "To be a benchmark in Ibiza for inclusive sport and represent the island in the national circuit, showing how sport transforms lives and strengthens community.",
+    "valuesTitle": "What We Believe",
+    "valuesLead": "We work with the community and institutions to create an active, healthy and inclusive environment.",
     "ourValues": "Our Values",
-    "valuesDesc": "These core principles guide everything we do at Club Esportiu Joventut"
+    "valuesDesc": "Principles that guide every activity of the club",
+    "values": {
+      "inclusionTitle": "Inclusion and Diversity",
+      "inclusionDesc": "Barrier-free access: age, gender or ability. Specific programs for disability and vulnerable groups.",
+      "integrationTitle": "Social Integration",
+      "integrationDesc": "Intergenerational activities that connect school, family and community.",
+      "developmentTitle": "Development and Well-being",
+      "developmentDesc": "Personal growth, physical and mental health, and active habits with regular practice."
+    }
   },
   "trainings": {
     "title": "Training Programs",

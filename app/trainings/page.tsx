@@ -89,12 +89,14 @@ export default function TrainingsPage() {
       <Navigation />
       <div className="pt-16">
         {/* Hero */}
-        <section className="relative py-20 bg-gradient-to-r from-brand-green via-brand-teal to-brand-green">
+        <section className="relative py-20 bg-hero-gradient text-foreground">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-5xl font-black mb-6">{t('trainings.title')}</h1>
-            <p className="text-xl text-foreground/90 max-w-3xl mx-auto font-thin">
-              {t('trainings.description')}
-            </p>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-6">
+  {t('trainings.title')}
+</h1>
+<p className="text-base sm:text-lg lg:text-xl text-foreground/90 max-w-3xl mx-auto font-thin">
+  {t('trainings.description')}
+</p>
           </div>
         </section>
 
