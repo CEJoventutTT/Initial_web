@@ -10,7 +10,7 @@ export default function WhoWeAre() {
     <section id="about" className="py-20 bg-brand-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Text Content */}
+          {/* Texto */}
           <div>
             <h2 className="text-4xl font-black text-white mb-6">
               {t('about.title')}
@@ -22,7 +22,7 @@ export default function WhoWeAre() {
             <div className="grid sm:grid-cols-3 gap-6">
               {/* Card 1 */}
               <div className="text-center">
-                <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border border-white/15 bg-brand-teal/25">
+                <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border border-brand-teal/30 bg-brand-teal/20">
                   <Award className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">
@@ -35,7 +35,7 @@ export default function WhoWeAre() {
 
               {/* Card 2 */}
               <div className="text-center">
-                <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border border-white/15 bg-brand-teal/25">
+                <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border border-brand-teal/30 bg-brand-teal/20">
                   <Heart className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">
@@ -48,7 +48,7 @@ export default function WhoWeAre() {
 
               {/* Card 3 */}
               <div className="text-center">
-                <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border border-white/15 bg-brand-teal/25">
+                <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border border-brand-teal/30 bg-brand-teal/20">
                   <Target className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">
@@ -61,22 +61,15 @@ export default function WhoWeAre() {
             </div>
           </div>
 
-          {/* Image */}
-          <div className="relative">
+          {/* Imagen */}
+          <div className="relative rounded-lg overflow-hidden border border-brand-teal/20 bg-white/5 p-6">
             <img
               src="/her.jpg"
               alt="Club Esportiu Joventut"
-              className="rounded-lg w-full h-auto border border-white/10 bg-white/5 p-6"
+              className="rounded-lg w-full h-auto"
               draggable={false}
             />
-
-            {/* Badge opcional (si quieres reactivarlo, descomenta) */}
-            {/*
-            <div className="absolute -bottom-6 -right-6 bg-brand-red text-white p-6 rounded-lg shadow-lg border border-white/10">
-              <div className="text-3xl font-black leading-none">365</div>
-              <div className="text-sm font-thin mt-1">{t('about.yearsExcellence')}</div>
-            </div>
-            */}
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/20 via-transparent to-transparent pointer-events-none" />
           </div>
         </div>
       </div>

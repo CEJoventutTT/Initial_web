@@ -47,18 +47,12 @@ export default function JoinPage() {
 
     if (!serviceId || !templateId || !publicKey) {
       console.error('EmailJS config missing. Check NEXT_PUBLIC_EMAILJS_* env vars.')
-      toast({
-        variant: 'destructive',
-        title: t('common.error'),
-        description: t('join.applicationDesc'),
-      })
+      toast({ variant: 'destructive', title: t('common.error'), description: t('join.applicationDesc') })
       return
     }
 
     try {
       setSubmitting(true)
-
-      // Mapeo de parámetros esperados por la plantilla de EmailJS
       const templateParams = {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -81,14 +75,8 @@ export default function JoinPage() {
       }
 
       await emailjs.send(serviceId, templateId, templateParams, { publicKey })
+      toast({ title: t('common.success'), description: t('join.reviewMessage') })
 
-      // Éxito: toast con i18n
-      toast({
-        title: t('common.success'),
-        description: t('join.reviewMessage'),
-      })
-
-      // Reset sencillo del formulario (mantenemos el plan seleccionado)
       setFormData({
         firstName: '',
         lastName: '',
@@ -104,79 +92,62 @@ export default function JoinPage() {
       })
     } catch (err) {
       console.error(err)
-      toast({
-        variant: 'destructive',
-        title: t('common.error'),
-        description: t('join.applicationDesc'),
-      })
+      toast({ variant: 'destructive', title: t('common.error'), description: t('join.applicationDesc') })
     } finally {
       setSubmitting(false)
     }
   }
 
-  // Planes con textos sacados de trainings.*
   const membershipPlans = [
     {
       id: 'basic' as const,
-      name: t('trainings.beginnerLevel'), // Golpes Iniciales
+      name: t('trainings.beginnerLevel'),
       desc: t('trainings.beginnerDesc'),
       priceLine: t('trainings.price1'),
       icon: Users,
       popular: false,
-      features: [
-        t('trainings.personalizedTraining'),
-        t('trainings.flexSchedule'),
-        t('trainings.improve'),
-      ],
+      features: [t('trainings.personalizedTraining'), t('trainings.flexSchedule'), t('trainings.improve')],
     },
     {
       id: 'premium' as const,
-      name: t('trainings.competitionLevel'), // Juego en Marcha
+      name: t('trainings.competitionLevel'),
       desc: t('trainings.competitionDesc'),
       priceLine: t('trainings.price2'),
       icon: Trophy,
       popular: true,
-      features: [
-        t('trainings.personalizedTraining'),
-        t('trainings.flexSchedule'),
-        t('trainings.steadyProgress'),
-      ],
+      features: [t('trainings.personalizedTraining'), t('trainings.flexSchedule'), t('trainings.steadyProgress')],
     },
     {
       id: 'elite' as const,
-      name: t('trainings.adultsProgram'), // A Potencia Máxima
+      name: t('trainings.adultsProgram'),
       desc: t('trainings.adultsDesc'),
       priceLine: t('trainings.price3'),
       icon: Zap,
       popular: false,
-      features: [
-        t('trainings.personalizedTraining'),
-        t('trainings.completeTraining'),
-        t('trainings.freeTshirt'),
-      ],
+      features: [t('trainings.personalizedTraining'), t('trainings.completeTraining'), t('trainings.freeTshirt')],
     },
   ]
 
   return (
-    <div className="min-h-screen bg-brand-dark text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Navigation />
       <div className="pt-16">
         {/* Hero */}
         <section className="relative py-20 bg-gradient-to-r from-brand-green via-brand-teal to-brand-green">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-5xl font-black text-white mb-6">{t('join.title')}</h1>
-            <p className="text-xl text-white/90 max-w-3xl mx-auto font-thin">
+            <h1 className="text-5xl font-black mb-6">{t('join.title')}</h1>
+            <p className="text-xl text-foreground/90 max-w-3xl mx-auto font-thin">
               {t('join.description')}
             </p>
           </div>
         </section>
 
         {/* Membership Plans */}
-        <section className="py-20 bg-brand-dark">
+        <section className="pt-20 pb-10 bg-brand-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-black text-white mb-4">{t('join.choosePlan')}</h2>
-              <p className="text-white/80 text-lg">{t('join.choosePlanDesc')}</p>
+              <h2 className="text-4xl font-black mb-4">{t('join.choosePlan')}</h2>
+              <p className="text-muted-foreground text-lg">{t('join.choosePlanDesc')}</p>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8 mb-16">
@@ -189,42 +160,48 @@ export default function JoinPage() {
                     onClick={() => setSelectedPlan(plan.id)}
                     className={`relative cursor-pointer transition-all duration-300 border ${
                       active
-                        ? 'border-brand-teal bg-white/5'
-                        : 'border-white/10 hover:border-brand-teal/60'
+                        ? 'border-accent bg-card/90'
+                        : 'border-border hover:border-accent'
                     }`}
                   >
                     {plan.popular && (
                       <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                        <div className="bg-brand-red text-white px-4 py-1 rounded-full text-sm font-semibold">
+                        <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
                           {t('join.mostPopular')}
                         </div>
                       </div>
                     )}
 
                     <CardHeader className="text-center pb-4">
-                      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/15 bg-brand-teal/25">
-                        <IconComponent className="h-8 w-8 text-white" />
+                      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-border bg-brand-teal/25">
+                        <IconComponent className="h-8 w-8 text-foreground" />
                       </div>
-                      <CardTitle className="text-white text-2xl">{plan.name}</CardTitle>
-                      {plan.desc && (
-                        <CardDescription className="text-white/80">
-                          {plan.desc}
-                        </CardDescription>
-                      )}
-                      <div className="mt-3 text-brand-teal font-semibold">
+
+                      {/* Bloque título + descripción con altura reservada para alinear */}
+                      <div className="min-h-[88px] flex flex-col justify-center">
+                        <CardTitle className="text-foreground text-2xl">{plan.name}</CardTitle>
+                        {plan.desc && (
+                          <CardDescription className="text-muted-foreground">
+                            {plan.desc}
+                          </CardDescription>
+                        )}
+                      </div>
+
+                      {/* Precio alineado */}
+                      <div className="mt-3 text-accent font-semibold min-h-[24px] flex items-center justify-center">
                         {plan.priceLine}
                       </div>
                     </CardHeader>
 
                     <CardContent>
-                      <div className="text-white/80 text-sm mb-3">
+                      <div className="text-muted-foreground text-sm mb-3">
                         {t('trainings.includes')}
                       </div>
                       <ul className="space-y-3 mb-2">
                         {plan.features.map((feature, index) => (
                           <li key={index} className="flex items-start">
-                            <Check className="h-5 w-5 text-brand-teal mr-3 mt-0.5 flex-shrink-0" />
-                            <span className="text-white/85 text-sm">{feature}</span>
+                            <Check className="h-5 w-5 text-accent mr-3 mt-0.5 flex-shrink-0" />
+                            <span className="text-foreground/85 text-sm">{feature}</span>
                           </li>
                         ))}
                       </ul>
@@ -237,19 +214,19 @@ export default function JoinPage() {
         </section>
 
         {/* Application Form */}
-        <section className="py-20 bg-white/5">
+        <section className="pt-10 pb-20 bg-white/5">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-black text-white mb-4">{t('join.completeApplication')}</h2>
-              <p className="text-white/80 text-lg">{t('join.applicationDesc')}</p>
+              <h2 className="text-4xl font-black mb-4">{t('join.completeApplication')}</h2>
+              <p className="text-muted-foreground text-lg">{t('join.applicationDesc')}</p>
             </div>
 
-            <Card className="bg-brand-dark border border-white/10">
+            <Card className="bg-card/90 border border-border">
               <CardHeader>
-                <CardTitle className="text-white text-2xl">{t('join.membershipApplication')}</CardTitle>
-                <CardDescription className="text-white/80">
+                <CardTitle className="text-foreground text-2xl">{t('join.membershipApplication')}</CardTitle>
+                <CardDescription className="text-muted-foreground">
                   {t('join.selectedPlan')}: {' '}
-                  <span className="text-brand-teal font-semibold">
+                  <span className="text-accent font-semibold">
                     {membershipPlans.find(p => p.id === selectedPlan)?.name}
                   </span>
                 </CardDescription>
@@ -259,29 +236,29 @@ export default function JoinPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Personal Information */}
                   <div>
-                    <h3 className="text-white font-semibold text-lg mb-4">{t('join.personalInfo')}</h3>
+                    <h3 className="text-foreground font-semibold text-lg mb-4">{t('join.personalInfo')}</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">
+                        <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.firstName')} *
                         </label>
                         <Input
                           required
                           value={formData.firstName}
                           onChange={(e) => handleInputChange('firstName', e.target.value)}
-                          className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
+                          className="bg-card border-border text-foreground placeholder-foreground/40 focus:border-accent focus-visible:ring-0"
                           placeholder="John"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">
+                        <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.lastName')} *
                         </label>
                         <Input
                           required
                           value={formData.lastName}
                           onChange={(e) => handleInputChange('lastName', e.target.value)}
-                          className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
+                          className="bg-card border-border text-foreground placeholder-foreground/40 focus:border-accent focus-visible:ring-0"
                           placeholder="Doe"
                         />
                       </div>
@@ -290,10 +267,10 @@ export default function JoinPage() {
 
                   {/* Contact Information */}
                   <div>
-                    <h3 className="text-white font-semibold text-lg mb-4">{t('join.contactInfo')}</h3>
+                    <h3 className="text-foreground font-semibold text-lg mb-4">{t('join.contactInfo')}</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">
+                        <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.email')}
                         </label>
                         <Input
@@ -301,12 +278,12 @@ export default function JoinPage() {
                           required
                           value={formData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
-                          className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
+                          className="bg-card border-border text-foreground placeholder-foreground/40 focus:border-accent focus-visible:ring-0"
                           placeholder="john.doe@example.com"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">
+                        <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.phone')}
                         </label>
                         <Input
@@ -314,7 +291,7 @@ export default function JoinPage() {
                           required
                           value={formData.phone}
                           onChange={(e) => handleInputChange('phone', e.target.value)}
-                          className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
+                          className="bg-card border-border text-foreground placeholder-foreground/40 focus:border-accent focus-visible:ring-0"
                           placeholder="+1 (555) 123-4567"
                         />
                       </div>
@@ -323,10 +300,10 @@ export default function JoinPage() {
 
                   {/* Additional Information */}
                   <div>
-                    <h3 className="text-white font-semibold text-lg mb-4">{t('join.additionalInfo')}</h3>
+                    <h3 className="text-foreground font-semibold text-lg mb-4">{t('join.additionalInfo')}</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">
+                        <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.dateOfBirth')} *
                         </label>
                         <Input
@@ -334,35 +311,35 @@ export default function JoinPage() {
                           required
                           value={formData.dateOfBirth}
                           onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                          className="bg-white/5 border-white/10 text-white focus:border-brand-teal focus-visible:ring-0"
+                          className="bg-card border-border text-foreground focus:border-accent focus-visible:ring-0"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">
+                        <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.experience')}
                         </label>
                         <Select onValueChange={(value) => handleInputChange('experience', value)}>
-                          <SelectTrigger className="bg-white/5 border-white/10 text-white focus:ring-0">
+                          <SelectTrigger className="bg-card border-border text-foreground focus:ring-0">
                             <SelectValue placeholder={t('join.experience')} />
                           </SelectTrigger>
-                          <SelectContent className="bg-brand-dark border border-white/10 text-white">
-                          <SelectItem value="beginner">{t('levels.beginner')}</SelectItem>
-                          <SelectItem value="intermediate">{t('levels.intermediate')}</SelectItem>
-                          <SelectItem value="advanced">{t('levels.advanced')}</SelectItem>
-                          <SelectItem value="expert">{t('levels.expert')}</SelectItem>
+                          <SelectContent className="bg-card border border-border text-foreground">
+                            <SelectItem value="beginner">{t('levels.beginner')}</SelectItem>
+                            <SelectItem value="intermediate">{t('levels.intermediate')}</SelectItem>
+                            <SelectItem value="advanced">{t('levels.advanced')}</SelectItem>
+                            <SelectItem value="expert">{t('levels.expert')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">
+                        <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.goals')}
                         </label>
                         <Textarea
                           value={formData.goals}
                           onChange={(e) => handleInputChange('goals', e.target.value)}
-                          className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
+                          className="bg-card border-border text-foreground placeholder-foreground/40 focus:border-accent focus-visible:ring-0"
                           placeholder={t('join.goals')}
                           rows={3}
                         />
@@ -372,22 +349,22 @@ export default function JoinPage() {
 
                   {/* Emergency Contact */}
                   <div>
-                    <h3 className="text-white font-semibold text-lg mb-4">{t('join.emergencyContact')}</h3>
+                    <h3 className="text-foreground font-semibold text-lg mb-4">{t('join.emergencyContact')}</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-white/80 mb-2">
+                        <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.emergencyContactName')} *
                         </label>
                         <Input
                           required
                           value={formData.emergencyContact}
                           onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
-                          className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
+                          className="bg-card border-border text-foreground placeholder-foreground/40 focus:border-accent focus-visible:ring-0"
                           placeholder="Jane Doe"
                         />
                       </div>
                       <div>
-                        <label className="block text sm font-medium text-white/80 mb-2">
+                        <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.emergencyContactPhone')} *
                         </label>
                         <Input
@@ -395,7 +372,7 @@ export default function JoinPage() {
                           required
                           value={formData.emergencyPhone}
                           onChange={(e) => handleInputChange('emergencyPhone', e.target.value)}
-                          className="bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-brand-teal focus-visible:ring-0"
+                          className="bg-card border-border text-foreground placeholder-foreground/40 focus:border-accent focus-visible:ring-0"
                           placeholder="+1 (555) 987-6543"
                         />
                       </div>
@@ -409,9 +386,9 @@ export default function JoinPage() {
                         id="terms"
                         checked={formData.agreeTerms}
                         onCheckedChange={(checked) => handleInputChange('agreeTerms', checked as boolean)}
-                        className="border-white/30 data-[state=checked]:bg-brand-red data-[state=checked]:border-brand-red"
+                        className="border-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                       />
-                      <label htmlFor="terms" className="text-sm text-white/85 leading-relaxed">
+                      <label htmlFor="terms" className="text-sm text-foreground/85 leading-relaxed">
                         {t('join.agreeTerms')}
                       </label>
                     </div>
@@ -421,9 +398,9 @@ export default function JoinPage() {
                         id="newsletter"
                         checked={formData.agreeNewsletter}
                         onCheckedChange={(checked) => handleInputChange('agreeNewsletter', checked as boolean)}
-                        className="border-white/30 data-[state=checked]:bg-brand-teal data-[state=checked]:border-brand-teal"
+                        className="border-foreground/30 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                       />
-                      <label htmlFor="newsletter" className="text-sm text-white/85">
+                      <label htmlFor="newsletter" className="text-sm text-foreground/85">
                         {t('join.agreeNewsletter')}
                       </label>
                     </div>
@@ -434,11 +411,11 @@ export default function JoinPage() {
                     <Button
                       type="submit"
                       disabled={!formData.agreeTerms || submitting}
-                      className="w-full bg-brand-red hover:bg-brand-red/90 text-white py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-primary text-primary-foreground hover:opacity-90 py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {submitting ? t('login.signingIn') : t('join.submitApplication')}
                     </Button>
-                    <p className="text-center text-white/70 text-sm mt-4">
+                    <p className="text-center text-foreground/70 text-sm mt-4">
                       {t('join.reviewMessage')}
                     </p>
                   </div>
@@ -449,36 +426,36 @@ export default function JoinPage() {
         </section>
 
         {/* Benefits */}
-        <section className="py-20 bg-brand-dark">
+        <section className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-black text-white mb-4">{t('join.whyJoin')}</h2>
-              <p className="text-white/80 text-lg">{t('join.whyJoinDesc')}</p>
+              <h2 className="text-4xl font-black mb-4">{t('join.whyJoin')}</h2>
+              <p className="text-muted-foreground text-lg">{t('join.whyJoinDesc')}</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/15 bg-brand-teal/25">
-                  <Users className="h-8 w-8 text-white" />
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-border bg-brand-teal/25">
+                  <Users className="h-8 w-8 text-foreground" />
                 </div>
-                <h3 className="text-white font-semibold text-xl mb-4">{t('join.expertCoaching')}</h3>
-                <p className="text-white/80">{t('join.expertCoachingDesc')}</p>
+                <h3 className="text-foreground font-semibold text-xl mb-4">{t('join.expertCoaching')}</h3>
+                <p className="text-muted-foreground">{t('join.expertCoachingDesc')}</p>
               </div>
 
               <div className="text-center">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/15 bg-brand-teal/25">
-                  <MapPin className="h-8 w-8 text-white" />
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-border bg-brand-teal/25">
+                  <MapPin className="h-8 w-8 text-foreground" />
                 </div>
-                <h3 className="text-white font-semibold text-xl mb-4">{t('join.modernFacilities')}</h3>
-                <p className="text-white/80">{t('join.modernFacilitiesDesc')}</p>
+                <h3 className="text-foreground font-semibold text-xl mb-4">{t('join.modernFacilities')}</h3>
+                <p className="text-muted-foreground">{t('join.modernFacilitiesDesc')}</p>
               </div>
 
               <div className="text-center">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/15 bg-brand-teal/25">
-                  <Trophy className="h-8 w-8 text-white" />
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-border bg-brand-teal/25">
+                  <Trophy className="h-8 w-8 text-foreground" />
                 </div>
-                <h3 className="text-white font-semibold text-xl mb-4">{t('join.competitiveOpportunities')}</h3>
-                <p className="text-white/80">{t('join.competitiveOpportunitiesDesc')}</p>
+                <h3 className="text-foreground font-semibold text-xl mb-4">{t('join.competitiveOpportunities')}</h3>
+                <p className="text-muted-foreground">{t('join.competitiveOpportunitiesDesc')}</p>
               </div>
             </div>
           </div>

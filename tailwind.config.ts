@@ -1,4 +1,3 @@
-// tailwind.config.ts
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -14,55 +13,53 @@ const config: Config = {
     container: { center: true, padding: '2rem', screens: { '2xl': '1400px' } },
     extend: {
       colors: {
-        // Brand tokens
         brand: {
-          teal: '#5D8C87',    // superficies / elementos “calm”
-          dark: '#262425',    // fondo principal
-          red:  '#BF0F30',    // CTA / acentos
-          green:'#6BBFA0',    // nuevo color para gradientes
+          teal: '#5D8C87',   // secundario calm
+          green: '#6BBFA0',  // acento/gradientes
+          dark: '#262425',   // fondo principal
+          red:  '#BF0F30',   // CTA
+          blue: '#2C6DFF',   // acento para iconos / links secundarios
           white:'#FFFFFF',
         },
-
-        // Semánticos (usados por shadcn/ui)
         background: '#262425',
         foreground: '#FFFFFF',
         border: '#343233',
         input:  '#343233',
-        ring:   '#6BBFA0',  // Antes rojo, ahora verde para los focos
+        ring:   '#6BBFA0',
 
         primary: {
-          DEFAULT: '#BF0F30',   // CTA rojo
-          foreground: '#FFFFFF'
+          DEFAULT: '#BF0F30',      // CTA rojo
+          foreground: '#FFFFFF',
         },
         secondary: {
-          DEFAULT: '#5D8C87',   // botón secundario / chips
-          foreground: '#262425'
+          DEFAULT: '#5D8C87',      // headings secundarios, chips
+          foreground: '#262425',
         },
         accent: {
-          DEFAULT: '#6BBFA0',   // ahora verde para acentos
-          foreground: '#262425'
+          DEFAULT: '#6BBFA0',      // acentos / highlights / badges
+          foreground: '#262425',
         },
         muted: {
           DEFAULT: '#2B292A',
-          foreground: '#CFCFCF'
+          foreground: 'rgba(255,255,255,0.80)', // texto cuerpo
         },
         popover: {
           DEFAULT: '#262425',
-          foreground: '#FFFFFF'
+          foreground: '#FFFFFF',
         },
         card: {
           DEFAULT: '#262425',
-          foreground: '#FFFFFF'
+          foreground: '#FFFFFF',
         },
       },
       boxShadow: {
-        brand: '0 10px 30px -10px rgba(107,191,160,.35)', // glow verde para CTA
+        brand: '0 10px 30px -10px rgba(107,191,160,.35)', // glow verde
       },
       borderRadius: {
         lg: '0.75rem',
         md: '0.6rem',
         sm: '0.45rem',
-      }
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],

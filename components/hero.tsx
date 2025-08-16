@@ -11,7 +11,7 @@ export default function Hero() {
   const { t } = useTranslation()
 
   return (
-    <section id="home" className="relative min-h-screen overflow-hidden">
+    <section id="home" className="relative min-h-screen overflow-hidden bg-background">
       {/* Imagen de fondo */}
       <div className="absolute inset-0">
         <Image
@@ -25,52 +25,38 @@ export default function Hero() {
         />
 
         {/* Funde con el nav (oscurece arriba) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/55 to-transparent pointer-events-none" />
-        {/* Viñeteado lateral para lectura del texto */}
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/85 via-brand-dark/35 to-transparent md:from-brand-dark/80 md:via-brand-dark/30 md:to-transparent pointer-events-none" />
-        {/* Tinte verde sutil en todo el hero */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-brand-green/18 via-transparent to-brand-teal/14 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 to-transparent pointer-events-none" />
+        {/* Viñeteado lateral */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/35 to-transparent md:from-background/80 md:via-background/30 md:to-transparent pointer-events-none" />
+        {/* Tinte sutil de marca */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-brand-green/10 via-transparent to-brand-teal/8 pointer-events-none mix-blend-normal" />
         {/* Borde suave */}
         <div className="absolute inset-0 ring-1 ring-black/10 pointer-events-none" />
       </div>
 
       {/* Contenido */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-36 pb-20 md:pb-28 text-center">
-        <h1
-          className="
-            text-white font-black tracking-tight leading-[1.05] text-balance
-            text-4xl sm:text-5xl md:text-[56px] lg:text-[64px]
-          "
-        >
-          <span className="block mb-2">
-            {t('hero.title')}
-          </span>
-
-          <span
-            className="
-              block md:mt-1 lg:mt-2
-              text-brand-teal/85
-              text-[0.82em] sm:text-[0.9em] lg:text-[0.95em]
-            "
-          >
+        <h1 className="text-foreground font-black tracking-tight leading-[1.05] text-balance text-4xl sm:text-5xl md:text-[56px] lg:text-[64px]">
+          <span className="block mb-2">{t('hero.title')}</span>
+          <span className="block md:mt-1 lg:mt-2 text-secondary text-[0.82em] sm:text-[0.9em] lg:text-[0.95em]">
             {t('hero.subtitle')}
           </span>
         </h1>
 
-        <p className="mx-auto mt-7 md:mt-8 text-base sm:text-lg md:text-xl leading-relaxed text-white/85 max-w-2xl md:max-w-3xl">
+        <p className="mx-auto mt-7 md:mt-8 text-base sm:text-lg md:text-xl leading-relaxed text-foreground/85 max-w-2xl md:max-w-3xl">
           {t('hero.description')}
         </p>
 
         {/* CTAs */}
         <div className="mt-9 md:mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-          {/* Secundario: explorar */}
+          {/* Secundario: explorar (verde claro) */}
           <Link href="/trainings" aria-label="Explore trainings">
             <Button
               size="lg"
               variant="outline"
               className="
-                rounded-xl border border-white/30 text-white
-                hover:border-white hover:bg-white hover:text-brand-dark
+                rounded-xl border border-accent text-accent
+                hover:bg-accent hover:text-accent-foreground
                 px-6 md:px-8 py-3.5 md:py-4 text-base md:text-lg font-semibold
                 transition-transform duration-150 hover:scale-[1.02]
               "
@@ -80,14 +66,14 @@ export default function Hero() {
             </Button>
           </Link>
 
-          {/* Primario: unirse */}
+          {/* Primario: unirse (rojo) */}
           <Link href="/join" aria-label="Join the club">
             <Button
               size="lg"
               className="
-                rounded-xl bg-brand-red text-white
-                hover:bg-brand-red/90 px-6 md:px-8 py-3.5 md:py-4
-                text-base md:text-lg font-semibold shadow-lg
+                rounded-xl bg-primary text-primary-foreground
+                hover:opacity-90 px-6 md:px-8 py-3.5 md:py-4
+                text-base md:text-lg font-semibold shadow-brand
                 transition-transform duration-150 hover:scale-[1.02]
               "
             >
@@ -98,10 +84,10 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Sol fijo en BLANCO */}
+      {/* Sol fijo */}
       <div className="fixed bottom-8 right-8 z-50">
-        <a href="#about" aria-label="Scroll to content" className="inline-flex text-white">
-          <SunBouncing className="text-white" />
+        <a href="#about" aria-label="Scroll to content" className="inline-flex text-foreground">
+          <SunBouncing className="text-foreground" />
         </a>
       </div>
     </section>
