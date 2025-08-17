@@ -4,6 +4,8 @@ import type { Metadata } from "next"
 import { cookies } from "next/headers"
 import { TranslationProvider, type Language } from "@/lib/i18n"
 import { Toaster } from "@/components/ui/toaster"
+import FooterLegal from "@/components/footer-legal"
+import CookieConsent from "@/components/cookie-consent"
 
 // Carga SSR de diccionarios
 async function loadDict(lang: Language) {
@@ -25,22 +27,21 @@ export const metadata: Metadata = {
     icon: [
       { url: "/favicon.ico" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/web-app-manifest-192x192.png", sizes: "192x192", type: "image/png" },
-      { url: "/web-app-manifest-512x512.png", sizes: "512x512", type: "image/png" },
+      { url: "/web-app-manifest-512x512.png", sizes: "512x512", type: "image/png" }
     ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }]
   },
   appleWebApp: {
-    title: "Joventut",
+    title: "Joventut"
   },
   manifest: "/site.webmanifest",
-  themeColor: "#0f172a",
+  themeColor: "#0f172a"
 }
 
 export default async function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode
 }) {
@@ -54,10 +55,17 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} suppressHydrationWarning>
-      <body className="font-inter">
+      <body className="font-inter bg-dark text-white">
         <TranslationProvider initialLanguage={lang} dictionary={dict}>
           {children}
-          {/* Toaster global para poder usar useToast() en toda la app */}
+
+          {/* Aviso de cookies */}
+          <CookieConsent />
+
+          {/* Footer con enlaces legales */}
+          <FooterLegal />
+
+          {/* Toaster global */}
           <Toaster />
         </TranslationProvider>
       </body>
