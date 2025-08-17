@@ -3,7 +3,7 @@ import "./globals.css"
 import type { Metadata } from "next"
 import { cookies } from "next/headers"
 import { TranslationProvider, type Language } from "@/lib/i18n"
-import { Toaster } from "@/components/ui/toaster" // ⬅️ IMPORT CORRECTO (named import)
+import { Toaster } from "@/components/ui/toaster" // ⬅️ IMPORT CORRECTO
 
 // Carga SSR de diccionarios
 async function loadDict(lang: Language) {
@@ -21,6 +21,17 @@ export const metadata: Metadata = {
   title: "Club Esportiu Joventut - Sant Josep de sa Talaia, Ibiza, Baleares",
   description: "Club de tenis de mesa inclusivo en Baleares",
   generator: "v0.dev",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" }, // fallback
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 }
 
 export default async function RootLayout({
