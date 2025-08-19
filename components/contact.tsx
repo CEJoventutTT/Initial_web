@@ -66,7 +66,7 @@ export default function Contact() {
           <div className="space-y-8">
             <div className="grid sm:grid-cols-2 gap-6">
               {[
-                { Icon: MapPin, title: t('contact.address'), text: <"Carrer Club Robinson 350, 07830, Sant Josep de sa Talaia, Illes Balears"</> },
+                { Icon: MapPin, title: t('contact.address'), text: 'Carrer Club Robinson 350, 07830, Sant Josep de sa Talaia, Illes Balears' },
                 { Icon: Phone, title: t('contact.phone'), text: '+34 644 978 857' },
                 { Icon: Mail, title: t('contact.email'), text: 'ce.joventut.tt@gmail.com' },
                 { Icon: Clock, title: t('contact.hours'), text: <>Mon-Fri: 6AM-10PM<br/>Sat-Sun: 8AM-8PM</> },
