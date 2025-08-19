@@ -11,7 +11,7 @@ export default function NewsPage() {
   const { t } = useTranslation()
   const tt = typeof t === 'function' ? t : ((k: string, v?: any) => k)
 
-  // Estructura preparada para CMS futuro (ahora vacía)
+  // ✅ Ponemos tu artículo de Medium como "destacado"
   const featuredArticle: null | {
     id: string
     title: string
@@ -22,8 +22,27 @@ export default function NewsPage() {
     category: string
     author: string
     featured?: boolean
-  } = null
+    externalUrl?: string
+  } = {
+    id: 'pingpong-demencia',
+    title: 'El ping-pong: mucho más que un juego, un aliado contra la demencia',
+    excerpt:
+      'Publicado en Medium: cómo el tenis de mesa puede ser un aliado para la salud física y cognitiva, especialmente en personas mayores.',
+    date: '2025-08-19',
+    readTime: '5 min read',
+    image: '/pareja-ancianos-jugando-al-ping-pong-patio-hotel_484921-8345.jpg', // cámbialo por la portada que quieras tener en /public
+    category: 'Salud',
+    author: 'Club Esportiu Joventut TT',
+    externalUrl:
+      'https://medium.com/@ce.joventut.tt/el-ping-pong-mucho-más-que-un-juego-un-aliado-contra-la-demencia-ff085c58302c',
+  }
 
+
+
+
+
+  
+  // (puedes ir añadiendo más artículos aquí si quieres una parrilla)
   const articles: Array<{
     id: string
     title: string
@@ -33,6 +52,7 @@ export default function NewsPage() {
     image: string
     category: string
     author: string
+    externalUrl?: string
   }> = []
 
   const categories = [
@@ -87,7 +107,11 @@ export default function NewsPage() {
                     <div className="p-8 lg:p-12">
                       <div className="flex items-center text-sm text-white/70 mb-4">
                         <Calendar className="mr-2 h-4 w-4" />
-                        {new Date(featuredArticle.date).toLocaleDateString()}
+                        {new Date(featuredArticle.date).toLocaleDateString('es-ES', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
                         <Clock className="ml-4 mr-2 h-4 w-4" />
                         {featuredArticle.readTime}
                         <User className="ml-4 mr-2 h-4 w-4" />
@@ -99,12 +123,22 @@ export default function NewsPage() {
                         {featuredArticle.excerpt}
                       </p>
 
-                      <Link href={`/news/${featuredArticle.id}`}>
-                        <Button className="bg-primary hover:opacity-90 text-primary-foreground">
-                          {tt('news.readFullStory')}
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </Link>
+                      {/* Si hay externalUrl, abrimos Medium; si no, a /news/[id] */}
+                      {featuredArticle.externalUrl ? (
+                        <Link href={featuredArticle.externalUrl} target="_blank" rel="noopener noreferrer">
+                          <Button className="bg-primary hover:opacity-90 text-primary-foreground">
+                            {tt('news.readFullStory')}
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link href={`/news/${featuredArticle.id}`}>
+                          <Button className="bg-primary hover:opacity-90 text-primary-foreground">
+                            {tt('news.readFullStory')}
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </Card>

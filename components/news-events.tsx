@@ -8,31 +8,15 @@ import { useTranslation } from '@/lib/i18n'
 export default function NewsEvents() {
   const { t } = useTranslation()
 
-  const news = [
-    {
-      title: 'Annual Championship Tournament 2024',
-      description: 'Join us for our biggest tournament of the year featuring players from across the region. Prizes and trophies await!',
-      date: '2024-02-15',
-      readTime: '3 min read',
-      image: '/table-tennis-championship.png',
-      category: 'Tournament'
-    },
-    {
-      title: 'New Training Equipment Arrives',
-      description: 'We\'ve upgraded our facilities with state-of-the-art training equipment including robot trainers and professional tables.',
-      date: '2024-01-28',
-      readTime: '2 min read',
-      image: '/modern-table-tennis-facility.png',
-      category: 'Facility Update'
-    },
-    {
-      title: 'Youth Development Program Launch',
-      description: 'Introducing our new youth development program designed to nurture young talent and build future champions.',
-      date: '2024-01-20',
-      readTime: '4 min read',
-      image: '/young-table-tennis-training.png',
-      category: 'Program Launch'
-    },
+  const news = [  
+{
+  title: 'El ping-pong: mucho más que un juego, un aliado contra la demencia',
+  description: 'Publicado en Medium: cómo el tenis de mesa puede ser un aliado para la salud física y cognitiva, especialmente en personas mayores.',
+  date: '2025-08-19',
+  readTime: '5 min read',
+  image: '/encyclopedia-02-00107-g003-550.jpg',
+  category: 'Salud'
+},
     {
       title: 'Member Spotlight: Sarah Chen',
       description: 'Meet Sarah Chen, our rising star who recently won the regional junior championship. Read about her journey and training.',
