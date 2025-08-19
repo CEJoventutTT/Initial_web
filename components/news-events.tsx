@@ -18,12 +18,12 @@ export default function NewsEvents() {
   category: 'Salud'
 },
     {
-      title: 'Member Spotlight: Sarah Chen',
-      description: 'Meet Sarah Chen, our rising star who recently won the regional junior championship. Read about her journey and training.',
-      date: '2024-01-12',
+      title: 'El ping-pong en la infancia y adolescencia: un aliado para crecer con cuerpo y mente sanos',
+      description: 'Impacto del tenis de mesa en el desarrollo físico, cognitivo y social de niños y adolescentes.',
+      date: '2025-08-19',
       readTime: '5 min read',
-      image: '/female-table-tennis-winner.png',
-      category: 'Member Spotlight'
+      image: '/2.jpg',
+      category: 'Salud',
     }
   ]
 

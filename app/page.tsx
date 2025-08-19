@@ -6,7 +6,7 @@ import WhoWeAre from '@/components/who-we-are'
 import TrainingsActivities from '@/components/trainings-activities'
 import CompetitionResults from '@/components/competition-results'
 import NewsEvents from '@/components/news-events'
-import MediaGallery from '@/components/media-gallery'
+//import MediaGallery from '@/components/media-gallery'
 import BecomeMember from '@/components/become-member'
 import Contact from '@/components/contact'
 
@@ -18,8 +18,8 @@ export default function HomePage() {
       <WhoWeAre />
       <TrainingsActivities />
       <CompetitionResults />
-     {/* <NewsEvents />
-      <MediaGallery />*/}
+     <NewsEvents />
+      {/*<MediaGallery />*/}
       <BecomeMember />
       <Contact />
     </div>
