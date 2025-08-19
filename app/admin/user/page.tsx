@@ -1,9 +1,10 @@
 // app/admin/users/page.tsx
 'use client'
 
-import { useFormState, useFormStatus } from 'react-dom'
-import { createUserAdmin } from './actions'
 import { useEffect } from 'react'
+import { useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
+import { createUserAdmin } from './actions'
 
 function SubmitButton() {
   const { pending } = useFormStatus()
@@ -21,12 +22,11 @@ function SubmitButton() {
 const initialState = { ok: false, error: null as string | null, message: null as string | null }
 
 export default function AdminUsersPage() {
-  const [state, formAction] = useFormState(createUserAdmin, initialState)
+  const [state, formAction] = useActionState(createUserAdmin, initialState)
 
   useEffect(() => {
-    // aquí podrías disparar un toast si usas tu sistema de notificaciones
-    if (state?.error) console.error(state.error)
-    if (state?.ok) console.log(state.message)
+    if (state?.error) console.error('[AdminUsers] Error:', state.error)
+    if (state?.ok && state?.message) console.log('[AdminUsers] OK:', state.message)
   }, [state])
 
   return (
@@ -74,7 +74,9 @@ export default function AdminUsersPage() {
         <p className="text-red-500 text-sm">Error: {state.error}</p>
       )}
       {state?.ok && (
-        <p className="text-green-600 text-sm">{state.message}</p>
+        <p className="text-green-600 text-sm whitespace-pre-line">
+          {state.message}
+        </p>
       )}
     </div>
   )
