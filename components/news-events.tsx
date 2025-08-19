@@ -18,7 +18,7 @@ export default function NewsEvents() {
   category: 'Salud'
 },
     {
-      title: 'El ping-pong en la infancia y adolescencia: un aliado para crecer con cuerpo y mente sanos',
+      title: 'El ping-pong en la infancia y adolescencia: un camino hacia la salud física y mental',
       description: 'Impacto del tenis de mesa en el desarrollo físico, cognitivo y social de niños y adolescentes.',
       date: '2025-08-19',
       readTime: '5 min read',
