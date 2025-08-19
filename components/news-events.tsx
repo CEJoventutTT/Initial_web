@@ -91,6 +91,18 @@ export default function NewsEvents() {
       href: 'https://sport-transfer.eu/table-tennis---the-best-entertainment-sport-for-children-and-young-people,3,55',
       lang: 'en',
     },
+            {
+
+      title: 'Unlocking the Secrets of Spin: Understanding the Physics of Table Tennis',
+      description: 'The ping pong ball is a six-degree-of-freedom motion in a gravitational field, with the ball interacting with the air, the racket, and the table. This includes three translational and three rotational degrees of freedom. ',
+      date: '2024-09-7',
+      readTime: '5 min read',
+      image: '/1.jpg',
+      category: 'Training',
+      href:
+        'https://medium.com/@chrislu81/unlocking-the-secrets-of-spin-understanding-the-physics-of-table-tennis-db45db130561',
+      lang: 'en',
+    },
   ]
 
   // noticias visibles según idioma (fallback a ES si quedara vacío)
@@ -158,7 +170,7 @@ export default function NewsEvents() {
         </div>
 
         <div className="text-center mt-12">
-          <Link href="/noticias">
+          <Link href="/news">
             <Button className="border border-white/20 bg-white/5 text-white hover:bg-primary hover:text-primary-foreground">
               {t('news.viewAllNews')}
             </Button>

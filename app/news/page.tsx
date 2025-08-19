@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 
 type Lang = 'es' | 'en' | 'ca'
-type CategoryId = 'all' | 'health'
+type CategoryId = 'all' | 'health' | 'training'
 
 type Article = {
   id: string
@@ -102,6 +102,18 @@ export default function NewsPage() {
       categories: ['health'],
       externalUrl:
         'https://sport-transfer.eu/table-tennis---the-best-entertainment-sport-for-children-and-young-people,3,55',
+      lang: 'en',
+    },
+        {
+      id: 'pingpong-physics-en',
+      title: 'Unlocking the Secrets of Spin: Understanding the Physics of Table Tennis',
+      excerpt: 'The ping pong ball is a six-degree-of-freedom motion in a gravitational field, with the ball interacting with the air, the racket, and the table. This includes three translational and three rotational degrees of freedom. ',
+      date: '2024-09-7',
+      readTime: '5 min read',
+      image: '/1.jpg',
+      categories: ['training'],
+      externalUrl:
+        'https://medium.com/@chrislu81/unlocking-the-secrets-of-spin-understanding-the-physics-of-table-tennis-db45db130561',
       lang: 'en',
     },
   ]
