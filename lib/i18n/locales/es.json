@@ -171,7 +171,7 @@
     "studentsLabel": "estudiantes",
     "coachLabel": "Entrenador:",
     "locationLabel": "Ubicación:",
-    "locationClub": "Cp L'Urgell",
+    "locationClub": "Club Robinson 350, 07830, Sant Josep de sa Talaia",
     "enrollNow": "Inscribirse Ahora",
     "specialPrograms": "Programas Especiales",
     "specialProgramsDesc": "Opciones de entrenamiento adicionales para necesidades específicas",
@@ -363,7 +363,7 @@
     "message": "Mensaje",
     "sendMessageBtn": "Enviar Mensaje",
     "sending": "Enviando...",
-    "addressText": "C.P. L'Urgell | Avinguda del Diputat Josep Ribas, s/n\n07830 Sant Josep de sa Talaia, Illes Balears",
+    "addressText": "Club Robinson 350, 07830, Sant Josep de sa Talaia",
     "phoneText": "+34 644 978 857",
     "emailText": "ce.joventut.tt@gmail.com",
     "hoursText": "Mon-Fri: 6AM-10PM\nSat-Sun: 8AM-8PM"

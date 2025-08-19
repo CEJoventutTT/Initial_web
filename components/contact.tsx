@@ -66,7 +66,7 @@ export default function Contact() {
           <div className="space-y-8">
             <div className="grid sm:grid-cols-2 gap-6">
               {[
-                { Icon: MapPin, title: t('contact.address'), text: <>C.P. L'Urgell | Avinguda del Diputat Josep Ribas, s/n <br /> 07830 Sant Josep de sa Talaia, Illes Balears</> },
+                { Icon: MapPin, title: t('contact.address'), text: <"Carrer Club Robinson 350, 07830, Sant Josep de sa Talaia, Illes Balears"</> },
                 { Icon: Phone, title: t('contact.phone'), text: '+34 644 978 857' },
                 { Icon: Mail, title: t('contact.email'), text: 'ce.joventut.tt@gmail.com' },
                 { Icon: Clock, title: t('contact.hours'), text: <>Mon-Fri: 6AM-10PM<br/>Sat-Sun: 8AM-8PM</> },
@@ -91,7 +91,7 @@ export default function Contact() {
                 <div className="h-64 rounded-lg overflow-hidden">
                   <iframe
                     title="Club Esportiu Joventut Location"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3104.1939318490176!2d1.302067774867495!3d38.91954467171931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129946b9e686a4ab%3A0x8c31162d212170ec!2sC.P.%20L'Urgell!5e0!3m2!1ses-419!2ses!4v1755185883113!5m2!1ses-419!2ses"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3104.763822293864!2d1.2218434745180826!3d38.906515871721986!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12994b5b1c0dc0b3%3A0x8237f810ec79cea0!2sCarrer%20Club%20Robinson%2C%20350%2C%2007830%20Cala%20Vedella%2C%20Illes%20Balears!5e0!3m2!1ses!2ses!4v1755614880624!5m2!1ses!2ses"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
