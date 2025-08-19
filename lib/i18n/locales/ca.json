@@ -256,8 +256,10 @@
       "programLaunch": "Llançament de Programa",
       "memberSpotlight": "Membre Destacat",
       "results": "Resultats",
-      "workshop": "Salut",
-      "announcement": "Anunci"
+      "health": "Salut",
+      "announcement": "Anunci",
+      "training": "Formació"
+      
     },
     "viewAllNews": "Veure Totes les Notícies",
     "emptyTitle": "A punt d’engegar",
