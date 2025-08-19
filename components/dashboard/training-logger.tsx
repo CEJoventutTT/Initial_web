@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -7,24 +6,49 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Plus, Calendar, Clock, Target } from 'lucide-react'
+import { supabaseBrowser } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
-export default function TrainingLogger() {
+export default function TrainingLogger({
+  recentLogs,
+  uid
+}: {
+  recentLogs: Array<{ id:number; session_type:string; duration_min:number; notes:string|null; created_at:string }>
+  uid: string
+}) {
   const [isLogging, setIsLogging] = useState(false)
+  const [type, setType] = useState<string | undefined>(undefined)
+  const [duration, setDuration] = useState<number | ''>('')
+  const [notes, setNotes] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
-  const recentSessions = [
-    { date: '2024-01-15', type: 'Competition Training', duration: '90 min', xpGained: 120, notes: 'Worked on backhand technique' },
-    { date: '2024-01-12', type: 'Beginner Class',       duration: '60 min', xpGained: 80,  notes: 'Helped new members with basics' },
-    { date: '2024-01-10', type: 'Solo Practice',        duration: '45 min', xpGained: 60,  notes: 'Focused on serve consistency' },
-  ]
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!type || !duration) return
+    setLoading(true)
+    const supabase = supabaseBrowser()
+    const { error } = await supabase.from('training_logs').insert({
+      user_id: uid,               // RLS: debe coincidir con auth.uid()
+      session_type: type,
+      duration_min: Number(duration),
+      notes: notes || null
+    })
+    setLoading(false)
+    if (!error) {
+      setIsLogging(false)
+      setType(undefined); setDuration(''); setNotes('')
+      router.refresh() // refresca datos server del dashboard
+    } else {
+      alert(error.message)
+    }
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-white">Training Sessions</h2>
-        <Button
-          onClick={() => setIsLogging(!isLogging)}
-          className="bg-[#BF0F30] hover:bg-[#a50c28] text-white"
-        >
+        <Button onClick={() => setIsLogging(!isLogging)} className="bg-[#BF0F30] hover:bg-[#a50c28] text-white">
           <Plus className="mr-2 h-4 w-4" />
           Log New Session
         </Button>
@@ -36,11 +60,11 @@ export default function TrainingLogger() {
             <CardTitle className="text-white">Log Training Session</CardTitle>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={onSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-white/80 mb-2">Session Type</label>
-                  <Select>
+                  <Select value={type} onValueChange={setType}>
                     <SelectTrigger className="bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Select training type" />
                     </SelectTrigger>
@@ -59,6 +83,8 @@ export default function TrainingLogger() {
                   <Input
                     type="number"
                     placeholder="90"
+                    value={duration}
+                    onChange={(e)=>setDuration(e.target.value ? Number(e.target.value) : '')}
                     className="bg-white/5 border-white/10 text-white placeholder-white/50"
                   />
                 </div>
@@ -68,21 +94,18 @@ export default function TrainingLogger() {
                 <label className="block text-sm font-medium text-white/80 mb-2">Session Notes</label>
                 <Textarea
                   placeholder="What did you work on today? Any improvements or challenges?"
+                  value={notes}
+                  onChange={(e)=>setNotes(e.target.value)}
                   className="bg-white/5 border-white/10 text-white placeholder-white/50"
                   rows={3}
                 />
               </div>
 
               <div className="flex space-x-4">
-                <Button type="submit" className="bg-[#BF0F30] hover:bg-[#a50c28] text-white">
-                  Log Session (+100 XP)
+                <Button type="submit" disabled={loading} className="bg-[#BF0F30] hover:bg-[#a50c28] text-white">
+                  {loading ? 'Saving…' : 'Log Session (+100 XP)'}
                 </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsLogging(false)}
-                  className="border-white/15 text-white/80 hover:bg-white/10"
-                >
+                <Button type="button" variant="outline" onClick={() => setIsLogging(false)} className="border-white/15 text-white/80 hover:bg-white/10">
                   Cancel
                 </Button>
               </div>
@@ -91,37 +114,41 @@ export default function TrainingLogger() {
         </Card>
       )}
 
-      {/* Recent Sessions */}
       <Card className="bg-[#262425] border-white/10">
         <CardHeader>
           <CardTitle className="text-white">Recent Sessions</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {recentSessions.map((session, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            {recentLogs.map((s) => (
+              <div key={s.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                 <div className="flex items-center space-x-4">
                   <div className="bg-[#5D8C87] p-2 rounded-lg">
                     <Target className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="text-white font-medium">{session.type}</h4>
+                    <h4 className="text-white font-medium">
+                      {s.session_type === 'beginner' ? 'Beginner Class' :
+                       s.session_type === 'competition' ? 'Competition Training' :
+                       s.session_type === 'adults' ? 'Adults Program' :
+                       s.session_type === 'solo' ? 'Solo Practice' : 'Practice Match'}
+                    </h4>
                     <div className="flex items-center text-sm text-white/70 space-x-4">
                       <span className="flex items-center">
                         <Calendar className="mr-1 h-3 w-3" />
-                        {new Date(session.date).toLocaleDateString()}
+                        {new Date(s.created_at).toLocaleDateString()}
                       </span>
                       <span className="flex items-center">
                         <Clock className="mr-1 h-3 w-3" />
-                        {session.duration}
+                        {s.duration_min} min
                       </span>
                     </div>
-                    <p className="text-white/80 text-sm mt-1">{session.notes}</p>
+                    {s.notes && <p className="text-white/80 text-sm mt-1">{s.notes}</p>}
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="font-bold" style={{ color: '#6BBFA0' }}>
-                    +{session.xpGained} XP
+                    +100 XP
                   </div>
                 </div>
               </div>
