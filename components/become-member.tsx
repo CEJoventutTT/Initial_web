@@ -5,6 +5,7 @@ import { Users, Trophy, Heart } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
 
+
 export default function BecomeMember() {
   const { t } = useTranslation()
 

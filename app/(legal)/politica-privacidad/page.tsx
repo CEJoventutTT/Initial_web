@@ -1,15 +1,13 @@
-import type { Metadata } from "next"
-import PrivacyClient from "./privacy-client"
+import type { Metadata } from 'next'
+import { getLang, getSeo } from '../../seo'
+import PrivacyClient from '@/components/legal/PrivacyClient'
 
-export const metadata: Metadata = {
-  title: "Política de Privacidad | Club Esportiu Joventut",
-  description: "Política de privacidad (RGPD/LOPDGDD) del Club Esportiu Joventut."
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang()
+  const { title, description } = getSeo('legal_privacy', lang)
+  return { title, description, alternates: { canonical: 'https://cejoventut.com/politica-privacidad' } }
 }
 
 export default function Page() {
-  return (
-    <section className="prose prose-invert max-w-none">
-      <PrivacyClient />
-    </section>
-  )
+  return <PrivacyClient />
 }

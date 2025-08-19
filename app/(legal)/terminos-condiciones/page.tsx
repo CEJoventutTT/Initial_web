@@ -1,15 +1,13 @@
-import type { Metadata } from "next"
-import TermsClient from "./terms-client"
+import type { Metadata } from 'next'
+import { getLang, getSeo } from '../../seo'
+import TermsClient from '@/components/legal/TermsClient'
 
-export const metadata: Metadata = {
-  title: "Términos y Condiciones | Club Esportiu Joventut",
-  description: "Términos y Condiciones del sitio del Club Esportiu Joventut."
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang()
+  const { title, description } = getSeo('legal_terms', lang)
+  return { title, description, alternates: { canonical: 'https://cejoventut.com/terminos-condiciones' } }
 }
 
 export default function Page() {
-  return (
-    <section className="prose prose-invert max-w-none">
-      <TermsClient />
-    </section>
-  )
+  return <TermsClient />
 }

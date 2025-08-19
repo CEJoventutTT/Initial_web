@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 
+
 export default function Contact() {
   const { t } = useTranslation()
   const [formData, setFormData] = useState({

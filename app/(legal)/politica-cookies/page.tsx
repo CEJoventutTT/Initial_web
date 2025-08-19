@@ -1,15 +1,13 @@
-import type { Metadata } from "next"
-import CookiesClient from "./cookies-client"
+import type { Metadata } from 'next'
+import { getLang, getSeo } from '../../seo'
+import CookiesClient from '@/components/legal/CookiesClient'
 
-export const metadata: Metadata = {
-  title: "Política de Cookies | Club Esportiu Joventut",
-  description: "Política de cookies del Club Esportiu Joventut."
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang()
+  const { title, description } = getSeo('legal_cookies', lang)
+  return { title, description, alternates: { canonical: 'https://cejoventut.com/politica-cookies' } }
 }
 
 export default function Page() {
-  return (
-    <section className="prose prose-invert max-w-none">
-      <CookiesClient />
-    </section>
-  )
+  return <CookiesClient />
 }

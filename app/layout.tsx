@@ -55,6 +55,33 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} suppressHydrationWarning>
+      <head>
+        {/* JSON-LD Schema.org */}
+        <script
+          type="application/ld+json"
+          // Ajusta las URLs de logo/imagen si usas otras rutas
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SportsClub",
+              "name": "Club Esportiu Joventut TT",
+              "url": "https://cejoventut.com",
+              "logo": "https://cejoventut.com/logo.png",
+              "image": "https://cejoventut.com/10.jpg",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Carrer Club Robinson, 350",
+                "addressLocality": "Sant Josep de sa Talaia",
+                "addressRegion": "Illes Balears",
+                "postalCode": "07830",
+                "addressCountry": "ES"
+              },
+              "sport": "TableTennis",
+              "email": "ce.joventut.tt@gmail.com"
+            })
+          }}
+        />
+      </head>
       <body className="font-inter bg-dark text-white">
         <TranslationProvider initialLanguage={lang} dictionary={dict}>
           {children}
