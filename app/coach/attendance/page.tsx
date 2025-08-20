@@ -1,149 +1,68 @@
+// app/attend/page.tsx
 'use client'
-import { useEffect, useMemo, useState } from 'react'
 
-type Program = { id: number; name: string | null }
-type Session = { id: number; program_id: number; starts_at: string; ends_at: string }
-type Student = { user_id: string; profiles?: { full_name: string | null } }
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-export default function CoachAttendancePage() {
-  const [programs, setPrograms] = useState<Program[]>([])
-  const [sessions, setSessions] = useState<Session[]>([])
-  const [students, setStudents] = useState<Student[]>([])
+export default function AttendPage() {
+  const supabase = createClientComponentClient()
+  const router = useRouter()
+  const qp = useSearchParams()
+  const s = qp.get('s')
+  const k = qp.get('k')
 
-  const [programId, setProgramId] = useState<number | ''>('')
-  const [sessionId, setSessionId] = useState<number | ''>('')
-  const [userId, setUserId] = useState<string>('')
-  const [status, setStatus] = useState<'present'|'absent'|'late'>('present')
   const [msg, setMsg] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [ok, setOk] = useState<boolean | null>(null)
 
-  // Carga inicial: programas + sesiones (server API con RLS)
   useEffect(() => {
     (async () => {
-      setLoading(true)
-      setMsg(null)
-      const res = await fetch('/api/coach/attendance', { cache: 'no-store' })
-      const data = await res.json()
-      if (res.ok) {
-        setPrograms(data.programs ?? [])
-        setSessions(data.sessions ?? [])
-      } else {
-        setMsg(`Error: ${data.error || 'No se pudieron cargar los datos'}`)
+      if (!s || !k) {
+        setOk(false)
+        setMsg('Código inválido.')
+        return
       }
-      setLoading(false)
-    })()
-  }, [])
-
-  // Al cambiar de programa, cargar alumnos (server API con RLS)
-  useEffect(() => {
-    (async () => {
-      setStudents([])
-      setSessionId('')
-      setUserId('')
-      if (!programId) return
-      const res = await fetch(`/api/coach/programs/${programId}/students`, { cache: 'no-store' })
-      const data = await res.json()
-      if (res.ok) {
-        setStudents(data.students ?? [])
-      } else {
-        setMsg(`Error: ${data.error || 'No se pudieron cargar los alumnos'}`)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        // redirige a login y vuelve aquí
+        const site = typeof window !== 'undefined' ? window.location.origin : ''
+        router.push(`/login?redirect=${encodeURIComponent(`/attend?s=${s}&k=${k}`)}`)
+        return
+      }
+      try {
+        const res = await fetch('/api/attendance/checkin', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ session_id: Number(s), key: k })
+        })
+        const data = await res.json()
+        if (res.ok) {
+          setOk(true)
+          setMsg(data.status === 'present'
+            ? `¡Asistencia registrada! +${data.xp} XP (puntual)`
+            : `Llegaste tarde. +${data.xp} XP`)
+          // opcional: ir al dashboard
+          // setTimeout(()=> router.push('/dashboard'), 1200)
+        } else {
+          setOk(false)
+          setMsg(data.detail || data.error || 'No se pudo registrar la asistencia.')
+        }
+      } catch (e: any) {
+        setOk(false)
+        setMsg(String(e?.message || e))
       }
     })()
-  }, [programId])
-
-  const sessionsOfProgram = useMemo(
-    () => sessions.filter(s => s.program_id === programId),
-    [sessions, programId]
-  )
-
-  const fmt = (iso: string) =>
-    new Date(iso).toLocaleString('es-ES', {
-      weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
-    })
-
-  async function mark() {
-    setMsg(null)
-    if (!programId || !sessionId || !userId) {
-      setMsg('Selecciona programa, sesión y alumno')
-      return
-    }
-    const res = await fetch('/api/coach/attendance/mark', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ session_id: Number(sessionId), user_id: userId, status })
-    })
-    const data = await res.json()
-    setMsg(res.ok ? '✅ Asistencia marcada' : `❌ ${data.error}`)
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [s, k])
 
   return (
-    <div className="space-y-6 max-w-3xl">
-      <h2 className="text-2xl font-bold">Marcar asistencia</h2>
-
-      {loading ? (
-        <p className="text-white/70">Cargando…</p>
-      ) : (
-        <>
-          <div className="grid md:grid-cols-3 gap-4">
-            <select
-              className="bg-white/5 border border-white/10 rounded p-2 text-white"
-              value={programId}
-              onChange={e=>{ setProgramId(e.target.value ? Number(e.target.value) : ''); setSessionId(''); setUserId('') }}
-            >
-              <option value="">Programa</option>
-              {programs.map(p => (
-                <option key={p.id} value={p.id}>{p.name ?? `Programa #${p.id}`}</option>
-              ))}
-            </select>
-
-            <select
-              className="bg-white/5 border border-white/10 rounded p-2 text-white"
-              value={sessionId}
-              onChange={e=>setSessionId(e.target.value ? Number(e.target.value) : '')}
-              disabled={!programId}
-            >
-              <option value="">Sesión</option>
-              {sessionsOfProgram.map(s => (
-                <option key={s.id} value={s.id}>
-                  #{s.id} • {fmt(s.starts_at)}
-                </option>
-              ))}
-            </select>
-
-            <select
-              className="bg-white/5 border border-white/10 rounded p-2 text-white"
-              value={userId}
-              onChange={e=>setUserId(e.target.value)}
-              disabled={!programId}
-            >
-              <option value="">Alumno</option>
-              {students.map(en => (
-                <option key={en.user_id} value={en.user_id}>
-                  {en.profiles?.full_name ?? en.user_id}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <select
-              className="bg-white/5 border border-white/10 rounded p-2 text-white"
-              value={status}
-              onChange={e=>setStatus(e.target.value as any)}
-            >
-              <option value="present">present</option>
-              <option value="absent">absent</option>
-              <option value="late">late</option>
-            </select>
-
-            <button className="bg-primary text-primary-foreground rounded px-4 py-2" onClick={mark}>
-              Guardar
-            </button>
-          </div>
-
-          {msg && <p className="text-white/80">{msg}</p>}
-        </>
-      )}
+    <div className="min-h-screen flex items-center justify-center bg-brand-dark text-white px-4">
+      <div className="w-full max-w-md bg-white/5 border border-white/10 rounded p-6 text-center">
+        <h1 className="text-xl font-bold mb-2">Registro de asistencia</h1>
+        {ok === null && <p className="text-white/70">Procesando…</p>}
+        {ok === true && <p className="text-green-400">{msg}</p>}
+        {ok === false && <p className="text-red-400">{msg}</p>}
+      </div>
     </div>
   )
 }
