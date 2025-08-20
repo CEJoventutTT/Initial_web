@@ -1,55 +1,38 @@
-// app/login/page.tsx
 'use client'
+import { useState } from 'react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-import * as React from 'react'
-import { useActionState } from 'react'
-import { signInAction, type LoginState } from './actions'
+export default function LoginForm() {
+  const supabase = createClientComponentClient()
+  const router = useRouter()
+  const sp = useSearchParams()
+  const next = sp.get('next') || '/dashboard'
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [msg, setMsg] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
-const initialState: LoginState = { error: null }
-
-export default function LoginPage() {
-  const [state, formAction, pending] = useActionState(signInAction, initialState)
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true); setMsg(null)
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) { setMsg(error.message); return }
+      router.replace(next)
+    } catch (err: any) {
+      setMsg(err?.message || 'No se pudo contactar con el servicio de autenticación.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-brand-dark text-white px-4">
-      <form action={formAction} className="w-full max-w-sm space-y-4 bg-white/5 p-6 rounded border border-white/10">
-        <h1 className="text-xl font-bold">Entrar</h1>
-
-        <div className="space-y-1">
-          <label htmlFor="email" className="block text-sm">Email</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            className="w-full rounded border px-3 py-2 text-black"
-            placeholder="tu@correo.com"
-          />
-        </div>
-
-        <div className="space-y-1">
-          <label htmlFor="password" className="block text-sm">Contraseña</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="w-full rounded border px-3 py-2 text-black"
-            placeholder="********"
-          />
-        </div>
-
-        <button
-          disabled={pending}
-          className="bg-primary text-primary-foreground rounded px-4 py-2 disabled:opacity-60"
-        >
-          {pending ? 'Entrando…' : 'Entrar'}
-        </button>
-
-        {state?.error && <p className="text-red-400 text-sm">{state.error}</p>}
-      </form>
-    </div>
+    <form onSubmit={onSubmit} className="space-y-4">
+      <input className="text-black px-3 py-2 rounded w-full" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" required />
+      <input className="text-black px-3 py-2 rounded w-full" type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Contraseña" required />
+      <button disabled={loading} className="bg-primary px-4 py-2 rounded">{loading ? 'Entrando…' : 'Entrar'}</button>
+      {msg && <p className="text-red-400 text-sm">{msg}</p>}
+    </form>
   )
 }

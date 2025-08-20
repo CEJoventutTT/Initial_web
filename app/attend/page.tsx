@@ -14,33 +14,31 @@ export default function AttendPage() {
   const fired = useRef(false) // evita doble ejecución
 
   useEffect(() => {
-    if (fired.current) return
-    fired.current = true
-
     const s = sp.get('s')
-    const k = sp.get('k')
-    if (!s || !k) {
-      setStatus('error'); setMsg('Parámetros inválidos en el enlace.')
-      return
-    }
-    const session_id = Number(s)
-    if (!Number.isFinite(session_id)) {
-      setStatus('error'); setMsg('ID de sesión inválido.')
-      return
-    }
+const k = sp.get('k')
+if (!s || !k) { setStatus('error'); setMsg('Parámetros inválidos.'); return }
+const session_id = Number(s)
+if (!Number.isFinite(session_id)) { setStatus('error'); setMsg('ID de sesión inválido.'); return }
+
+const res = await fetch('/api/coach/attendance/checkin', {   // 🔴 misma ruta
+  method: 'POST',
+  credentials: 'include',
+  cache: 'no-store',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ session_id, key: k }),
+})
 
     const run = async () => {
       setStatus('sending'); setMsg('Registrando asistencia…')
       try {
         const res = await fetch('/api/coach/attendance/checkin', {
           method: 'POST',
-          credentials: 'include',           // usa cookies (tu handler las espera)
-          cache: 'no-store',                // evita caché
+          credentials: 'include',   // usa cookies (tu handler las espera)
+          cache: 'no-store',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id, key: k }),
+          body: JSON.stringify({ key: k }), // ✅ solo key
         })
 
-        // Si no hay sesión del alumno, manda a login
         if (res.status === 401) {
           setStatus('error'); setMsg('Inicia sesión para registrar tu asistencia.')
           router.push('/login?next=' + encodeURIComponent(location.pathname + location.search))

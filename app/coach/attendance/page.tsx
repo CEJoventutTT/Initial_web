@@ -30,7 +30,7 @@ export default function AttendPage() {
         return
       }
       try {
-        const res = await fetch('/api/attendance/checkin', {
+        const res = await fetch('/api/coach/attendance/checkin', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ session_id: Number(s), key: k })
