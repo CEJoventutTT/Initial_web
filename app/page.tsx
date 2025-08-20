@@ -1,5 +1,4 @@
 // app/page.tsx
-
 import Navigation from '@/components/navigation'
 import Hero from '@/components/hero'
 import WhoWeAre from '@/components/who-we-are'
@@ -12,6 +11,7 @@ import Contact from '@/components/contact'
 
 import type { Metadata } from 'next'
 import { getLang, getSeo } from './seo'
+import HomeRedirectWrapper from '@/components/home-redirect-wrapper'
 
 // ✅ SEO dinámico según idioma
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,19 +20,19 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title, description }
 }
 
-// ✅ Componente server (NO lleva 'use client')
+// ✅ Componente server (mantiene SSR) y envuelve en wrapper cliente
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-dark text-white">
-      <Navigation />
-      <Hero />
-      <WhoWeAre />
-      <TrainingsActivities />
-      <CompetitionResults />
-      <NewsEvents />
-      {/* <MediaGallery /> */}
-      <BecomeMember />
-      <Contact />
-    </div>
+      <div className="min-h-screen bg-dark text-white">
+        <Navigation />
+        <Hero />
+        <WhoWeAre />
+        <TrainingsActivities />
+        <CompetitionResults />
+        <NewsEvents />
+        {/* <MediaGallery /> */}
+        <BecomeMember />
+        <Contact />
+      </div>
   )
 }

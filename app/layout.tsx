@@ -6,6 +6,7 @@ import { TranslationProvider, type Language } from "@/lib/i18n"
 import { Toaster } from "@/components/ui/toaster"
 import FooterLegal from "@/components/footer-legal"
 import CookieConsent from "@/components/cookie-consent"
+import AuthHashCatcher from "@/components/auth-hash-catcher"
 
 // Carga SSR de diccionarios
 async function loadDict(lang: Language) {
@@ -59,7 +60,6 @@ export default async function RootLayout({
         {/* JSON-LD Schema.org */}
         <script
           type="application/ld+json"
-          // Ajusta las URLs de logo/imagen si usas otras rutas
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
