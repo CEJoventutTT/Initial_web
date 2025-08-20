@@ -2,77 +2,70 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-function randomKey(len = 16) {
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+function randomKey(len = 20) {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz'
   let out = ''
-  const cryptoObj = globalThis.crypto || (require('crypto').webcrypto as Crypto)
   const buf = new Uint32Array(len)
-  cryptoObj.getRandomValues(buf)
+  crypto.getRandomValues(buf)
   for (let i = 0; i < len; i++) out += chars[buf[i] % chars.length]
   return out
 }
 
 export async function POST(req: Request) {
-  const ac = new AbortController()
-  const t = setTimeout(() => ac.abort(), 12_000)
   try {
-    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-    if (!token) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-
-    const userClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        global: { headers: { Authorization: `Bearer ${token}` } },
-        auth: { autoRefreshToken: false, persistSession: false },
-      }
-    )
-
-    const { data: { user }, error: userErr } = await userClient.auth.getUser({ signal: ac.signal } as any)
-    if (userErr || !user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-
-    const { program_id, start_at, end_at } = await req.json()
-
-    const s = new Date(start_at)
-    const e = new Date(end_at)
-    if (isNaN(+s) || isNaN(+e)) {
-      return NextResponse.json({ error: 'invalid_datetime' }, { status: 400 })
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!url || !serviceKey) {
+      console.error('[sessions.create] missing env', { hasURL: !!url, hasService: !!serviceKey })
+      return NextResponse.json({ error: 'server_misconfigured' }, { status: 500 })
     }
 
-    // ownership
-    const { data: owns, error: ownErr } = await userClient
-      .from('coach_programs')
-      .select('id')
-      .eq('program_id', program_id)
-      .eq('coach_id', user.id)
-      .limit(1)
-    if (ownErr) return NextResponse.json({ error: ownErr.message }, { status: 400 })
-    if (!owns || owns.length === 0) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+    const supabase = createClient(url, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
 
-    // Inserta con Service Role
-    const admin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
+    const body = await req.json().catch(() => null)
+    if (!body) return NextResponse.json({ error: 'invalid_body' }, { status: 400 })
+
+    const programId = body.program_id ?? body.programId
+    // Ajusta la ventana horaria: ahora → +10 min (cámbialo a tu gusto)
+    const startAt = body.start_at ?? body.starts_at ?? new Date().toISOString()
+    const endAt =
+      body.end_at ??
+      body.ends_at ??
+      new Date(Date.now() + 10 * 60_000).toISOString()
+
+    if (!programId) return NextResponse.json({ error: 'program_id_required' }, { status: 400 })
 
     const payload = {
-      program_id,
-      start_at: s.toISOString(),
-      end_at: e.toISOString(),
-      active: true,
+      program_id: Number(programId),
       qr_key: randomKey(20),
-      // secret: crypto.randomUUID(), // si quieres doble validación
+      secret: crypto.randomUUID(),
+      active: true,
+      expires_at: null,
+      // ⬇️ Usa los nombres REALES de tus columnas
+      start_at: startAt, // cambia a starts_at si tu tabla lo usa con "s"
+      end_at: endAt,     // cambia a ends_at si aplica
     }
 
-    const { data, error: insErr } = await admin
+    const { data, error } = await supabase
       .from('attendance_sessions')
       .insert(payload)
-      .select('id, qr_key')
+      .select('id, program_id, qr_key, secret, active, start_at, end_at')
       .single()
 
-    if (insErr) return NextResponse.json({ error: insErr.message }, { status: 400 })
-    return NextResponse.json({ ok: true, id: data.id, qr_key: data.qr_key })
-  } finally {
-    clearTimeout(t)
+    if (error) {
+      console.error('[sessions.create] insert_error', error)
+      return NextResponse.json({ error: error.message }, { status: 400 })
+    }
+
+    return NextResponse.json({ ok: true, session: data }, { status: 200 })
+  } catch (e: any) {
+    console.error('[sessions.create] server_error', e)
+    return NextResponse.json({ error: e.message ?? 'server_error' }, { status: 500 })
   }
 }
