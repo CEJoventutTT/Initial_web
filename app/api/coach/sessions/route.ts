@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     )
 
     const { error: insErr } = await admin
-      .from('sessions')
+      .from('attendance_sessions')
       .insert({ program_id, starts_at: s.toISOString(), ends_at: e.toISOString() })
 
     if (insErr) return NextResponse.json({ error: insErr.message }, { status: 400 })

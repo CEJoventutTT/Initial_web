@@ -1,47 +1,116 @@
 // app/coach/sessions/[id]/qr/page.tsx
-import { supabaseServer } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import { headers } from 'next/headers'
-import QR from './qr-client'
-import RotateQrButton from '@/components/coach/RotateQrButton'
+import { cookies, headers } from 'next/headers'
+import { createServerClient } from '@supabase/ssr'
+import CopyButton from '@/components/CopyButton'
 
-export default async function SessionQRPage({ params }: { params: { id: string } }) {
-  const supabase = supabaseServer()
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) redirect('/login')
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
-  const sid = Number(params.id)
-  if (!Number.isFinite(sid)) redirect('/coach/sessions')
+export default async function SessionQrPage({ params }: { params: { id: string } }) {
+  const id = params.id
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: { get: (name: string) => cookieStore.get(name)?.value } }
+  )
 
-  const { data: s } = await supabase
-    .from('sessions')
-    .select('id, program_id, starts_at, ends_at, qr_secret')
-    .eq('id', sid)
+  const { data, error } = await supabase
+    .from('attendance_sessions')
+    .select('id, secret, start_at, end_at, active')
+    .eq('id', id)
     .single()
-  if (!s) redirect('/coach/sessions')
 
-  // permisos (igual que ya tenías) …
+  if (error || !data) {
+    return <div className="p-6 text-red-400">No se pudo cargar la sesión</div>
+  }
 
-  // 🔐 Base URL robusta: env var > headers > localhost
-  const h = headers()
-  const proto = h.get('x-forwarded-proto') ?? 'http'
-  const host  = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000'
-  const base  = (process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '')) || `${proto}://${host}`
+  const now = Date.now()
+  const start = new Date(data.start_at).getTime()
+  const end = new Date(data.end_at).getTime()
 
-  const attendUrl = `${base}/attend?s=${s.id}&k=${encodeURIComponent(String(s.qr_secret ?? ''))}`
+  let status: string
+  if (now < start) status = 'No iniciada'
+  else if (now > end) status = 'Finalizada'
+  else status = data.active ? 'En curso' : 'Pausada'
 
-  // render (igual) …
+  // Base URL
+  const siteEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '')
+  let siteBase = siteEnv
+  if (!siteBase) {
+    const h = await headers()
+    const host = h.get('x-forwarded-host') || h.get('host') || ''
+    const proto = (h.get('x-forwarded-proto') || 'https') + '://'
+    siteBase = host ? `${proto}${host}` : ''
+  }
+
+  // URL con secreto (solo válida si la sesión no ha terminado)
+  const attendUrl =
+    now <= end
+      ? `${siteBase}/attend?s=${encodeURIComponent(id)}&k=${encodeURIComponent(data.secret)}`
+      : null
+
+  const qrSrc =
+    attendUrl &&
+    `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
+      attendUrl
+    )}`
+
   return (
-    <div className="space-y-6 max-w-3xl">
-      {/* … */}
-      <div className="bg-white p-4 inline-block rounded">
-        <QR value={attendUrl} />
+    <main className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold">QR de la sesión</h1>
+
+      <div className="flex flex-col items-center gap-4 rounded border border-white/10 p-6">
+        <div className="text-white/80">
+          <p>
+            <strong>Inicio:</strong> {new Date(data.start_at).toLocaleString()}
+          </p>
+          <p>
+            <strong>Fin:</strong> {new Date(data.end_at).toLocaleString()}
+          </p>
+          <p>
+            <strong>Estado:</strong>{' '}
+            <span
+              className={
+                status === 'En curso'
+                  ? 'text-emerald-400'
+                  : status === 'No iniciada'
+                  ? 'text-yellow-400'
+                  : 'text-red-400'
+              }
+            >
+              {status}
+            </span>
+          </p>
+        </div>
+
+        {attendUrl ? (
+          <>
+            <img
+              src={qrSrc!}
+              alt="Código QR"
+              className="h-[300px] w-[300px] rounded bg-white p-2"
+            />
+            <div className="max-w-full overflow-x-auto rounded bg-white/5 p-3 font-mono text-sm">
+              {attendUrl}
+            </div>
+            <div className="flex gap-2">
+              <a
+                href={attendUrl}
+                className="rounded bg-white/10 px-3 py-1 hover:bg-white/20"
+                target="_blank"
+              >
+                Abrir enlace
+              </a>
+              <CopyButton text={attendUrl} />
+            </div>
+          </>
+        ) : (
+          <div className="rounded bg-red-500/10 p-4 text-red-300">
+            La sesión ya ha finalizado. El QR ha caducado.
+          </div>
+        )}
       </div>
-      <div className="text-xs text-white/60 break-all">{attendUrl}</div>
-      <div className="space-x-3">
-        <RotateQrButton sessionId={s.id} size="md" />
-        <a href="/coach/sessions" className="border border-white/20 rounded px-4 py-2 hover:bg-white/10">Volver</a>
-      </div>
-    </div>
+    </main>
   )
 }

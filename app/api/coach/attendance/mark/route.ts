@@ -39,7 +39,7 @@ export async function GET() {
   const programIds = programs.map(p => p.id)
 
   // 4) Sesiones de esos programas
-  let sessions: any[] = []
+  let attendance_sessions: any[] = []
   if (programIds.length > 0) {
     const { data: sess, error: sessErr } = await supabase
       .from('sessions')
