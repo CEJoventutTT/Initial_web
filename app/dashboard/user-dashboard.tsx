@@ -1,3 +1,7 @@
+'use client'
+
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 import WelcomeSection from '/components/dashboard/welcome-section'
 import StatsPanel from '/components/dashboard/stats-panel'
 import BadgesSection from '/components/dashboard/badges-section'
@@ -19,6 +23,15 @@ export default function UserDashboard(props: {
 }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold">Panel del estudiante</h1>
+        <Link href="/dashboard/scan">
+          <Button className="bg-primary text-white hover:bg-primary/90">
+            Escanear QR
+          </Button>
+        </Link>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left */}
         <div className="lg:col-span-2 space-y-8">
