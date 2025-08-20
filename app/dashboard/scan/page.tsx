@@ -30,10 +30,14 @@ export default function ScanQRPage() {
   const [raw, setRaw] = useState<string | null>(null)
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle')
   const [msg, setMsg] = useState('')
-  const sentFor = useRef<string>('')
 
-  // 🔊 referencia al audio
-  const audioRef = useRef<HTMLAudioElement | null>(null)
+  // para evitar repetir el mismo QR / o sonar demasiado
+  const sentFor = useRef<string>('')
+  const lastBeepAt = useRef<number>(0)
+
+  // 🔊 audios
+  const detectAudioRef = useRef<HTMLAudioElement | null>(null) // suena al detectar QR válido
+  const okAudioRef = useRef<HTMLAudioElement | null>(null)      // suena cuando el checkin es OK
 
   const constraints = useMemo(() => ({
     facingMode: 'environment' as const,
@@ -57,8 +61,8 @@ export default function ScanQRPage() {
         setStatus('error'); setMsg(json?.error ?? 'Error al registrar asistencia')
       } else {
         setStatus('ok'); setMsg(`Asistencia registrada (${json?.status ?? 'ok'}) ✅`)
-        // 🔊 reproduce el sonido de éxito
-        audioRef.current?.play().catch(() => {})
+        // 🔊 sonido de éxito al confirmar check-in
+        okAudioRef.current?.play().catch(() => {})
       }
     } catch {
       setStatus('error'); setMsg('Error de red')
@@ -86,9 +90,20 @@ export default function ScanQRPage() {
               const text = results?.[0]?.rawValue
               if (!text) return
               setRaw(text)
+
+              // ya procesado exactamente este contenido → no repetir
               if (sentFor.current === text) return
+
               const parsed = extractParamsFromQR(text)
               if (!parsed) { setStatus('error'); setMsg('QR inválido.'); return }
+
+              // 🔊 sonido al detectar un QR válido (throttle 700ms)
+              const now = Date.now()
+              if (now - lastBeepAt.current > 700) {
+                detectAudioRef.current?.play().catch(() => {})
+                lastBeepAt.current = now
+              }
+
               sentFor.current = text
               void checkin(parsed)
             }}
@@ -117,8 +132,9 @@ export default function ScanQRPage() {
           </p>
         )}
 
-        {/* 🔊 el elemento de audio en el DOM */}
-        <audio ref={audioRef} src="/sounds/pop.mp3" preload="auto" />
+        {/* 🔊 audios (en public/...) */}
+        <audio ref={detectAudioRef} src="/sounds/pop.mp3" preload="auto" />
+        <audio ref={okAudioRef} src="/sounds/pop.mp3" preload="auto" />
       </main>
     </div>
   )
