@@ -32,6 +32,9 @@ export default function ScanQRPage() {
   const [msg, setMsg] = useState('')
   const sentFor = useRef<string>('')
 
+  // 🔊 referencia al audio
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
   const constraints = useMemo(() => ({
     facingMode: 'environment' as const,
     width: { ideal: 1280 },
@@ -42,7 +45,7 @@ export default function ScanQRPage() {
   const checkin = useCallback(async ({ session_id, key }: { session_id:number; key:string }) => {
     setStatus('sending'); setMsg('Registrando asistencia…')
     try {
-      const res = await fetch('/api/coach/attendance/checkin', {   // 🔴 usa la ruta que espera s+k
+      const res = await fetch('/api/coach/attendance/checkin', {
         method: 'POST',
         credentials: 'include',
         cache: 'no-store',
@@ -54,6 +57,8 @@ export default function ScanQRPage() {
         setStatus('error'); setMsg(json?.error ?? 'Error al registrar asistencia')
       } else {
         setStatus('ok'); setMsg(`Asistencia registrada (${json?.status ?? 'ok'}) ✅`)
+        // 🔊 reproduce el sonido de éxito
+        audioRef.current?.play().catch(() => {})
       }
     } catch {
       setStatus('error'); setMsg('Error de red')
@@ -67,7 +72,9 @@ export default function ScanQRPage() {
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Escanear QR</h1>
           <Link href="/dashboard">
-            <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">Volver al panel</Button>
+            <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">
+              Volver al panel
+            </Button>
           </Link>
         </div>
 
@@ -97,8 +104,21 @@ export default function ScanQRPage() {
         )}
 
         {status !== 'idle' && (
-          <p className={`mt-3 ${status === 'error' ? 'text-red-400' : status === 'ok' ? 'text-emerald-400' : 'text-white/80'}`}>{msg}</p>
+          <p
+            className={`mt-3 ${
+              status === 'error'
+                ? 'text-red-400'
+                : status === 'ok'
+                ? 'text-emerald-400'
+                : 'text-white/80'
+            }`}
+          >
+            {msg}
+          </p>
         )}
+
+        {/* 🔊 el elemento de audio en el DOM */}
+        <audio ref={audioRef} src="/sounds/pop.mp3" preload="auto" />
       </main>
     </div>
   )

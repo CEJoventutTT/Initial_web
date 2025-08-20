@@ -3,22 +3,25 @@ import { supabaseServer } from '@/lib/supabase/server'
 import Navigation from '@/components/navigation'
 import UserDashboard from './user-dashboard'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function DashboardPage() {
   const supabase = supabaseServer()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session?.user) redirect('/login')
   const uid = session.user.id
 
-  // 🔹 Lanza todo en paralelo
   const [
     profileRes,
     xpRowsRes,
     streakRes,
-    recentLogsRes,
+    recentTrainingRes,
     badgesRes,
     leaderboardRes,
     userQuestsRes,
-    sessionsRes, // nuevo RPC
+    sessionsRes,
+    recentAttendanceRes,
   ] = await Promise.all([
     supabase.from('profiles')
       .select('full_name, role')
@@ -47,21 +50,28 @@ export default async function DashboardPage() {
       .select('quest_id, progress, status, quests(title, description, xp_reward, steps)')
       .eq('user_id', uid),
 
-    // 🚀 reemplaza enrollments+sessions por un RPC O(1) indexado
     supabase.rpc('upcoming_sessions_for_user', { p_user: uid, limit_n: 5 }),
+
+    supabase.from('attendance_logs')
+      .select('id, session_id, program_id, checked_at')
+      .eq('student_id', uid)
+      .order('checked_at', { ascending: false })
+      .limit(10),
   ])
 
-  const profile = profileRes.data
-  const xpRows = xpRowsRes.data ?? []
-  const totalXP = xpRows?.[0]?.total_xp ?? 0
-  const xpByType = xpRows.filter(r => r.event_type != null)
-                         .map(r => ({ type: r.event_type as string, xp: r.event_xp as number }))
-  const streak = (streakRes.data ?? 0) as number
-  const sessions = sessionsRes.data ?? []
-  const recentLogs = recentLogsRes.data ?? []
-  const badges = badgesRes.data ?? []
-  const leaderboard = leaderboardRes.data ?? []
-  const userQuests = userQuestsRes.data ?? []
+  const profile      = profileRes.data
+  const xpRows       = xpRowsRes.data ?? []
+  const totalXP      = xpRows?.[0]?.total_xp ?? 0
+  const xpByType     = (xpRows ?? [])
+    .filter((r: any) => r?.event_type != null)
+    .map((r: any) => ({ type: String(r.event_type), xp: Number(r.event_xp ?? r.delta ?? 0) }))
+  const streak       = Number(streakRes.data ?? 0)
+  const sessions     = sessionsRes.data ?? []
+  const recentLogs   = recentTrainingRes.data ?? []
+  const badges       = badgesRes.data ?? []
+  const leaderboard  = leaderboardRes.data ?? []
+  const userQuests   = userQuestsRes.data ?? []
+  const recentAttendance = recentAttendanceRes.data ?? []
 
   return (
     <div className="min-h-screen bg-[#262425] text-white">
@@ -74,6 +84,7 @@ export default async function DashboardPage() {
           xpByType={xpByType}
           sessions={sessions}
           recentLogs={recentLogs}
+          recentAttendance={recentAttendance}
           badges={badges}
           leaderboard={leaderboard}
           weeklyMissions={userQuests}
