@@ -2,7 +2,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
-import ConfirmDelete from '@/components/ConfirmDelete' // ⬅️ asegúrate de que el archivo existe en components
+import ConfirmDelete from '@/components/ConfirmDelete'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -99,7 +99,7 @@ export default async function CoachSessionsPage() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookies: { get: (name: string) => cookieStore.get(name)?.value }, // solo lectura
+      cookies: { get: (name: string) => cookieStore.get(name)?.value },
     }
   )
 
@@ -111,151 +111,176 @@ export default async function CoachSessionsPage() {
 
   if (error) {
     return (
-      <main className="p-6">
-        <h1 className="text-2xl font-bold">Sesiones de asistencia</h1>
-        <div className="mt-4 rounded border border-red-500/30 bg-red-500/10 p-4 text-red-300">
-          Error: {error.message}
+      <main className="min-h-[70vh] bg-brand-dark bg-panel-glow p-6">
+        <div className="mx-auto max-w-7xl">
+          <h1 className="text-3xl font-extrabold tracking-tight">
+            Sesiones de asistencia
+          </h1>
+          <div className="mt-4 rounded-md border border-red-500/30 bg-red-500/10 p-4 text-red-300 shadow-soft">
+            Error: {error.message}
+          </div>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Sesiones de asistencia</h1>
+    <main className="min-h-[70vh] bg-brand-dark bg-panel-glow p-6">
+      <div className="mx-auto max-w-7xl space-y-8">
+        <header className="rounded-xl border border-border/60 bg-muted/60 p-5 shadow-card backdrop-blur">
+          <h1 className="text-3xl font-extrabold tracking-tight">
+            Sesiones de asistencia
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Crea, edita y gestiona sesiones. Colores y acentos adaptados a la marca.
+          </p>
+        </header>
 
-      {/* Crear sesión */}
-      <section className="rounded border border-white/10 p-4">
-        <h2 className="mb-3 text-lg font-semibold">Crear nueva sesión</h2>
-        <form action={createSession} className="grid gap-3 sm:grid-cols-5">
-          <div className="sm:col-span-1">
-            <label className="block text-sm text-white/70 mb-1">Programa (opcional)</label>
-            <input name="program_id" className="w-full rounded bg-white/5 px-3 py-2 outline-none" />
-          </div>
-          <div className="sm:col-span-1">
-            <label className="block text-sm text-white/70 mb-1">Inicio</label>
-            <input
-              name="start_at"
-              type="datetime-local"
-              required
-              className="w-full rounded bg-white/5 px-3 py-2 outline-none"
-            />
-          </div>
-          <div className="sm:col-span-1">
-            <label className="block text-sm text-white/70 mb-1">Fin</label>
-            <input
-              name="end_at"
-              type="datetime-local"
-              required
-              className="w-full rounded bg-white/5 px-3 py-2 outline-none"
-            />
-          </div>
-          <div className="flex items-end gap-2 sm:col-span-1">
-            <label className="flex items-center gap-2 text-sm text-white/80">
-              <input name="active" type="checkbox" defaultChecked className="accent-white" />
-              Activa
-            </label>
-          </div>
-          <div className="sm:col-span-1 flex items-end">
-            <button type="submit" className="w-full rounded bg-white/10 px-4 py-2 hover:bg-white/20">
-              Crear sesión
-            </button>
-          </div>
-        </form>
-      </section>
+        {/* Crear sesión */}
+        <section className="rounded-xl border border-border/60 bg-card/80 p-5 shadow-card backdrop-blur">
+          <h2 className="mb-4 text-lg font-semibold text-brand-white/90">
+            Crear nueva sesión
+          </h2>
+          <form action={createSession} className="grid gap-4 sm:grid-cols-5">
+            <div className="sm:col-span-1">
+              <label className="mb-1 block text-sm text-white/70">Programa (opcional)</label>
+              <input
+                name="program_id"
+                className="w-full rounded-md border border-input bg-white/5 px-3 py-2 text-white placeholder-white/40 outline-none focus:ring-2 focus:ring-accent"
+              />
+            </div>
+            <div className="sm:col-span-1">
+              <label className="mb-1 block text-sm text-white/70">Inicio</label>
+              <input
+                name="start_at"
+                type="datetime-local"
+                required
+                className="w-full rounded-md border border-input bg-white/5 px-3 py-2 text-white outline-none focus:ring-2 focus:ring-accent"
+              />
+            </div>
+            <div className="sm:col-span-1">
+              <label className="mb-1 block text-sm text-white/70">Fin</label>
+              <input
+                name="end_at"
+                type="datetime-local"
+                required
+                className="w-full rounded-md border border-input bg-white/5 px-3 py-2 text-white outline-none focus:ring-2 focus:ring-accent"
+              />
+            </div>
+            <div className="flex items-end gap-3 sm:col-span-1">
+              <label className="flex items-center gap-2 text-sm text-white/80">
+                <input name="active" type="checkbox" defaultChecked className="accent-accent" />
+                Activa
+              </label>
+            </div>
+            <div className="sm:col-span-1 flex items-end">
+              <button
+                type="submit"
+                className="w-full rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground shadow-brand transition hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-accent"
+              >
+                Crear sesión
+              </button>
+            </div>
+          </form>
+        </section>
 
-      {/* Tabla sesiones */}
-      {!data || data.length === 0 ? (
-        <p className="text-white/70">No hay sesiones creadas todavía.</p>
-      ) : (
-        <div className="overflow-x-auto rounded border border-white/10">
-          <table className="w-full text-sm">
-            <thead className="bg-white/5 text-left text-white/70">
-              <tr>
-                <th className="py-2 px-3">ID</th>
-                <th className="px-3">Programa</th>
-                <th className="px-3">Activa</th>
-                <th className="px-3">Horario</th>
-                <th className="px-3">Creada</th>
-                <th className="px-3">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((s) => {
-                const isPast = new Date(s.end_at).getTime() < Date.now()
-                return (
-                  <tr key={s.id} className="border-t border-white/10">
-                    <td className="py-2 px-3 font-mono">{s.id}</td>
-                    <td className="px-3">
-                      <form action={updateProgramId} className="flex items-center gap-2">
-                        <input type="hidden" name="id" value={s.id} />
-                        <input
-                          name="program_id"
-                          defaultValue={s.program_id ?? ''}
-                          placeholder="program_id"
-                          className="w-44 rounded bg-white/5 px-2 py-1 outline-none"
-                        />
-                        <button
-                          type="submit"
-                          className="rounded bg-white/10 px-3 py-1 hover:bg-white/20"
-                          title="Guardar programa"
-                        >
-                          Guardar
-                        </button>
-                      </form>
-                    </td>
-                    <td className="px-3">
-                      <span
-                        className={
-                          'rounded px-2 py-0.5 ' +
-                          (s.active ? 'bg-emerald-500/15 text-emerald-300' : 'bg-white/10 text-white/70')
-                        }
-                      >
-                        {s.active ? 'Sí' : 'No'}
-                      </span>
-                    </td>
-                    <td className="px-3">
-                      {new Date(s.start_at).toLocaleString()} → {new Date(s.end_at).toLocaleString()}
-                      {isPast && <span className="ml-2 text-red-300">(finalizada)</span>}
-                    </td>
-                    <td className="px-3">
-                      {s.created_at ? new Date(s.created_at).toLocaleString() : '—'}
-                    </td>
-                    <td className="px-3">
-                      <div className="flex flex-wrap gap-2">
-                        {/* Mostrar QR */}
-                        <a
-                          href={`/coach/sessions/${s.id}/qr`}
-                          className="rounded bg-white/10 px-3 py-1 hover:bg-white/20"
-                          title="Mostrar QR"
-                        >
-                          Mostrar QR
-                        </a>
-
-                        {/* Toggle activa */}
-                        <form action={toggleActive}>
-                          <input type="hidden" name="id" value={s.id} />
-                          <input type="hidden" name="current" value={String(!!s.active)} />
-                          <button
-                            type="submit"
-                            className="rounded bg-white/10 px-3 py-1 hover:bg-white/20"
-                            title={s.active ? 'Desactivar' : 'Activar'}
-                          >
-                            {s.active ? 'Desactivar' : 'Activar'}
-                          </button>
-                        </form>
-
-                        {/* Borrar con confirmación */}
-                        <ConfirmDelete id={s.id} action={deleteSession} />
-                      </div>
-                    </td>
+        {/* Tabla sesiones */}
+        {!data || data.length === 0 ? (
+          <p className="text-white/80">No hay sesiones creadas todavía.</p>
+        ) : (
+          <section className="rounded-xl border border-border/60 bg-card/80 p-0 shadow-card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-white/5 text-left text-white/80">
+                  <tr className="uppercase tracking-wide text-[11px]">
+                    <th className="py-3 px-4">ID</th>
+                    <th className="px-4">Programa</th>
+                    <th className="px-4">Activa</th>
+                    <th className="px-4">Horario</th>
+                    <th className="px-4">Creada</th>
+                    <th className="px-4">Acciones</th>
                   </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+                </thead>
+                <tbody>
+                  {data.map((s) => {
+                    const isPast = new Date(s.end_at).getTime() < Date.now()
+                    return (
+                      <tr key={s.id} className="border-t border-border/60 hover:bg-white/[0.04]">
+                        <td className="py-3 px-4 font-mono text-white/90">{s.id}</td>
+                        <td className="px-4">
+                          <form action={updateProgramId} className="flex items-center gap-2">
+                            <input type="hidden" name="id" value={s.id} />
+                            <input
+                              name="program_id"
+                              defaultValue={s.program_id ?? ''}
+                              placeholder="program_id"
+                              className="w-48 rounded-md border border-input bg-white/5 px-2 py-1 text-white outline-none focus:ring-2 focus:ring-accent"
+                            />
+                            <button
+                              type="submit"
+                              className="rounded-md border border-white/15 bg-white/5 px-3 py-1 text-white/90 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-accent"
+                              title="Guardar programa"
+                            >
+                              Guardar
+                            </button>
+                          </form>
+                        </td>
+                        <td className="px-4">
+                          <span
+                            className={
+                              'rounded-md px-2 py-0.5 text-[12px] ' +
+                              (s.active
+                                ? 'bg-emerald-500/15 text-emerald-300'
+                                : 'bg-white/8 text-white/70 border border-white/10')
+                            }
+                          >
+                            {s.active ? 'Sí' : 'No'}
+                          </span>
+                        </td>
+                        <td className="px-4">
+                          <span className="whitespace-nowrap">
+                            {new Date(s.start_at).toLocaleString()} → {new Date(s.end_at).toLocaleString()}
+                          </span>
+                          {isPast && <span className="ml-2 rounded-sm bg-red-500/15 px-2 py-0.5 text-[11px] text-red-300">finalizada</span>}
+                        </td>
+                        <td className="px-4">
+                          {s.created_at ? new Date(s.created_at).toLocaleString() : '—'}
+                        </td>
+                        <td className="px-4">
+                          <div className="flex flex-wrap gap-2">
+                            <a
+                              href={`/coach/sessions/${s.id}/qr`}
+                              className="rounded-md bg-accent/15 px-3 py-1 text-accent-foreground transition hover:bg-accent/25"
+                              title="Mostrar QR"
+                            >
+                              Mostrar QR
+                            </a>
+                            <form action={toggleActive}>
+                              <input type="hidden" name="id" value={s.id} />
+                              <input type="hidden" name="current" value={String(!!s.active)} />
+                              <button
+                                type="submit"
+                                className="rounded-md border border-white/15 bg-white/5 px-3 py-1 text-white/90 transition hover:bg-white/10"
+                                title={s.active ? 'Desactivar' : 'Activar'}
+                              >
+                                {s.active ? 'Desactivar' : 'Activar'}
+                              </button>
+                            </form>
+                            <ConfirmDelete
+                              id={s.id}
+                              action={deleteSession}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+      </div>
     </main>
   )
 }

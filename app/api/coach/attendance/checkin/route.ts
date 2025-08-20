@@ -1,86 +1,111 @@
 // app/api/coach/attendance/checkin/route.ts
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
+import { createServerClient } from '@supabase/ssr'
 
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic' // evita cache
 
-// (opcional) Déjalo mientras pruebas; luego puedes eliminarlo
-export async function GET() {
-  return NextResponse.json({ ping: 'ok', bypass: true })
+type SessionRow = {
+  id: number
+  program_id: number | null
+  qr_key: string | null
+  secret: string | null // uuid (texto al traerlo)
+  active: boolean | null
+  expires_at: string | null // ISO
+  start_at: string | null   // ISO
+  end_at: string | null     // ISO
 }
 
 export async function POST(req: Request) {
-  // 0) Variables de entorno
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const srv = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !srv) {
-    return NextResponse.json(
-      { error: 'env_missing', detail: { NEXT_PUBLIC_SUPABASE_URL: !!url, SUPABASE_SERVICE_ROLE_KEY: !!srv } },
-      { status: 500 }
-    )
-  }
-
-  const supabase = createClient(url, srv)
-
-  // 1) Cuerpo
-  let body: any
   try {
-    body = await req.json()
-  } catch {
-    return NextResponse.json({ error: 'bad_json_body' }, { status: 400 })
-  }
+    const url = new URL(req.url)
 
-  const s = typeof body.s === 'string' ? Number(body.s) : body.s
-  const k: string | undefined = body.k
-  const studentId: string | undefined = body.studentId ?? body.user_id
+    // 1) Leer params: query ?s=&k= o body {session_id,key} / {s,k}
+    let s = url.searchParams.get('s')
+    let k = url.searchParams.get('k')
+    if (!s || !k) {
+      const body = await req.json().catch(() => null)
+      if (body) {
+        s = String(body.session_id ?? body.s ?? s ?? '')
+        k = String(body.key ?? body.k ?? k ?? '')
+      }
+    }
 
-  if (!s || !k || !studentId) {
-    return NextResponse.json(
-      { error: 'invalid_params', detail: { s: !!s, k: !!k, studentId: !!studentId } },
-      { status: 400 }
+    const session_id = Number(s)
+    if (!Number.isFinite(session_id) || !k || k.length < 8) {
+      return NextResponse.json({ error: 'invalid_param' }, { status: 400 })
+    }
+
+    // 2) Supabase SSR client (con tus env públicos ya configurados)
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value
+          },
+        },
+      }
     )
-  }
 
-  try {
-    // 2) Carga sesión
-    const { data: session, error: sErr } = await supabase
+    // 3) Cargar sesión
+    const { data: session, error: sesErr } = await supabase
       .from('attendance_sessions')
-      .select('id, qr_key, active, expires_at, program_id')
-      .eq('id', s)
-      .single()
+      .select('id, program_id, qr_key, secret, active, expires_at, start_at, end_at')
+      .eq('id', session_id)
+      .single<SessionRow>()
 
-    if (sErr || !session) {
+    if (sesErr || !session) {
       return NextResponse.json({ error: 'session_not_found' }, { status: 404 })
     }
 
-    // 3) Validaciones
+    // 4) Validaciones de estado/tiempos
     if (!session.active) {
-      return NextResponse.json({ error: 'session_inactive' }, { status: 400 })
+      return NextResponse.json({ error: 'session_inactive' }, { status: 409 })
     }
-    if (session.qr_key !== k) {
-      return NextResponse.json({ error: 'invalid_key' }, { status: 400 })
+    const now = new Date()
+
+    if (session.expires_at && now > new Date(session.expires_at)) {
+      return NextResponse.json({ error: 'session_expired' }, { status: 410 })
     }
-    const exp = new Date(session.expires_at).getTime()
-    if (Number.isNaN(exp) || exp < Date.now()) {
-      return NextResponse.json({ error: 'expired' }, { status: 400 })
+    if (session.start_at && now < new Date(session.start_at)) {
+      return NextResponse.json({ error: 'session_not_started' }, { status: 409 })
+    }
+    if (session.end_at && now > new Date(session.end_at)) {
+      return NextResponse.json({ error: 'session_closed' }, { status: 409 })
     }
 
-    // 4) Inserta log
-    const { error: insErr } = await supabase.from('attendance_logs').insert({
+    // 5) Validar clave: aceptamos coincidencia con qr_key (text) o secret (uuid)
+    const matchesQr = session.qr_key && k === session.qr_key
+    const matchesSecret = session.secret && k === session.secret
+    if (!matchesQr && !matchesSecret) {
+      return NextResponse.json({ error: 'invalid_key' }, { status: 401 })
+    }
+
+    // 6) Registrar log (ajusta columnas extra si las tienes)
+    const logPayload = {
       session_id: session.id,
       program_id: session.program_id,
-      student_id: studentId,
-      checked_at: new Date().toISOString(),
-    })
-
-    if (insErr) {
-      return NextResponse.json({ error: 'insert_failed', detail: insErr.message }, { status: 500 })
+      // añade más campos si los necesitas: user_id, coach_id, device, etc.
     }
 
-    // 5) OK
-    return NextResponse.json({ ok: true })
-  } catch (e: any) {
-    return NextResponse.json({ error: 'exception', detail: e?.message }, { status: 500 })
+    const { error: insErr } = await supabase
+      .from('attendance_logs')
+      .insert(logPayload)
+
+    if (insErr) {
+      // No bloqueamos el check-in por fallo de logging, pero lo avisamos
+      return NextResponse.json(
+        { status: 'ok', warning: 'log_insert_failed' },
+        { status: 200 }
+      )
+    }
+
+    return NextResponse.json({ status: 'ok' }, { status: 200 })
+  } catch (e) {
+    console.error('[checkin] server_error', e)
+    return NextResponse.json({ error: 'server_error' }, { status: 500 })
   }
 }

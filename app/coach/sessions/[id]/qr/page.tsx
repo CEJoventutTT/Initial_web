@@ -22,7 +22,13 @@ export default async function SessionQrPage({ params }: { params: { id: string }
     .single()
 
   if (error || !data) {
-    return <div className="p-6 text-red-400">No se pudo cargar la sesión</div>
+    return (
+      <main className="min-h-[60vh] bg-brand-dark bg-panel-glow p-6">
+        <div className="mx-auto max-w-3xl rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-red-300 shadow-soft">
+          No se pudo cargar la sesión
+        </div>
+      </main>
+    )
   }
 
   const now = Date.now()
@@ -34,7 +40,6 @@ export default async function SessionQrPage({ params }: { params: { id: string }
   else if (now > end) status = 'Finalizada'
   else status = data.active ? 'En curso' : 'Pausada'
 
-  // Base URL
   const siteEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '')
   let siteBase = siteEnv
   if (!siteBase) {
@@ -44,7 +49,6 @@ export default async function SessionQrPage({ params }: { params: { id: string }
     siteBase = host ? `${proto}${host}` : ''
   }
 
-  // URL con secreto (solo válida si la sesión no ha terminado)
   const attendUrl =
     now <= end
       ? `${siteBase}/attend?s=${encodeURIComponent(id)}&k=${encodeURIComponent(data.secret)}`
@@ -52,64 +56,71 @@ export default async function SessionQrPage({ params }: { params: { id: string }
 
   const qrSrc =
     attendUrl &&
-    `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
+    `https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=${encodeURIComponent(
       attendUrl
     )}`
 
   return (
-    <main className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">QR de la sesión</h1>
+    <main className="min-h-[60vh] bg-brand-dark bg-panel-glow p-6">
+      <div className="mx-auto max-w-3xl space-y-6">
+        <header className="rounded-xl border border-border/60 bg-muted/60 p-5 shadow-card backdrop-blur">
+          <h1 className="text-2xl font-extrabold tracking-tight">QR de la sesión</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Escanea para registrar asistencia. El enlace incluye un token seguro.
+          </p>
+        </header>
 
-      <div className="flex flex-col items-center gap-4 rounded border border-white/10 p-6">
-        <div className="text-white/80">
-          <p>
-            <strong>Inicio:</strong> {new Date(data.start_at).toLocaleString()}
-          </p>
-          <p>
-            <strong>Fin:</strong> {new Date(data.end_at).toLocaleString()}
-          </p>
-          <p>
-            <strong>Estado:</strong>{' '}
-            <span
-              className={
-                status === 'En curso'
-                  ? 'text-emerald-400'
-                  : status === 'No iniciada'
-                  ? 'text-yellow-400'
-                  : 'text-red-400'
-              }
-            >
-              {status}
-            </span>
-          </p>
-        </div>
+        <section className="rounded-xl border border-border/60 bg-card/80 p-6 shadow-card backdrop-blur">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div className="space-y-2 text-white/85">
+              <p><span className="text-white/60">Inicio:</span> {new Date(data.start_at).toLocaleString()}</p>
+              <p><span className="text-white/60">Fin:</span> {new Date(data.end_at).toLocaleString()}</p>
+              <p>
+                <span className="text-white/60">Estado:</span>{' '}
+                <span
+                  className={
+                    status === 'En curso'
+                      ? 'text-emerald-400'
+                      : status === 'No iniciada'
+                      ? 'text-yellow-400'
+                      : 'text-red-400'
+                  }
+                >
+                  {status}
+                </span>
+              </p>
+            </div>
 
-        {attendUrl ? (
-          <>
-            <img
-              src={qrSrc!}
-              alt="Código QR"
-              className="h-[300px] w-[300px] rounded bg-white p-2"
-            />
-            <div className="max-w-full overflow-x-auto rounded bg-white/5 p-3 font-mono text-sm">
-              {attendUrl}
+            <div className="flex flex-col items-center justify-center gap-4">
+              {attendUrl ? (
+                <>
+                  <img
+                    src={qrSrc!}
+                    alt="Código QR"
+                    className="h-[300px] w-[300px] rounded-lg bg-white p-2 shadow-soft"
+                  />
+                  <div className="max-w-full overflow-x-auto rounded-md border border-white/10 bg-white/5 p-3 font-mono text-xs text-white/90">
+                    {attendUrl}
+                  </div>
+                  <div className="flex gap-2">
+                    <a
+                      href={attendUrl}
+                      className="rounded-md bg-accent/15 px-3 py-1 text-accent-foreground transition hover:bg-accent/25"
+                      target="_blank"
+                    >
+                      Abrir enlace
+                    </a>
+                    <CopyButton text={attendUrl} />
+                  </div>
+                </>
+              ) : (
+                <div className="w-full rounded-md border border-red-500/30 bg-red-500/10 p-4 text-center text-red-300">
+                  La sesión ya ha finalizado. El QR ha caducado.
+                </div>
+              )}
             </div>
-            <div className="flex gap-2">
-              <a
-                href={attendUrl}
-                className="rounded bg-white/10 px-3 py-1 hover:bg-white/20"
-                target="_blank"
-              >
-                Abrir enlace
-              </a>
-              <CopyButton text={attendUrl} />
-            </div>
-          </>
-        ) : (
-          <div className="rounded bg-red-500/10 p-4 text-red-300">
-            La sesión ya ha finalizado. El QR ha caducado.
           </div>
-        )}
+        </section>
       </div>
     </main>
   )
