@@ -11,32 +11,33 @@ export default function AttendPage() {
   const router = useRouter()
   const [status, setStatus] = useState<'idle'|'sending'|'ok'|'error'>('idle')
   const [msg, setMsg] = useState<string>('')
-  const fired = useRef(false) // evita doble ejecución
+  const fired = useRef(false)
 
   useEffect(() => {
-    const s = sp.get('s')
-const k = sp.get('k')
-if (!s || !k) { setStatus('error'); setMsg('Parámetros inválidos.'); return }
-const session_id = Number(s)
-if (!Number.isFinite(session_id)) { setStatus('error'); setMsg('ID de sesión inválido.'); return }
+    if (fired.current) return
+    fired.current = true
 
-const res = await fetch('/api/coach/attendance/checkin', {   // 🔴 misma ruta
-  method: 'POST',
-  credentials: 'include',
-  cache: 'no-store',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ session_id, key: k }),
-})
+    const s = sp.get('s')
+    const k = sp.get('k')
+    if (!s || !k) {
+      setStatus('error'); setMsg('Parámetros inválidos en el enlace.')
+      return
+    }
+    const session_id = Number(s)
+    if (!Number.isFinite(session_id)) {
+      setStatus('error'); setMsg('ID de sesión inválido.')
+      return
+    }
 
     const run = async () => {
       setStatus('sending'); setMsg('Registrando asistencia…')
       try {
         const res = await fetch('/api/coach/attendance/checkin', {
           method: 'POST',
-          credentials: 'include',   // usa cookies (tu handler las espera)
+          credentials: 'include',
           cache: 'no-store',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ key: k }), // ✅ solo key
+          body: JSON.stringify({ session_id, key: k }),
         })
 
         if (res.status === 401) {
@@ -70,9 +71,7 @@ const res = await fetch('/api/coach/attendance/checkin', {   // 🔴 misma ruta
         {status === 'error' && (
           <div>
             <p className="text-red-400">{msg}</p>
-            <p className="mt-2 text-white/70">
-              Asegúrate de haber iniciado sesión con tu cuenta.
-            </p>
+            <p className="mt-2 text-white/70">Asegúrate de haber iniciado sesión con tu cuenta.</p>
           </div>
         )}
 
