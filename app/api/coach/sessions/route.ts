@@ -1,57 +1,47 @@
 import { NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
 
-// GET: lista sesiones de los programas de este coach
-export async function GET() {
-  const supabase = createRouteHandlerClient({ cookies })
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-
-  // programas del coach
-  const { data: programs, error: progErr } = await supabase
-    .from('programs')
-    .select('id, name')
-    .eq('coach_id', session.user.id)
-  if (progErr) return NextResponse.json({ error: progErr.message }, { status: 400 })
-
-  const programIds = (programs ?? []).map(p => p.id)
-  let sessions: any[] = []
-  if (programIds.length) {
-    const { data, error } = await supabase
-      .from('sessions')
-      .select('id, program_id, starts_at, ends_at')
-      .in('program_id', programIds)
-      .order('starts_at', { ascending: true })
-      .limit(100)
-    if (error) return NextResponse.json({ error: error.message }, { status: 400 })
-    sessions = data ?? []
-  }
-
-  return NextResponse.json({ programs: programs ?? [], sessions })
-}
-
-// POST: crear sesión (sólo si el coach es dueño del programa)
 export async function POST(req: Request) {
-  const supabase = createRouteHandlerClient({ cookies })
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
+  if (!token) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+
+  // 1) Cliente “user” con el JWT del coach (para autorizar)
+  const userClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+      auth: { autoRefreshToken: false, persistSession: false },
+    }
+  )
+
+  const { data: { user }, error: userErr } = await userClient.auth.getUser()
+  if (userErr || !user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   const { program_id, starts_at, ends_at } = await req.json()
 
-  // Verifica ownership del programa
-  const { data: prog } = await supabase
-    .from('programs')
-    .select('id')
-    .eq('id', program_id)
-    .eq('coach_id', session.user.id)
-    .single()
-  if (!prog) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+  const s = new Date(starts_at), e = new Date(ends_at)
+  if (isNaN(+s) || isNaN(+e)) return NextResponse.json({ error: 'invalid_datetime' }, { status: 400 })
 
-  const { error } = await supabase
+  // 2) Ownership O(1)
+  const { count, error: ownErr } = await userClient
+    .from('coach_programs')
+    .select('id', { count: 'exact', head: true })
+    .eq('program_id', program_id)
+    .eq('coach_id', user.id)
+  if (ownErr) return NextResponse.json({ error: ownErr.message }, { status: 400 })
+  if (!count) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+
+  // 3) Inserta con Service Role (bypasa RLS, ya autorizamos arriba)
+  const admin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY! // ⚠️ server-only
+  )
+
+  const { error: insErr } = await admin
     .from('sessions')
-    .insert({ program_id, starts_at, ends_at })
+    .insert({ program_id, starts_at: s.toISOString(), ends_at: e.toISOString() })
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  if (insErr) return NextResponse.json({ error: insErr.message }, { status: 400 })
   return NextResponse.json({ ok: true })
 }

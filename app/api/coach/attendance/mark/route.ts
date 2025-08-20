@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
   const { error } = await supabase
     .from('attendance')
-    .insert({ session_id, user_id, status })
+     .upsert({ session_id, user_id, status }, { onConflict: 'session_id,user_id' })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
   return NextResponse.json({ ok: true })
