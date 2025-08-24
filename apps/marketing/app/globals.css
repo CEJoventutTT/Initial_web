@@ -1,0 +1,29 @@
+@import 'flag-icons/css/flag-icons.min.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tokens globales */
+:root{
+  --color-teal: #5D8C87;
+  --color-dark: #262425;
+  --color-red:  #BF0F30;
+  --color-white:#FFFFFF;
+
+  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+body { font-family: var(--font-inter); background: var(--color-dark); color: var(--color-white); }
+
+/* Scrollbar */
+::-webkit-scrollbar{ width:8px }
+::-webkit-scrollbar-track{ background: var(--color-dark) }
+::-webkit-scrollbar-thumb{ background: var(--color-teal); border-radius:4px }
+
+/* Utilidades opcionales (por si las quieres en JSX) */
+.bg-brand-teal  { background-color: var(--color-teal) !important; }
+.bg-brand-dark  { background-color: var(--color-dark) !important; }
+.bg-brand-red   { background-color: var(--color-red) !important;  }
+.text-brand-teal{ color: var(--color-teal) !important; }
+.text-brand-red { color: var(--color-red)  !important; }
+.text-brand-dark{ color: var(--color-dark)!important; }

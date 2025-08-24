@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
@@ -76,5 +77,21 @@
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
+=======
+  "name": "cejoventut-monorepo",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "packageManager": "pnpm@10.14.0",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "clean": "rimraf **/.next **/dist node_modules"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.6",
+    "typescript": "^5.6.0",
+    "rimraf": "^6.0.1"
+>>>>>>> 0fd6d25 (Primer commit: monorepo CEJoventut con marketing e i18n)
   }
 }
