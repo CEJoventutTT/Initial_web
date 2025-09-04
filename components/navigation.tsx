@@ -19,7 +19,7 @@ export default function Navigation() {
     //{ name: t('nav.teams'), href: '/teams' },
     //{ name: t('nav.news'), href: '/news' },
    //{ name: t('nav.gallery'), href: '/gallery' },
-    { name: t('nav.join'), href: '/join' },
+    { name: t('nav.colabora'), href: '/join' },
   ]
 
   return (

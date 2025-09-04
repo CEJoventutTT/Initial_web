@@ -66,7 +66,7 @@ export default function Hero() {
               className="rounded-xl bg-primary text-primary-foreground hover:opacity-90 px-6 md:px-8 py-3.5 md:py-4 text-base md:text-lg font-semibold shadow-brand transition-transform duration-150 hover:scale-[1.02]"
             >
               <Users className="mr-2 h-5 w-5" />
-              {t('join.solicitar')}
+              {t('join.title')}
             </Button>
           </Link>
         </div>
