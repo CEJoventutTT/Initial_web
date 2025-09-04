@@ -1,7 +1,7 @@
 {
   "nav": {
     "home": "Home",
-    "about": "About Us",
+    "about": "The Club",
     "trainings": "Trainings",
     "teams": "Teams",
     "news": "News",
@@ -12,7 +12,7 @@
   "hero": {
     "title": "Learn, train and master",
     "subtitle": "Table Tennis while having fun",
-    "description": "Join Club Esportiu Joventut and unlock your potential. From beginners to champions, we train everyone.",
+    "description": "We improve health, well-being, and social cohesion through table tennis in Ibiza.",
     "joinClub": "Join the Club",
     "exploreTrainings": "Explore Trainings"
   },

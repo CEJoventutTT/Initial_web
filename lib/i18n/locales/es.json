@@ -1,7 +1,7 @@
 {
   "nav": {
     "home": "Inicio",
-    "about": "Nosotros",
+    "about": "El Club",
     "trainings": "Entrenamientos",
     "teams": "Equipos",
     "news": "Noticias",
@@ -12,7 +12,7 @@
   "hero": {
     "title": "Aprende, entrena y domina",
     "subtitle": "el Tenis de Mesa mientras te diviertes",
-    "description": "Únete al Club Esportiu Joventut y desbloquea tu potencial. Desde principiantes hasta campeones, entrenamos a todos.",
+    "description": "Mejoramos la salud, el bienestar y la cohesión social a través del tenis de mesa en Ibiza.",
     "joinClub": "Únete al Club",
     "exploreTrainings": "Explorar Entrenamientos"
   },

@@ -13,12 +13,12 @@ export default function Navigation() {
   const { t } = useTranslation()
 
   const navLinks = [
-    { name: t('nav.home'), href: '/' },
+   // { name: t('nav.home'), href: '/' },
     { name: t('nav.about'), href: '/about' },
     //{ name: t('nav.trainings'), href: '/trainings' },
-    { name: t('nav.teams'), href: '/teams' },
-    { name: t('nav.news'), href: '/news' },
-    { name: t('nav.gallery'), href: '/gallery' },
+    //{ name: t('nav.teams'), href: '/teams' },
+    //{ name: t('nav.news'), href: '/news' },
+   //{ name: t('nav.gallery'), href: '/gallery' },
     { name: t('nav.join'), href: '/join' },
   ]
 

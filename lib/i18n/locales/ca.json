@@ -1,7 +1,7 @@
 {
   "nav": {
     "home": "Inici",
-    "about": "Nosaltres",
+    "about": "El Club",
     "trainings": "Entrenaments",
     "teams": "Equips",
     "news": "Notícies",
@@ -12,7 +12,7 @@
   "hero": {
     "title": "Aprèn, entrena i domina",
     "subtitle": "el Tennis de Taula mentre et diverteixes",
-    "description": "Uneix-te al Club Esportiu Joventut i allibera el teu potencial. Des de principiants fins a campions, entrenem a tots.",
+    "description": "Millorem la salut, el benestar i la cohesió social a través del tennis de taula a Eivissa",
     "joinClub": "Uneix-te al Club",
     "exploreTrainings": "Explorar Entrenaments"
   },
