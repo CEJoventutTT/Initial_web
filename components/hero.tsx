@@ -49,7 +49,7 @@ export default function Hero() {
 
         {/* CTAs */}
         <div className="mt-9 md:mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-          <Link href="/trainings" aria-label="Explore trainings">
+        {/*  <Link href="/trainings" aria-label="Explore trainings">
             <Button
               size="lg"
               variant="outline"
@@ -58,7 +58,7 @@ export default function Hero() {
               <Play className="mr-2 h-5 w-5" />
               {t('hero.exploreTrainings')}
             </Button>
-          </Link>
+          </Link>*/}
 
           <Link href="/join" aria-label="Join the club">
             <Button

@@ -15,7 +15,7 @@ export default function Navigation() {
   const navLinks = [
     { name: t('nav.home'), href: '/' },
     { name: t('nav.about'), href: '/about' },
-    { name: t('nav.trainings'), href: '/trainings' },
+    //{ name: t('nav.trainings'), href: '/trainings' },
     { name: t('nav.teams'), href: '/teams' },
     { name: t('nav.news'), href: '/news' },
     { name: t('nav.gallery'), href: '/gallery' },
