@@ -51,7 +51,7 @@ export default function BecomeMember() {
           </Button>
         </Link>
 
-        <p className="text-foreground/70 text-sm mt-4 font-thin">{t('join.specialOffer')}</p>
+       {/* <p className="text-foreground/70 text-sm mt-4 font-thin">{t('join.specialOffer')}</p>*/}
       </div>
     </section>
   )
