@@ -9,7 +9,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 
-
 export default function Contact() {
   const { t } = useTranslation()
   const [formData, setFormData] = useState({
@@ -55,7 +54,7 @@ export default function Contact() {
   }
 
   return (
-    <section className="py-20 bg-background">
+    <section id="contact" className="py-20 bg-background scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-black text-foreground mb-4">{t('contact.title')}</h2>
