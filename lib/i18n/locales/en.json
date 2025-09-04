@@ -280,6 +280,16 @@
     "emptySubtitleVideos": "Featured club videos are on the way."
   },
     "join": {
+       "joinCommunity": "Build community",
+    "joinCommunityDesc": "We bring table tennis to your center to foster social cohesion and teamwork.",
+
+    "competeWin": "Health and well-being",
+    "competeWinDesc": "An accessible activity that improves coordination, concentration, and physical and mental health.",
+
+    "loveGame": "Inclusion for all ages",
+    "loveGameDesc": "Programs adapted for children, teenagers, adults, and seniors with an inclusive approach.",
+
+    "becomeMember": "Request activity",
     "title": "Request an activity at your center",
     "description": "We are open to collaborations with schools, associations, and organizations to bring table tennis as a tool for health, inclusion, and social cohesion.",
     "completeApplication": "Complete the form to request an activity",

@@ -5,17 +5,13 @@ import { Users, Trophy, Heart } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
 
-
 export default function BecomeMember() {
   const { t } = useTranslation()
 
   return (
     <section className="py-20 relative overflow-hidden bg-background">
-      {/* Background */}
-      <div
-       
-      >
-        {/* Overlay corporativo más respirado */}
+      {/* Overlay corporativo */}
+      <div>
         <div className="absolute inset-0 bg-gradient-to-r from-brand-green/90 to-brand-teal/90 mix-blend-multiply"></div>
       </div>
 
@@ -50,8 +46,6 @@ export default function BecomeMember() {
             {t('join.becomeMember')}
           </Button>
         </Link>
-
-       {/* <p className="text-foreground/70 text-sm mt-4 font-thin">{t('join.specialOffer')}</p>*/}
       </div>
     </section>
   )

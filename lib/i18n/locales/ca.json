@@ -281,6 +281,16 @@
     "emptySubtitleVideos": "Estem preparant els vídeos destacats del club."
   },
   "join": {
+     "joinCommunity": "Crea comunitat",
+    "joinCommunityDesc": "Portem el tennis de taula al teu centre per fomentar la cohesió social i el treball en equip.",
+
+    "competeWin": "Salut i benestar",
+    "competeWinDesc": "Una activitat accessible que millora la coordinació, la concentració i la salut física i mental.",
+
+    "loveGame": "Inclusió per a totes les edats",
+    "loveGameDesc": "Programes adaptats per a infants, adolescents, adults i gent gran, amb un enfocament inclusiu.",
+
+    "becomeMember": "Sol·licitar activitat",
     "title": "Sol·licitar activitat al teu centre",
     "description": "Estem oberts a col·laboracions amb escoles, associacions i entitats per apropar el tennis de taula com a eina de salut, inclusió i cohesió social.",
     "completeApplication": "Completa el formulari per sol·licitar una activitat",

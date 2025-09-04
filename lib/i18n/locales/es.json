@@ -280,6 +280,17 @@
     "emptySubtitleVideos": "Estamos preparando los vídeos destacados del club."
   },
   "join": {
+    
+    "joinCommunity": "Crea comunidad",
+    "joinCommunityDesc": "Llevamos el tenis de mesa a tu centro para fomentar la cohesión social y el trabajo en equipo.",
+
+    "competeWin": "Salud y bienestar",
+    "competeWinDesc": "Una actividad accesible que mejora la coordinación, la concentración y la salud física y mental.",
+
+    "loveGame": "Inclusión para todas las edades",
+    "loveGameDesc": "Programas adaptados para niños, adolescentes, adultos y mayores, con un enfoque inclusivo.",
+
+    "becomeMember": "Solicitar actividad",
     "title": "Solicitar actividad en tu centro",
     "description": "Estamos abiertos a colaboraciones con colegios, asociaciones y entidades para acercar el tenis de mesa como herramienta de salud, inclusión y cohesión social.",
     "completeApplication": "Completa el formulario para solicitar una actividad",
