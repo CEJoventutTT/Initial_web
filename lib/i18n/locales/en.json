@@ -119,6 +119,18 @@
   },
   "about": {
     "title": "About Us",
+     "benefits": {
+      "title": "Benefits of table tennis",
+      "lead": "A low-impact activity with high returns for physical, cognitive, and social health.",
+      "physicalTitle": "Physical improvement",
+      "physicalDesc": "Hand-eye coordination, balance, agility, and functional strength with low joint impact.",
+      "cognitiveTitle": "Cognition & attention",
+      "cognitiveDesc": "Trains memory, focus, and quick decision-making in safe environments.",
+      "cardiovascularTitle": "Cardiovascular",
+      "cardiovascularDesc": "Moderate aerobic activity that supports heart health and endurance.",
+      "socialTitle": "Social cohesion",
+      "socialDesc": "Builds community, reduces isolation, and fosters healthy habits."
+    },
     "description": "The Club Esportiu Joventut TT was founded in Sant Josep de sa Talaia with a clear mission: to improve health, well-being, and social cohesion through sport. We are a young and inclusive club, and we travel anywhere in Ibiza to offer activities adapted to each center or collaborating entity.",
     "yearsExcellence": "Years of experience",
     "programs": "Annual programs",

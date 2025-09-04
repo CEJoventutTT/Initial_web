@@ -22,6 +22,13 @@ export default function AboutClient() {
     { title: t('about.values.developmentTitle'), description: t('about.values.developmentDesc'), icon: Target }
   ]
 
+  const benefits = [
+    { icon: Activity, title: t('about.benefits.physicalTitle'), desc: t('about.benefits.physicalDesc') },
+    { icon: Target,   title: t('about.benefits.cognitiveTitle'), desc: t('about.benefits.cognitiveDesc') },
+    { icon: Heart,    title: t('about.benefits.cardiovascularTitle'), desc: t('about.benefits.cardiovascularDesc') },
+    { icon: Users,    title: t('about.benefits.socialTitle'), desc: t('about.benefits.socialDesc') }
+  ]
+
   return (
     <div className="min-h-screen bg-brand-dark text-white">
       <Navigation />
@@ -52,6 +59,37 @@ export default function AboutClient() {
                     <div className="text-2xl font-bold text-white mb-2">{stat.value}</div>
                     <div className="text-white/80">{stat.label}</div>
                   </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Beneficios del tenis de mesa */}
+        <section className="py-20 bg-white/5">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-14">
+              <h2 className="text-4xl font-black text-white mb-4">{t('about.benefits.title')}</h2>
+              <p className="text-white/80 text-lg max-w-3xl mx-auto font-thin">
+                {t('about.benefits.lead')}
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {benefits.map((b, i) => {
+                const Icon = b.icon as any
+                return (
+                  <Card key={i} className="bg-brand-dark border border-white/10 text-center">
+                    <CardHeader>
+                      <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/15 bg-brand-teal/25">
+                        <Icon className="h-7 w-7 text-white" />
+                      </div>
+                      <CardTitle className="text-white text-lg font-semibold">{b.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-white/80 font-thin text-sm">{b.desc}</p>
+                    </CardContent>
+                  </Card>
                 )
               })}
             </div>

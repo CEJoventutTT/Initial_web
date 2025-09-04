@@ -118,6 +118,18 @@
     "sunday": "Diumenge"
   },
   "about": {
+     "benefits": {
+      "title": "Beneficis del tennis de taula",
+      "lead": "Una activitat de baix impacte amb un alt retorn en salut física, cognitiva i social.",
+      "physicalTitle": "Millora física",
+      "physicalDesc": "Coordinació oculomanual, equilibri, agilitat i força funcional amb baix impacte articular.",
+      "cognitiveTitle": "Cognició i atenció",
+      "cognitiveDesc": "Treballa memòria, concentració i presa de decisions ràpides en entorns segurs.",
+      "cardiovascularTitle": "Cardiovascular",
+      "cardiovascularDesc": "Activitat aeròbica moderada que afavoreix la salut del cor i la resistència.",
+      "socialTitle": "Cohesió social",
+      "socialDesc": "Genera comunitat, redueix l’aïllament i fomenta hàbits saludables."
+    },
     "title": "Sobre Nosaltres",
     "description": "El Club Esportiu Joventut TT neix a Sant Josep de sa Talaia amb una missió clara: millorar la salut, el benestar i la cohesió social a través de l’esport. Som un club jove i inclusiu i ens desplacem a qualsevol punt d’Eivissa per oferir activitats adaptades a cada centre o entitat col·laboradora.",
     "yearsExcellence": "Anys d’experiència",

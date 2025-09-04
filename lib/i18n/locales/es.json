@@ -118,6 +118,18 @@
     "sunday": "Domingo"
   },
   "about": {
+    "benefits": {
+      "title": "Beneficios del tenis de mesa",
+      "lead": "Una actividad de bajo impacto con alto retorno en salud física, cognitiva y social.",
+      "physicalTitle": "Mejora física",
+      "physicalDesc": "Coordinación óculo-manual, equilibrio, agilidad y fuerza funcional con bajo impacto articular.",
+      "cognitiveTitle": "Cognición y atención",
+      "cognitiveDesc": "Trabaja memoria, concentración y toma de decisiones rápidas en entornos seguros.",
+      "cardiovascularTitle": "Cardiovascular",
+      "cardiovascularDesc": "Actividad aeróbica moderada que favorece la salud del corazón y la resistencia.",
+      "socialTitle": "Cohesión social",
+      "socialDesc": "Genera comunidad, reduce el aislamiento y fomenta hábitos saludables."
+    },
     "title": "Sobre Nosotros",
     "description": "El Club Esportiu Joventut TT nace en Sant Josep de sa Talaia con una misión clara: mejorar la salud, el bienestar y la cohesión social a través del deporte. Somos un club joven e inclusivo y nos desplazamos a cualquier punto de Ibiza para ofrecer actividades adaptadas a cada centro o entidad colaboradora.",
     "yearsExcellence": "Años de experiencia",
@@ -279,6 +291,7 @@
     "emptySubtitlePhotos": "Muy pronto subiremos nuestras mejores fotos.",
     "emptySubtitleVideos": "Estamos preparando los vídeos destacados del club."
   },
+  
   "join": {
     
     "joinCommunity": "Crea comunidad",
