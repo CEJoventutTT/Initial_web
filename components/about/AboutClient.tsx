@@ -69,7 +69,7 @@ export default function AboutClient() {
             </div>
             <div className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg">
               <Image
-                src="/adrian-morato.webp"
+                src="/adrian-morato.jpg"
                 alt={t('about.coachName')}
                 fill
                 className="object-cover"
