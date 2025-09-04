@@ -70,7 +70,7 @@ export default async function RootLayout({
               "image": "https://cejoventut.com/10.jpg",
               "address": {
                 "@type": "PostalAddress",
-                "streetAddress": "Carrer Club Robinson, 350",
+                "streetAddress": " ",
                 "addressLocality": "Sant Josep de sa Talaia",
                 "addressRegion": "Illes Balears",
                 "postalCode": "07830",
