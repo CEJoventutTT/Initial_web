@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox'
 import { Users, Trophy, MapPin } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
-import emailjs from '@emailjs/browser'
 import { useToast } from '@/hooks/use-toast'
 
 type ParticipantProfile = 'children' | 'teens' | 'adults' | 'seniors' | 'mixed'
@@ -61,7 +60,7 @@ export default function JoinPage() {
 
     // Consentimiento
     agreeTerms: false,
-    agreeNewsletter: false
+    agreeNewsletter: false,
   })
 
   const handleInputChange = (field: string, value: any) => {
@@ -81,63 +80,20 @@ export default function JoinPage() {
     e.preventDefault()
     if (!formData.agreeTerms || submitting) return
 
-    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
-    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
-    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
-
-    if (!serviceId || !templateId || !publicKey) {
-      console.error('EmailJS config missing. Check NEXT_PUBLIC_EMAILJS_* env vars.')
-      toast({ variant: 'destructive', title: t('common.error'), description: t('join.applicationDesc') })
-      return
-    }
-
     try {
       setSubmitting(true)
-      const templateParams = {
-        // Centro/entidad
-        centerName: formData.centerName,
-        orgType: formData.orgType,
-        municipality: formData.municipality,
-        address: formData.address,
-        locationNotes: formData.locationNotes,
 
-        // Contacto
-        contactPerson: formData.contactPerson,
-        role: formData.role,
-        email: formData.email,
-        phone: formData.phone,
+      const res = await fetch('/api/center-activity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
 
-        // Participantes
-        participantProfile: formData.participantProfile,
-        ageRange: formData.ageRange,
-        numParticipants: formData.numParticipants,
-        specialNeeds: formData.specialNeeds,
-        accessibility: formData.accessibility,
-
-        // Planificación
-        preferredDays: formData.preferredDays.join(', '),
-        preferredTime: formData.preferredTime,
-        frequencyPerWeek: formData.frequencyPerWeek,
-        sessionDuration: formData.sessionDuration,
-        startDate: formData.startDate,
-
-        // Espacio/material
-        tablesAvailable: formData.tablesAvailable ? 'Yes' : 'No',
-        spaceAvailable: formData.spaceAvailable ? 'Yes' : 'No',
-        equipmentNotes: formData.equipmentNotes,
-
-        // Otros
-        objectives: formData.objectives,
-        notes: formData.notes,
-
-        // Consentimiento
-        agreeTerms: formData.agreeTerms ? 'Yes' : 'No',
-        agreeNewsletter: formData.agreeNewsletter ? 'Yes' : 'No',
-
-        createdAt: new Date().toISOString(),
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err?.error || 'REQUEST_FAILED')
       }
 
-      await emailjs.send(serviceId, templateId, templateParams, { publicKey })
       toast({ title: t('common.success'), description: t('join.reviewMessage') })
 
       setFormData({
@@ -166,11 +122,15 @@ export default function JoinPage() {
         objectives: '',
         notes: '',
         agreeTerms: false,
-        agreeNewsletter: false
+        agreeNewsletter: false,
       })
-    } catch (err) {
-      console.error(err)
-      toast({ variant: 'destructive', title: t('common.error'), description: t('join.applicationDesc') })
+    } catch (err: any) {
+      console.error('[Join] submit error:', err?.message || err)
+      toast({
+        variant: 'destructive',
+        title: t('common.error'),
+        description: err?.message || t('join.applicationDesc'),
+      })
     } finally {
       setSubmitting(false)
     }
@@ -240,7 +200,10 @@ export default function JoinPage() {
                         <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.orgType')}
                         </label>
-                        <Select onValueChange={(v) => handleInputChange('orgType', v as OrgType)}>
+                        <Select
+                          value={formData.orgType}
+                          onValueChange={(v) => handleInputChange('orgType', v as OrgType)}
+                        >
                           <SelectTrigger className="bg-card border-border text-foreground focus:ring-0">
                             <SelectValue placeholder={t('join.orgType')} />
                           </SelectTrigger>
@@ -350,7 +313,10 @@ export default function JoinPage() {
                         <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.participantProfile')}
                         </label>
-                        <Select onValueChange={(v) => handleInputChange('participantProfile', v as ParticipantProfile)}>
+                        <Select
+                          value={formData.participantProfile}
+                          onValueChange={(v) => handleInputChange('participantProfile', v as ParticipantProfile)}
+                        >
                           <SelectTrigger className="bg-card border-border text-foreground focus:ring-0">
                             <SelectValue placeholder={t('join.participantProfile')} />
                           </SelectTrigger>
@@ -440,7 +406,10 @@ export default function JoinPage() {
                         <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.preferredTime')}
                         </label>
-                        <Select onValueChange={(v) => handleInputChange('preferredTime', v as TimeSlot)}>
+                        <Select
+                          value={formData.preferredTime}
+                          onValueChange={(v) => handleInputChange('preferredTime', v as TimeSlot)}
+                        >
                           <SelectTrigger className="bg-card border-border text-foreground focus:ring-0">
                             <SelectValue placeholder={t('join.preferredTime')} />
                           </SelectTrigger>
@@ -456,7 +425,10 @@ export default function JoinPage() {
                         <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.frequencyPerWeek')}
                         </label>
-                        <Select onValueChange={(v) => handleInputChange('frequencyPerWeek', v)}>
+                        <Select
+                          value={formData.frequencyPerWeek}
+                          onValueChange={(v) => handleInputChange('frequencyPerWeek', v)}
+                        >
                           <SelectTrigger className="bg-card border-border text-foreground focus:ring-0">
                             <SelectValue placeholder={t('join.frequencyPerWeek')} />
                           </SelectTrigger>
@@ -473,7 +445,10 @@ export default function JoinPage() {
                         <label className="block text-sm font-medium text-foreground/80 mb-2">
                           {t('join.sessionDuration')}
                         </label>
-                        <Select onValueChange={(v) => handleInputChange('sessionDuration', v)}>
+                        <Select
+                          value={formData.sessionDuration}
+                          onValueChange={(v) => handleInputChange('sessionDuration', v)}
+                        >
                           <SelectTrigger className="bg-card border-border text-foreground focus:ring-0">
                             <SelectValue placeholder={t('join.sessionDuration')} />
                           </SelectTrigger>
@@ -602,7 +577,7 @@ export default function JoinPage() {
           </div>
         </section>
 
-        {/* Beneficios (puedes mantenerlos o adaptarlos al dossier) */}
+        {/* Beneficios */}
         <section className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
