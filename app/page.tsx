@@ -27,7 +27,7 @@ export default function HomePage() {
         <Navigation />
         <Hero />
         <WhoWeAre />
-        <TrainingsActivities />
+        {/*<TrainingsActivities />*/}
         <CompetitionResults />
         <NewsEvents />
         {/* <MediaGallery /> */}
