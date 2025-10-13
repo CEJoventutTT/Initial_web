@@ -57,6 +57,42 @@ export default function NewsPage() {
   // --- SOLO ESTOS 4 ARTÍCULOS ---
   const allArticles: Article[] = [
     {
+      id: 'entrenamientos-terapeuticos-es',
+      title: "Nuevo curso de tenis de mesa terapéutico para mayores",
+      excerpt: 'Arrancamos clases de tenis de mesa terapéutico en el municipio de Sant Josep',
+      date: '2025-10-12',
+      readTime: '2 min read',
+      image: '/entrenamientos-terapeuticos.jpg',
+      categories: ['health'],
+      externalUrl:
+        'https://medium.com/@ce.joventut.tt/nuevo-curso-de-tenis-de-mesa-terap%C3%A9utico-para-mayores-f2e4d4fcb8aa',
+      lang: 'es',
+    },
+    {
+      id: 'entrenamientos-terapeuticos-ca',
+      title: "Nou curs de tennis de taula terapèutic per a gent gran",
+      excerpt: 'Comencem classes de tennis de taula terapèutic al municipi de Sant Josep',
+      date: '2025-10-12',
+      readTime: '2 min read',
+      image: '/entrenamientos-terapeuticos.jpg',
+      categories: ['health'],
+      externalUrl:
+        'https://medium.com/@ce.joventut.tt/nou-curs-de-tennis-de-taula-terap%C3%A8utic-per-a-gent-gran-c7aa5c2ae708',
+      lang: 'ca',
+    },
+    {
+      id: 'entrenamientos-terapeuticos-en',
+      title: "New Therapeutic Table Tennis Course for Seniors",
+      excerpt: 'We’re launching therapeutic table tennis classes in the municipality of Sant Josep',
+      date: '2025-10-12',
+      readTime: '2 min read',
+      image: '/entrenamientos-terapeuticos.jpg',
+      categories: ['health'],
+      externalUrl:
+        'https://medium.com/@ce.joventut.tt/new-therapeutic-table-tennis-course-for-seniors-6389968b7eae',
+      lang: 'en',
+    },
+    {
       id: 'pingpong-infancia-ca',
       title: "El ping-pong en la infància i l'adolescència: un camí cap a la salut física i mental",
       excerpt: 'Impacte del tennis de taula en el desenvolupament físic, cognitiu i social dels joves.',

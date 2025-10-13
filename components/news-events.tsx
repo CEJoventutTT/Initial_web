@@ -52,6 +52,36 @@ export default function NewsEvents() {
   // --- SOLO ESTOS 4 ARTÍCULOS ---
   const allNews: HomeNews[] = [
     {
+      title: "Nuevo curso de tenis de mesa terapéutico para mayores",
+      description: 'Arrancamos clases de tenis de mesa terapéutico en el municipio de Sant Josep',
+      date: '2025-10-12',
+      readTime: '2 min read',
+      image: '/entrenamientos-terapeuticos.jpg',
+      category: 'Salut',
+      href: 'https://medium.com/@ce.joventut.tt/nuevo-curso-de-tenis-de-mesa-terap%C3%A9utico-para-mayores-f2e4d4fcb8aa',
+      lang: 'es',
+    },
+    {
+      title: "Nou curs de tennis de taula terapèutic per a gent gran",
+      description: 'Comencem classes de tennis de taula terapèutic al municipi de Sant Josep',
+      date: '2025-10-12',
+      readTime: '2 min read',
+      image: '/entrenamientos-terapeuticos.jpg',
+      category: 'Salut',
+      href: 'https://medium.com/@ce.joventut.tt/nou-curs-de-tennis-de-taula-terap%C3%A8utic-per-a-gent-gran-c7aa5c2ae708',
+      lang: 'ca',
+    },
+    {
+      title: "New Therapeutic Table Tennis Course for Seniors",
+      description: 'We’re launching therapeutic table tennis classes in the municipality of Sant Josep',
+      date: '2025-10-12',
+      readTime: '2 min read',
+      image: '/entrenamientos-terapeuticos.jpg',
+      category: 'Salut',
+      href: 'https://medium.com/@ce.joventut.tt/new-therapeutic-table-tennis-course-for-seniors-6389968b7eae',
+      lang: 'en',
+    },
+    {
       title: "El ping-pong en la infància i l'adolescència: un camí cap a la salut física i mental",
       description: 'Impacte del tennis de taula en el desenvolupament físic, cognitiu i social dels joves.',
       date: '2025-08-19',
