@@ -61,7 +61,7 @@ export default function NewsPage() {
       title: "Nuevo curso de tenis de mesa terapéutico para mayores",
       excerpt: 'Arrancamos clases de tenis de mesa terapéutico en el municipio de Sant Josep',
       date: '2025-10-12',
-      readTime: '2 min read',
+      readTime: '2 min leer',
       image: '/entrenamientos-terapeuticos.jpg',
       categories: ['health'],
       externalUrl:
@@ -73,7 +73,7 @@ export default function NewsPage() {
       title: "Nou curs de tennis de taula terapèutic per a gent gran",
       excerpt: 'Comencem classes de tennis de taula terapèutic al municipi de Sant Josep',
       date: '2025-10-12',
-      readTime: '2 min read',
+      readTime: '2 min llegir',
       image: '/entrenamientos-terapeuticos.jpg',
       categories: ['health'],
       externalUrl:
@@ -97,7 +97,7 @@ export default function NewsPage() {
       title: "El ping-pong en la infància i l'adolescència: un camí cap a la salut física i mental",
       excerpt: 'Impacte del tennis de taula en el desenvolupament físic, cognitiu i social dels joves.',
       date: '2025-08-19',
-      readTime: '5 min read',
+      readTime: '5 min llegir',
       image: '/2.jpg',
       categories: ['health'],
       externalUrl:
@@ -109,7 +109,7 @@ export default function NewsPage() {
       title: 'El ping-pong en la infancia y adolescencia: un camino hacia la salud física y mental',
       excerpt: 'Impacto del tenis de mesa en el desarrollo físico, cognitivo y social de niños y adolescentes.',
       date: '2025-08-19',
-      readTime: '5 min read',
+      readTime: '5 min leer',
       image: '/2.jpg',
       categories: ['health'],
       externalUrl:
@@ -121,7 +121,7 @@ export default function NewsPage() {
       title: 'El ping-pong: mucho más que un juego, un aliado contra la demencia',
       excerpt: 'Cómo el tenis de mesa puede ayudar a mantener el cerebro joven y activo.',
       date: '2025-08-19',
-      readTime: '5 min read',
+      readTime: '5 min leer',
       image: '/encyclopedia-02-00107-g003-550.jpg',
       categories: ['health'],
       externalUrl:
