@@ -8,158 +8,132 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 
-type Lang = 'es' | 'en' | 'ca'
-type CategoryId = 'all' | 'health' | 'training'
+type Lang = 'es' | 'en' | 'ca';
+type CategoryId = 'all' | 'health' | 'training';
 
 type Article = {
-  id: string
-  title: string
-  excerpt: string
-  date: string
-  readTime: string
-  image: string
-  categories: CategoryId[]
-  externalUrl: string
-  lang: Lang
-}
+  id: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  readTime: string;
+  image: string;
+  categories: CategoryId[];
+  externalUrl: string;
+  lang: Lang;
+};
 
 function normalizeLang(input?: string | null): Lang {
-  const v = (input || 'es').slice(0, 2).toLowerCase()
-  return v === 'es' || v === 'en' || v === 'ca' ? (v as Lang) : 'es'
+  const v = (input || 'es').slice(0, 2).toLowerCase();
+  return v === 'es' || v === 'en' || v === 'ca' ? (v as Lang) : 'es';
 }
 
 export default function NewsPage() {
   const { t, lang: hookLang } = useTranslation() as unknown as {
-    t: (k: string) => string
-    lang?: string
-  }
-  const tt = (k: string) => (typeof t === 'function' ? t(k) : k)
+    t: (k: string) => string;
+    lang?: string;
+  };
+  const tt = (k: string) => (typeof t === 'function' ? t(k) : k);
 
-  // idioma reactivo: del hook + escucha cambios en <html lang>
-  const [lang, setLang] = useState<Lang>(normalizeLang(hookLang))
+  const [lang, setLang] = useState<Lang>(normalizeLang(hookLang));
   useEffect(() => {
-    setLang(normalizeLang(hookLang))
-  }, [hookLang])
+    setLang(normalizeLang(hookLang));
+  }, [hookLang]);
 
   useEffect(() => {
-    if (typeof document === 'undefined') return
-    const el = document.documentElement
-    const update = () => setLang(normalizeLang(el.getAttribute('lang')))
-    update()
-    const mo = new MutationObserver(update)
-    mo.observe(el, { attributes: true, attributeFilter: ['lang'] })
-    return () => mo.disconnect()
-  }, [])
+    if (typeof document === 'undefined') return;
+    const el = document.documentElement;
+    const update = () => setLang(normalizeLang(el.getAttribute('lang')));
+    update();
+    const mo = new MutationObserver(update);
+    mo.observe(el, { attributes: true, attributeFilter: ['lang'] });
+    return () => mo.disconnect();
+  }, []);
 
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => { setMounted(true) }, [])
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
-  // --- SOLO ESTOS 4 ARTÍCULOS ---
-  const allArticles: Article[] = [
-    {
-      id: 'entrenamientos-terapeuticos-es',
-      title: "Nuevo curso de tenis de mesa terapéutico para mayores",
-      excerpt: 'Arrancamos clases de tenis de mesa terapéutico en el municipio de Sant Josep',
-      date: '2025-10-12',
-      readTime: '2 min leer',
-      image: '/entrenamientos-terapeuticos.jpg',
-      categories: ['health'],
-      externalUrl:
-        'https://medium.com/@ce.joventut.tt/nuevo-curso-de-tenis-de-mesa-terap%C3%A9utico-para-mayores-f2e4d4fcb8aa',
-      lang: 'es',
-    },
-    {
-      id: 'entrenamientos-terapeuticos-ca',
-      title: "Nou curs de tennis de taula terapèutic per a gent gran",
-      excerpt: 'Comencem classes de tennis de taula terapèutic al municipi de Sant Josep',
-      date: '2025-10-12',
-      readTime: '2 min llegir',
-      image: '/entrenamientos-terapeuticos.jpg',
-      categories: ['health'],
-      externalUrl:
-        'https://medium.com/@ce.joventut.tt/nou-curs-de-tennis-de-taula-terap%C3%A8utic-per-a-gent-gran-c7aa5c2ae708',
-      lang: 'ca',
-    },
-    {
-      id: 'entrenamientos-terapeuticos-en',
-      title: "New Therapeutic Table Tennis Course for Seniors",
-      excerpt: 'We’re launching therapeutic table tennis classes in the municipality of Sant Josep',
-      date: '2025-10-12',
-      readTime: '2 min read',
-      image: '/entrenamientos-terapeuticos.jpg',
-      categories: ['health'],
-      externalUrl:
-        'https://medium.com/@ce.joventut.tt/new-therapeutic-table-tennis-course-for-seniors-6389968b7eae',
-      lang: 'en',
-    },
-    {
-      id: 'pingpong-infancia-ca',
-      title: "El ping-pong en la infància i l'adolescència: un camí cap a la salut física i mental",
-      excerpt: 'Impacte del tennis de taula en el desenvolupament físic, cognitiu i social dels joves.',
-      date: '2025-08-19',
-      readTime: '5 min llegir',
-      image: '/2.jpg',
-      categories: ['health'],
-      externalUrl:
-        'https://medium.com/@ce.joventut.tt/el-ping-pong-en-la-infància-i-ladolescència-un-camí-cap-a-la-salut-física-i-mental-f756c586d32c',
-      lang: 'ca',
-    },
-    {
-      id: 'pingpong-infancia-es',
-      title: 'El ping-pong en la infancia y adolescencia: un camino hacia la salud física y mental',
-      excerpt: 'Impacto del tenis de mesa en el desarrollo físico, cognitivo y social de niños y adolescentes.',
-      date: '2025-08-19',
-      readTime: '5 min leer',
-      image: '/2.jpg',
-      categories: ['health'],
-      externalUrl:
-        'https://medium.com/@ce.joventut.tt/el-ping-pong-en-la-infancia-y-adolescencia-un-aliado-para-crecer-con-cuerpo-y-mente-sanos-611ba01cd98a',
-      lang: 'es',
-    },
-    {
-      id: 'pingpong-demencia-es',
-      title: 'El ping-pong: mucho más que un juego, un aliado contra la demencia',
-      excerpt: 'Cómo el tenis de mesa puede ayudar a mantener el cerebro joven y activo.',
-      date: '2025-08-19',
-      readTime: '5 min leer',
-      image: '/encyclopedia-02-00107-g003-550.jpg',
-      categories: ['health'],
-      externalUrl:
-        'https://medium.com/@ce.joventut.tt/el-ping-pong-mucho-más-que-un-juego-un-aliado-contra-la-demencia-ff085c58302c',
-      lang: 'es',
-    },
-    {
-      id: 'pingpong-children-en',
-      title: 'Table tennis – the best entertainment sport for children and young people',
-      excerpt: 'Exploring the benefits of table tennis for health and development of young players.',
-      date: '2025-08-19',
-      readTime: '5 min read',
-      image: '/2.jpg',
-      categories: ['health'],
-      externalUrl:
-        'https://sport-transfer.eu/table-tennis---the-best-entertainment-sport-for-children-and-young-people,3,55',
-      lang: 'en',
-    },
-        {
-      id: 'pingpong-physics-en',
-      title: 'Unlocking the Secrets of Spin: Understanding the Physics of Table Tennis',
-      excerpt: 'The ping pong ball is a six-degree-of-freedom motion in a gravitational field, with the ball interacting with the air, the racket, and the table. This includes three translational and three rotational degrees of freedom. ',
-      date: '2024-09-7',
-      readTime: '5 min read',
-      image: '/1.jpg',
-      categories: ['training'],
-      externalUrl:
-        'https://medium.com/@chrislu81/unlocking-the-secrets-of-spin-understanding-the-physics-of-table-tennis-db45db130561',
-      lang: 'en',
-    },
-  ]
+  const [allArticles, setAllArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Filtra por idioma (fallback a ES si quedara vacío)
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/news');
+        if (!response.ok) {
+          throw new Error('Failed to fetch news');
+        }
+        const items = await response.json();
+        
+        const articles = items.map((item: any) => {
+          const content = item['content:encoded'] || '';
+          const imageUrlMatch = content.match(/<img[^>]+src="([^">]+)"/);
+          const imageUrl = imageUrlMatch ? imageUrlMatch[1] : '/placeholder.jpg';
+
+          const excerptMatch = content.replace(/<[^>]*>/g, '').substring(0, 150);
+          
+          // Estimate read time
+          const words = content.split(' ').length;
+          const readTime = `${Math.ceil(words / 200)} min read`;
+
+          const title = item.title.toLowerCase();
+          let detectedLang: Lang;
+
+          // Prioritize Catalan-specific characters that don't appear in Spanish.
+          if (/[àèòç]|l·l/.test(title)) {
+            detectedLang = 'ca';
+          } 
+          // Then check for Spanish-specific characters.
+          else if (/[ñ]/.test(title)) {
+            detectedLang = 'es';
+          }
+          // Handle shared accented characters which create ambiguity.
+          else if (/[áéíóúüï]/.test(title)) {
+            // Use word checks for disambiguation
+            if (/\b(per|amb|dels|als|les|els|seva|nostra|vostra|aquesta|mateix|doncs|gairebé)\b/.test(title) || /\s+i\s+/.test(title)) {
+                 detectedLang = 'ca';
+            } else {
+                 detectedLang = 'es';
+            }
+          } 
+          // No accents, no specific characters, likely English.
+          else {
+            detectedLang = 'en';
+          }
+
+
+          return {
+            id: item.guid,
+            title: item.title,
+            excerpt: excerptMatch,
+            date: item.isoDate,
+            readTime: readTime,
+            image: imageUrl,
+            categories: item.categories || ['training'],
+            externalUrl: item.link,
+            lang: detectedLang,
+          };
+        });
+
+        setAllArticles(articles);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
   const articlesByLang = useMemo(
     () => allArticles.filter(a => a.lang === lang),
-    [lang]
-  )
-  const articles = articlesByLang.length ? articlesByLang : allArticles.filter(a => a.lang === 'es')
+    [lang, allArticles]
+  );
+  const articles = articlesByLang.length ? articlesByLang : allArticles.filter(a => a.lang === 'es');
 
   // Categorías presentes + "All"
   const categories = useMemo(() => {

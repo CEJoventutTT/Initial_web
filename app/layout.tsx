@@ -1,6 +1,6 @@
 // app/layout.tsx
 import "./globals.css"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { cookies } from "next/headers"
 import { TranslationProvider, type Language } from "@/lib/i18n"
 import { Toaster } from "@/components/ui/toaster"
@@ -18,6 +18,10 @@ async function loadDict(lang: Language) {
     default:
       return (await import("@/lib/i18n/locales/es.json")).default
   }
+}
+
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
 }
 
 export const metadata: Metadata = {
@@ -38,7 +42,6 @@ export const metadata: Metadata = {
     title: "Joventut"
   },
   manifest: "/site.webmanifest",
-  themeColor: "#0f172a"
 }
 
 export default async function RootLayout({
