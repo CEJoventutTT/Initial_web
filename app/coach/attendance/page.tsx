@@ -3,10 +3,10 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabaseBrowser } from '@/lib/supabase/client'
 
 export default function AttendPage() {
-  const supabase = createClientComponentClient()
+  const supabase = supabaseBrowser()
   const router = useRouter()
   const qp = useSearchParams()
   const s = qp.get('s')
@@ -25,7 +25,6 @@ export default function AttendPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
         // redirige a login y vuelve aquí
-        const site = typeof window !== 'undefined' ? window.location.origin : ''
         router.push(`/login?redirect=${encodeURIComponent(`/attend?s=${s}&k=${k}`)}`)
         return
       }
@@ -47,9 +46,9 @@ export default function AttendPage() {
           setOk(false)
           setMsg(data.detail || data.error || 'No se pudo registrar la asistencia.')
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         setOk(false)
-        setMsg(String(e?.message || e))
+        setMsg(e instanceof Error ? e.message : String(e))
       }
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps

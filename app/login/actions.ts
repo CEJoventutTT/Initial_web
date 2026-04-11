@@ -1,9 +1,8 @@
 // app/login/actions.ts
 'use server'
 
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs'
+import { supabaseServer } from '@/lib/supabase/server'
 
 export type LoginState = { error: string | null }
 
@@ -18,7 +17,7 @@ export async function signInAction(
     return { error: 'Introduce email y contraseña.' }
   }
 
-  const supabase = createServerActionClient({ cookies })
+  const supabase = await supabaseServer()
   const { error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) {
     return { error: error.message }

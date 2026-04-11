@@ -7,6 +7,7 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 import { detectArticleLang } from '@/lib/news'
+import Image from 'next/image'
 
 type Lang = 'es' | 'en' | 'ca';
 
@@ -52,13 +53,9 @@ export default function NewsEvents() {
   useEffect(() => { setMounted(true); }, []);
 
   const [allArticles, setAllArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        setLoading(true);
         const response = await fetch('/api/news');
         if (!response.ok) {
           throw new Error('Failed to fetch news');
@@ -95,11 +92,8 @@ export default function NewsEvents() {
         });
 
         setAllArticles(articles);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      } catch (err: unknown) {
+        console.error('Failed to fetch news', err);
       }
     };
 
@@ -132,9 +126,12 @@ export default function NewsEvents() {
               className="bg-white/5 border border-white/10 hover:scale-[1.01] transition-transform duration-300 overflow-hidden"
             >
               <div className="relative overflow-hidden">
-                <img
+                <Image
                   src={article.image || '/placeholder.svg'}
                   alt={article.title}
+                  width={768}
+                  height={192}
+                  unoptimized
                   className="w-full h-48 object-cover"
                 />
                 <div className="absolute top-4 left-4">

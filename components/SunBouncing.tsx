@@ -230,6 +230,7 @@ export default function SunBouncing({ size = 40, className }: Props) {
       <div ref={hitboxRef} onClick={startBouncing} style={{ display: 'none' }} />
 
       {/* Sol: bote en reposo / control JS en rebote */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={sunRef}
         src={FRAMES[frame]}

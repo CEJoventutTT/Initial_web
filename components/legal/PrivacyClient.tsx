@@ -14,7 +14,7 @@ export default function PrivacyClient() {
       <ul>
         <li><strong>{t("legal.shared.controller")}:</strong> Club Esportiu Joventut TT</li>
         <li><strong>{t("legal.shared.taxId")}:</strong> G22554984</li>
-        <li><strong>{t("legal.shared.address")}:</strong> Carrer Club Robinson, 350, 07830, Sant Josep de sa Talaia, Illes Balears</li>
+        <li><strong>{t("legal.shared.address")}:</strong> Diseminado Polígono 31, 11035, 07839 Es Cubells, Illes Balears</li>
         <li><strong>{t("legal.shared.email")}:</strong> ce.joventut.tt@gmail.com</li>
       </ul>
 

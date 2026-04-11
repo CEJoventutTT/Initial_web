@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Crown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import Image from 'next/image'
 
 export default function Leaderboard({
   items
@@ -29,7 +30,7 @@ export default function Leaderboard({
               <div className="flex items-center space-x-3">
                 <div className="text-lg font-bold w-6 text-center">{idx+1}</div>
                 <div className="relative">
-                  <img src="/placeholder.svg?height=40&width=40" alt={p.full_name ?? 'Player'} className="w-10 h-10 rounded-full" />
+                  <Image src="/placeholder.svg" alt={p.full_name ?? 'Player'} width={40} height={40} className="w-10 h-10 rounded-full" />
                 </div>
                 <div>
                   <div className="font-medium text-white">{p.full_name ?? 'Player'}</div>

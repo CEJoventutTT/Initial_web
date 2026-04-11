@@ -26,7 +26,7 @@ export default async function CoachLayout({ children }: { children: ReactNode })
     )
   }
 
-  const supabase = supabaseServer()
+  const supabase = await supabaseServer()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) redirect('/login')
 

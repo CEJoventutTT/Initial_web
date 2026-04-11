@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 import { detectArticleLang } from '@/lib/news'
+import Image from 'next/image'
 
 type Lang = 'es' | 'en' | 'ca';
 type CategoryId = 'all' | 'health' | 'training';
@@ -55,13 +56,9 @@ export default function NewsPage() {
   useEffect(() => { setMounted(true); }, []);
 
   const [allArticles, setAllArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        setLoading(true);
         const response = await fetch('/api/news');
         if (!response.ok) {
           throw new Error('Failed to fetch news');
@@ -100,11 +97,8 @@ export default function NewsPage() {
         });
 
         setAllArticles(articles);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      } catch (err: unknown) {
+        console.error('Failed to fetch news', err);
       }
     };
 
@@ -190,9 +184,12 @@ export default function NewsPage() {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filtered.map((article) => (
                   <Card key={article.id} className="bg-card/90 border border-border overflow-hidden">
-                    <img
+                    <Image
                       src={article.image}
                       alt={article.title}
+                      width={640}
+                      height={160}
+                      unoptimized
                       className="w-full h-40 object-cover"
                     />
                     <CardContent className="p-6">

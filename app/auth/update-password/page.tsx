@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabaseBrowser } from '@/lib/supabase/client'
 
 function parseHashTokens() {
   if (typeof window === 'undefined') return null
@@ -20,7 +20,7 @@ function parseHashTokens() {
 }
 
 export default function UpdatePasswordPage() {
-  const supabase = createClientComponentClient()
+  const supabase = supabaseBrowser()
   const router = useRouter()
 
   const [loading, setLoading] = useState(true)
@@ -55,7 +55,7 @@ export default function UpdatePasswordPage() {
         // 2) ¿Viene con #access_token y refresh_token? setea sesión manualmente
         const tokens = parseHashTokens()
         if (tokens?.access_token && tokens?.refresh_token) {
-          const { data, error } = await supabase.auth.setSession({
+          const { error } = await supabase.auth.setSession({
             access_token: tokens.access_token,
             refresh_token: tokens.refresh_token,
           })

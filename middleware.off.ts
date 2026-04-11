@@ -1,7 +1,7 @@
 // middleware.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { supabaseMiddleware } from '@/lib/supabase/middleware'
 
 const PUBLIC_PREFIXES = ['/attend', '/api/coach/attendance/checkin']
 
@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
 
   // Para el resto, sincroniza sesión si lo necesitas
   const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
+  const supabase = supabaseMiddleware(req, res)
   await supabase.auth.getSession()
   return res
 }

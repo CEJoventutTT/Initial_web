@@ -1,10 +1,9 @@
 import { ReactNode } from 'react'
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabaseServer } from '@/lib/supabase/server'
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = await supabaseServer()
 
   // 1) Recupera sesión activa
   const {

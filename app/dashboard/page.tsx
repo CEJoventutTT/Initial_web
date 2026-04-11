@@ -42,7 +42,7 @@ export default async function DashboardPage() {
     )
   }
 
-  const supabase = supabaseServer()
+  const supabase = await supabaseServer()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session?.user) redirect('/login')
   const uid = session.user.id

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Calendar, Clock, User, ArrowLeft, Share2, Heart, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
+import Image from 'next/image'
 
 // Simulación de fetch por slug (ahora vacío)
 const getArticleBySlug = (slug: string) => {
@@ -15,7 +16,7 @@ const getArticleBySlug = (slug: string) => {
 
 export default function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { t } = useTranslation()
-  const tt = typeof t === 'function' ? t : ((k: string, v?: any) => k)
+  const tt = typeof t === 'function' ? t : ((k: string) => k)
   const { slug } = use(params)
 
   const article = getArticleBySlug(slug)
@@ -100,9 +101,12 @@ export default function ArticlePage({ params }: { params: Promise<{ slug: string
         {article.image && (
           <section className="py-0">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <img
+              <Image
                 src={article.image || '/placeholder.svg'}
                 alt={article.title}
+                width={1200}
+                height={384}
+                unoptimized
                 className="w-full h-64 md:h-96 object-cover rounded-lg shadow-2xl border border-white/10"
               />
             </div>

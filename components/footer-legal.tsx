@@ -36,7 +36,7 @@ export default function FooterLegal() {
             </a>
           </span>
           <span>·</span>
-          <span>Sant Josep de sa Talaia, Illes Balears</span>
+          <span>Diseminado Polígono 31, 11035, 07839 Es Cubells, Illes Balears</span>
         </div>
       </div>
     </footer>

@@ -3,10 +3,10 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabaseBrowser } from '@/lib/supabase/client'
 
 export default function AttendPage() {
-  const supabase = createClientComponentClient()
+  const supabase = supabaseBrowser()
   const sp = useSearchParams()
   const s = sp.get('s')
   const k = sp.get('k')
@@ -39,8 +39,8 @@ export default function AttendPage() {
         } else {
           setStatus('error'); setMsg(j?.error || 'Error al registrar asistencia')
         }
-      } catch (e: any) {
-        setStatus('error'); setMsg(e?.message || 'Error de red')
+      } catch (e: unknown) {
+        setStatus('error'); setMsg(e instanceof Error ? e.message : 'Error de red')
       }
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps

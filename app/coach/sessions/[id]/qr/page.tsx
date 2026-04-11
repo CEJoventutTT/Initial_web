@@ -2,6 +2,7 @@
 import { cookies, headers } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import CopyButton from '@/components/CopyButton'
+import Image from 'next/image'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -94,9 +95,12 @@ export default async function SessionQrPage({ params }: { params: Promise<{ id: 
             <div className="flex flex-col items-center justify-center gap-4">
               {attendUrl ? (
                 <>
-                  <img
+                  <Image
                     src={qrSrc!}
                     alt="Código QR"
+                    width={300}
+                    height={300}
+                    unoptimized
                     className="h-[300px] w-[300px] rounded-lg bg-white p-2 shadow-soft"
                   />
                   <div className="max-w-full overflow-x-auto rounded-md border border-white/10 bg-white/5 p-3 font-mono text-xs text-white/90">
