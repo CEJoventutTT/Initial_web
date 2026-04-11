@@ -6,8 +6,8 @@ import CopyButton from '@/components/CopyButton'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export default async function SessionQrPage({ params }: { params: { id: string } }) {
-  const id = params.id
+export default async function SessionQrPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const cookieStore = await cookies()
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

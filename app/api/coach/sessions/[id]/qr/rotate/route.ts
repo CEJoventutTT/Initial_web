@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const ac = new AbortController()
   const t = setTimeout(() => ac.abort(), 12_000)
   try {
@@ -21,7 +21,8 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     const { data: { user }, error: userErr } = await userClient.auth.getUser({ signal: ac.signal } as any)
     if (userErr || !user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
-    const sessionId = Number(params.id)
+    const { id } = await params
+    const sessionId = Number(id)
     if (!Number.isFinite(sessionId)) return NextResponse.json({ error: 'invalid_id' }, { status: 400 })
 
     // 1) recuperar program_id desde attendance_sessions

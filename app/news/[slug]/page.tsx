@@ -1,5 +1,6 @@
 'use client'
 
+import { use } from 'react'
 import Navigation from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, User, ArrowLeft, Share2, Heart, MessageCircle } from 'lucide-react'
@@ -12,11 +13,12 @@ const getArticleBySlug = (slug: string) => {
   return (articles as any)[slug] || null
 }
 
-export default function ArticlePage({ params }: { params: { slug: string } }) {
+export default function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { t } = useTranslation()
   const tt = typeof t === 'function' ? t : ((k: string, v?: any) => k)
+  const { slug } = use(params)
 
-  const article = getArticleBySlug(params.slug)
+  const article = getArticleBySlug(slug)
 
   if (!article) {
     return (

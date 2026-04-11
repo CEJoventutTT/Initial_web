@@ -5,13 +5,14 @@ import { cookies } from 'next/headers'
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = createRouteHandlerClient({ cookies })
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
-  const programId = Number(params.id)
+  const { id } = await params
+  const programId = Number(id)
 
   // Solo alumnos del programa; join con profiles para nombre
   const { data, error } = await supabase
@@ -26,13 +27,14 @@ export async function GET(
 /** OPCIONAL: inscribir alumno al programa (body: { user_id }) */
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = createRouteHandlerClient({ cookies })
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
-  const program_id = Number(params.id)
+  const { id } = await params
+  const program_id = Number(id)
   const { user_id } = await req.json()
 
   // policy exigirá que seas coach de ese programa
@@ -47,13 +49,14 @@ export async function POST(
 /** OPCIONAL: dar de baja alumno (body: { user_id }) */
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = createRouteHandlerClient({ cookies })
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
-  const program_id = Number(params.id)
+  const { id } = await params
+  const program_id = Number(id)
   const { user_id } = await req.json()
 
   const { error } = await supabase
