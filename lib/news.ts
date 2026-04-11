@@ -1,5 +1,44 @@
 type Lang = 'es' | 'en' | 'ca'
 
+const CATEGORY_MAPPING: Record<string, string> = {
+  // Training / Formación
+  'training': 'training',
+  'formación': 'training',
+  'formacio': 'training',
+  'formació': 'training',
+  
+  // Championships / Campeonatos
+  'championship': 'championships',
+  'championships': 'championships',
+  'campeonato': 'championships',
+  'campionats': 'championships',
+  'campeonats': 'championships',
+  'torneo': 'championships',
+  'tournament': 'championships',
+  
+  // Events / Eventos
+  'event': 'events',
+  'events': 'events',
+  'evento': 'events',
+  'eventos': 'events',
+  'acontecimiento': 'events',
+  'acontecimiento': 'events',
+  'acte': 'events',
+  'actes': 'events',
+  'aconteciment': 'events',
+  
+  // News (default)
+  'news': 'news',
+  'noticias': 'news',
+  'notícies': 'news',
+  'noticia': 'news',
+}
+
+function normalizeCategory(category: string): string {
+  const normalized = (category || '').toLowerCase().trim()
+  return CATEGORY_MAPPING[normalized] || 'news'
+}
+
 const LANGUAGE_TAGS: Record<Lang, string[]> = {
   es: ['es', 'esp', 'espanol', 'español', 'castellano', 'spanish'],
   en: ['en', 'eng', 'english', 'ingles', 'inglés'],
@@ -78,3 +117,6 @@ export function detectArticleLang(article: {
   if (/[ñáéíóúüï]/.test(rawText)) return 'es'
   return 'en'
 }
+
+export { detectArticleLang, normalizeCategory }
+

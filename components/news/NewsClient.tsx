@@ -7,7 +7,7 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
-import { detectArticleLang } from '@/lib/news'
+import { detectArticleLang, normalizeCategory } from '@/lib/news'
 import Image from 'next/image'
 
 type Lang = 'es' | 'en' | 'ca';
@@ -90,7 +90,7 @@ export default function NewsPage() {
             date: item.isoDate,
             readTime: readTime,
             image: imageUrl,
-            categories: item.categories || ['training'],
+            categories: (item.categories || ['training']).map(normalizeCategory),
             externalUrl: item.link,
             lang: detectedLang,
           };

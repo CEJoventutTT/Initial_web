@@ -264,14 +264,10 @@
     "about": "About {author}",
     "categories": {
       "all": "All",
-      "tournament": "Tournament",
-      "facilityUpdate": "Facility Update",
-      "programLaunch": "Program Launch",
-      "memberSpotlight": "Member Spotlight",
-      "results": "Results",
       "training": "Training",
-      "health": "Health",
-      "announcement": "Announcement"
+      "championships": "Championships",
+      "events": "Events",
+      "news": "News"
     },
     "viewAllNews": "View All News",
     "emptyTitle": "Launching shortly",
@@ -424,10 +420,10 @@
     "message": "Message",
     "sendMessageBtn": "Send Message",
     "sending": "Sending...",
-    "addressText": "Diseminado Polígono 31, 11035, 07839 Es Cubells",
+    "addressText": "Polideportivo Es Cubells\nDiseminado Polígono 31, 11035, 07839 Es Cubells",
     "phoneText": "+34 644 978 857",
     "emailText": "ce.joventut.tt@gmail.com",
-    "hoursText": "Mon-Fri: 6AM-10PM\nSat-Sun: 8AM-8PM"
+    "hoursText": "Monday-Thursday: 17h-19h"
   },
   "common": {
     "month": "/month",

@@ -264,15 +264,10 @@
     "about": "Sobre {author}",
     "categories": {
       "all": "Tots",
-      "tournament": "Torneig",
-      "facilityUpdate": "Actualització d'Instal·lacions",
-      "programLaunch": "Llançament de Programa",
-      "memberSpotlight": "Membre Destacat",
-      "results": "Resultats",
-      "health": "Salut",
-      "announcement": "Anunci",
-      "training": "Formació"
-      
+      "training": "Formació",
+      "championships": "Campionats",
+      "events": "Esdeveniments",
+      "news": "Notícies"
     },
     "viewAllNews": "Veure Totes les Notícies",
     "emptyTitle": "A punt d’engegar",
@@ -425,10 +420,10 @@
     "message": "Missatge",
     "sendMessageBtn": "Enviar Missatge",
     "sending": "Enviant...",
-    "addressText": "Diseminado Polígon 31, 11035, 07839 Es Cubells",
+    "addressText": "Polideportivo Es Cubells\nDiseminado Polígon 31, 11035, 07839 Es Cubells",
     "phoneText": "+34 644 978 857",
     "emailText": "ce.joventut.tt@gmail.com",
-    "hoursText": "Mon-Fri: 6AM-10PM\nSat-Sun: 8AM-8PM"
+    "hoursText": "Dilluns-Dijous: 17h-19h"
   },
   "common": {
     "month": "/mes",

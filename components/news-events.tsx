@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
-import { detectArticleLang } from '@/lib/news'
+import { detectArticleLang, normalizeCategory } from '@/lib/news'
 import Image from 'next/image'
 
 type Lang = 'es' | 'en' | 'ca';
@@ -85,7 +85,7 @@ export default function NewsEvents() {
             date: item.isoDate,
             readTime: readTime,
             image: imageUrl,
-            category: item.categories?.[0] || 'General',
+            category: normalizeCategory(item.categories?.[0] || 'news'),
             href: item.link,
             lang: detectedLang,
           };
