@@ -101,14 +101,16 @@ export default function ArticlePage({ params }: { params: Promise<{ slug: string
         {article.image && (
           <section className="py-0">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <Image
-                src={article.image || '/placeholder.svg'}
-                alt={article.title}
-                width={1200}
-                height={384}
-                unoptimized
-                className="w-full h-64 md:h-96 object-cover rounded-lg shadow-2xl border border-white/10"
-              />
+              <div className="relative w-full h-64 md:h-96 rounded-lg shadow-2xl border border-white/10 overflow-hidden">
+                <Image
+                  src={article.image || '/placeholder.svg'}
+                  alt={article.title}
+                  fill
+                  sizes="(max-width: 1200px) 100vw, 1200px"
+                  unoptimized
+                  className="object-cover"
+                />
+              </div>
             </div>
           </section>
         )}

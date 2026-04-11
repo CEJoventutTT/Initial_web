@@ -27,7 +27,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   // 3) Renderiza el contenido protegido
   return (
-    <div className="min-h-screen bg-dark text-white">
+    <div className="min-h-screen bg-brand-dark text-white">
       <div className="max-w-5xl mx-auto py-10 px-6">
         <h1 className="text-3xl font-bold mb-6">Panel de administración</h1>
         {children}

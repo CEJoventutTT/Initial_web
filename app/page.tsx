@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 // ✅ Componente server (mantiene SSR) y envuelve en wrapper cliente
 export default function HomePage() {
   return (
-      <div className="min-h-screen bg-dark text-white">
+      <div className="min-h-screen bg-brand-dark text-white">
         <Navigation />
         <Hero />
         <WhoWeAre />

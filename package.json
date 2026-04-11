@@ -2,6 +2,7 @@
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -46,7 +47,6 @@
     "clsx": "^2.1.1",
     "cmdk": "1.1.1",
     "date-fns": "4.1.0",
-    "emailjs-com": "^3.2.0",
     "embla-carousel-react": "8.6.0",
     "flag-icons": "^7.5.0",
     "geist": "^1.7.0",

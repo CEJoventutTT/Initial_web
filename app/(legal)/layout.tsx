@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-dark text-white">
+    <main className="min-h-screen bg-brand-dark text-white">
       {/* Top bar sticky con botón volver + selector de idioma */}
       <LegalTopBar />
 

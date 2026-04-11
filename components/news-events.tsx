@@ -125,14 +125,14 @@ export default function NewsEvents() {
               key={index}
               className="bg-white/5 border border-white/10 hover:scale-[1.01] transition-transform duration-300 overflow-hidden"
             >
-              <div className="relative overflow-hidden">
+              <div className="relative overflow-hidden h-48">
                 <Image
                   src={article.image || '/placeholder.svg'}
                   alt={article.title}
-                  width={768}
-                  height={192}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 768px"
                   unoptimized
-                  className="w-full h-48 object-cover"
+                  className="object-cover"
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">

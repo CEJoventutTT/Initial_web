@@ -69,7 +69,7 @@ export default function Contact() {
                 { Icon: MapPin, title: t('contact.address'), text: t('contact.addressText') },
                 { Icon: Phone, title: t('contact.phone'), text: '+34 644 978 857' },
                 { Icon: Mail, title: t('contact.email'), text: 'ce.joventut.tt@gmail.com' },
-                { Icon: Clock, title: t('contact.hours'), text: <>Mon-Fri: 6AM-10PM<br/>Sat-Sun: 8AM-8PM</> },
+                { Icon: Clock, title: t('contact.hours'), text: <>Lunes-Jueves: 17h-19h<br/></> },
               ].map(({ Icon, title, text }, i) => (
                 <Card key={i} className="bg-card/90 border border-border">
                   <CardContent className="p-6 flex items-start">

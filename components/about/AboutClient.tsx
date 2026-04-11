@@ -2,19 +2,12 @@
 
 import Navigation from '@/components/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Heart, Target, Users, Trophy, Calendar, Activity } from 'lucide-react'
+import { Heart, Target, Users, Activity } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 import Image from 'next/image'
 
 export default function AboutClient() {
   const { t } = useTranslation()
-
-  const stats = [
-    { label: t('about.yearsExcellence'), value: t('about.since'), icon: Calendar },
-    { label: t('about.programs'), value: t('about.programsShort'), icon: Activity },
-    { label: t('about.communityReach'), value: t('about.communityReachShort'), icon: Users },
-    { label: t('about.nationalPath'), value: t('about.nationalPathShort'), icon: Trophy }
-  ]
 
   const values = [
     { title: t('about.values.inclusionTitle'),  description: t('about.values.inclusionDesc'),  icon: Heart },
@@ -42,26 +35,6 @@ export default function AboutClient() {
             <p className="text-xl text-white/90 max-w-3xl mx-auto font-thin">
               {t('about.description')}
             </p>
-          </div>
-        </section>
-
-        {/* Stats */}
-        <section className="py-16 bg-brand-dark">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {stats.map((stat, idx) => {
-                const Icon = stat.icon as any
-                return (
-                  <div key={idx} className="text-center">
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/15 bg-brand-teal/25">
-                      <Icon className="h-8 w-8 text-white" />
-                    </div>
-                    <div className="text-2xl font-bold text-white mb-2">{stat.value}</div>
-                    <div className="text-white/80">{stat.label}</div>
-                  </div>
-                )
-              })}
-            </div>
           </div>
         </section>
 
