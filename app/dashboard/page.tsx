@@ -2,11 +2,46 @@ import { redirect } from 'next/navigation'
 import { supabaseServer } from '@/lib/supabase/server'
 import Navigation from '@/components/navigation'
 import UserDashboard from './user-dashboard'
+import { getMissingSupabaseEnv, hasSupabaseEnv } from '@/lib/env'
+
+type BadgeItem = {
+  id: number
+  granted_at: string
+  badges: { code: string; name: string; icon_url: string | null } | null
+}
+
+type MissionItem = {
+  quest_id: number
+  progress: any
+  status: string
+  quests: { title: string; description: string; xp_reward: number; steps: any } | null
+}
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function DashboardPage() {
+  if (!hasSupabaseEnv()) {
+    return (
+      <div className="min-h-screen bg-[#262425] text-white">
+        <Navigation />
+        <div className="pt-16">
+          <div className="mx-auto max-w-3xl px-4 py-12">
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-6">
+              <h1 className="text-2xl font-bold">Configuracion pendiente</h1>
+              <p className="mt-2 text-white/80">
+                El panel necesita variables de entorno de Supabase para funcionar.
+              </p>
+              <p className="mt-3 text-sm text-white/70">
+                Faltan: {getMissingSupabaseEnv().join(', ')}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const supabase = supabaseServer()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session?.user) redirect('/login')
@@ -68,9 +103,18 @@ export default async function DashboardPage() {
   const streak       = Number(streakRes.data ?? 0)
   const sessions     = sessionsRes.data ?? []
   const recentLogs   = recentTrainingRes.data ?? []
-  const badges       = badgesRes.data ?? []
+  const badges: BadgeItem[] = (badgesRes.data ?? []).map((row: any) => ({
+    id: Number(row.id),
+    granted_at: String(row.granted_at),
+    badges: Array.isArray(row.badges) ? (row.badges[0] ?? null) : (row.badges ?? null),
+  }))
   const leaderboard  = leaderboardRes.data ?? []
-  const userQuests   = userQuestsRes.data ?? []
+  const userQuests: MissionItem[] = (userQuestsRes.data ?? []).map((row: any) => ({
+    quest_id: Number(row.quest_id),
+    progress: row.progress,
+    status: String(row.status),
+    quests: Array.isArray(row.quests) ? (row.quests[0] ?? null) : (row.quests ?? null),
+  }))
   const recentAttendance = recentAttendanceRes.data ?? []
 
   return (

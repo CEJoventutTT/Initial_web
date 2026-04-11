@@ -11,7 +11,6 @@ import Contact from '@/components/contact'
 
 import type { Metadata } from 'next'
 import { getLang, getSeo } from './seo'
-import HomeRedirectWrapper from '@/components/home-redirect-wrapper'
 
 // ✅ SEO dinámico según idioma
 export async function generateMetadata(): Promise<Metadata> {

@@ -39,13 +39,13 @@ export async function GET() {
   const programIds = programs.map(p => p.id)
 
   // 4) Sesiones de esos programas
-  let attendance_sessions: any[] = []
+  let sessions: any[] = []
   if (programIds.length > 0) {
     const { data: sess, error: sessErr } = await supabase
-      .from('sessions')
-      .select('id, program_id, starts_at, ends_at')
+      .from('attendance_sessions')
+      .select('id, program_id, start_at, end_at')
       .in('program_id', programIds)
-      .order('starts_at', { ascending: true })
+      .order('start_at', { ascending: true })
 
     if (sessErr) {
       return NextResponse.json({ error: sessErr.message }, { status: 400 })

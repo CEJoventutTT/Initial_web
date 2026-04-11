@@ -20,7 +20,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       }
     )
 
-    const { data: { user }, error: userErr } = await userClient.auth.getUser({ signal: ac.signal } as any)
+    const { data: { user }, error: userErr } = await userClient.auth.getUser()
     if (userErr || !user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
     const sessionId = Number(params.id)
@@ -30,10 +30,10 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     // 1) Recupera program_id (solo esa columna)
     const { data: s, error: sErr } = await userClient
-      .from('sessions')
+      .from('attendance_sessions')
       .select('program_id')
       .eq('id', sessionId)
-      .single({ head: false, count: null }) // mínimo I/O
+      .single()
     if (sErr) return NextResponse.json({ error: sErr.message }, { status: 400 })
     if (!s)   return NextResponse.json({ error: 'not_found' }, { status: 404 })
 
@@ -65,7 +65,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     // Luego la sesión
     const { error: delSesErr } = await admin
-      .from('sessions')
+      .from('attendance_sessions')
       .delete()
       .eq('id', sessionId)
     if (delSesErr) return NextResponse.json({ error: delSesErr.message }, { status: 400 })

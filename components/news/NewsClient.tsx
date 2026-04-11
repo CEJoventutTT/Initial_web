@@ -7,6 +7,7 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
+import { detectArticleLang } from '@/lib/news'
 
 type Lang = 'es' | 'en' | 'ca';
 type CategoryId = 'all' | 'health' | 'training';
@@ -78,30 +79,11 @@ export default function NewsPage() {
           const words = content.split(' ').length;
           const readTime = `${Math.ceil(words / 200)} min read`;
 
-          const title = item.title.toLowerCase();
-          let detectedLang: Lang;
-
-          // Prioritize Catalan-specific characters that don't appear in Spanish.
-          if (/[àèòç]|l·l/.test(title)) {
-            detectedLang = 'ca';
-          } 
-          // Then check for Spanish-specific characters.
-          else if (/[ñ]/.test(title)) {
-            detectedLang = 'es';
-          }
-          // Handle shared accented characters which create ambiguity.
-          else if (/[áéíóúüï]/.test(title)) {
-            // Use word checks for disambiguation
-            if (/\b(per|amb|dels|als|les|els|seva|nostra|vostra|aquesta|mateix|doncs|gairebé)\b/.test(title) || /\s+i\s+/.test(title)) {
-                 detectedLang = 'ca';
-            } else {
-                 detectedLang = 'es';
-            }
-          } 
-          // No accents, no specific characters, likely English.
-          else {
-            detectedLang = 'en';
-          }
+          const detectedLang = detectArticleLang({
+            title: item.title,
+            content,
+            categories: item.categories,
+          });
 
 
           return {

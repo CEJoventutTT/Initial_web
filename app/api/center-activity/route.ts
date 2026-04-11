@@ -106,7 +106,7 @@ export async function POST(req: Request) {
     const admin = await resend.emails.send({
       from: FROM,
       to: ADMIN,
-      reply_to: `${d.contactPerson} <${d.email}>`, // si respondéis, le contestáis al solicitante
+      replyTo: `${d.contactPerson} <${d.email}>`,
       subject: `Nueva solicitud — ${d.centerName} (${d.municipality ?? '-'}) — ${d.contactPerson}`,
       html: htmlAdmin(d),
     })
@@ -116,13 +116,13 @@ export async function POST(req: Request) {
       await resend.emails.send({
         from: FROM,
         to: d.email,
-        reply_to: ADMIN, // si el usuario responde, os llega a vuestro Gmail
+        replyTo: ADMIN,
         subject: `Hemos recibido tu solicitud — ${d.centerName}`,
         html: htmlUser(d),
       })
     }
 
-    return NextResponse.json({ ok: true, id: admin?.id ?? null })
+    return NextResponse.json({ ok: true, id: admin.data?.id ?? null })
   } catch (err: any) {
     console.error('[center-activity] error:', err)
     return NextResponse.json(
