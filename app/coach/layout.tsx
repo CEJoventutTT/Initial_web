@@ -4,6 +4,9 @@ import { redirect } from 'next/navigation'
 import { supabaseServer } from '@/lib/supabase/server'
 import { getMissingSupabaseEnv, hasSupabaseEnv } from '@/lib/env'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function CoachLayout({ children }: { children: ReactNode }) {
   if (!hasSupabaseEnv()) {
     return (
