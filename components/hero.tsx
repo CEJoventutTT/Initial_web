@@ -19,8 +19,7 @@ export default function Hero() {
           alt="Table tennis player in action at Club Esportiu Joventut, Sant Josep de sa Talaia"
           priority
           fill
-          className="object-cover translate-y-[20px]"
-          style={{ objectPosition: 'center top' }}
+          className="object-cover object-[76%_center] sm:object-[72%_center] md:translate-y-[20px] md:object-[70%_top] lg:object-[68%_top]"
           sizes="100vw"
         />
 

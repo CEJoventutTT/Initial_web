@@ -123,16 +123,16 @@ export default function NewsEvents() {
           {news.map((article, index) => (
             <Card
               key={index}
-              className="bg-white/5 border border-white/10 hover:scale-[1.01] transition-transform duration-300 overflow-hidden"
+              className="flex h-full flex-col overflow-hidden border border-white/10 bg-white/5 transition-transform duration-300 hover:scale-[1.01]"
             >
-              <div className="relative overflow-hidden h-48">
+              <div className="relative overflow-hidden h-56 md:h-64 lg:h-72">
                 <Image
                   src={article.image || '/placeholder.svg'}
                   alt={article.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 768px"
                   unoptimized
-                  className="object-cover"
+                  className="object-cover object-[center_20%]"
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">
@@ -141,20 +141,20 @@ export default function NewsEvents() {
                 </div>
               </div>
 
-              <CardHeader>
+              <CardHeader className="p-6 pb-4">
                 <div className="flex items-center text-sm text-white/70 mb-2">
                   <Calendar className="mr-1 h-4 w-4" />
                   {mounted ? formatDate(article.date) : <span className="opacity-0">--/--/----</span>}
                   <Clock className="ml-4 mr-1 h-4 w-4" />
                   {article.readTime}
                 </div>
-                <CardTitle className="text-white">{article.title}</CardTitle>
-                <CardDescription className="text-white/80">
+                <CardTitle className="text-white text-xl leading-tight">{article.title}</CardTitle>
+                <CardDescription className="text-white/80 line-clamp-3">
                   {article.description}
                 </CardDescription>
               </CardHeader>
 
-              <CardContent>
+              <CardContent className="mt-auto p-6 pt-0">
                 <Link href={article.href} target="_blank" rel="noopener noreferrer">
                   <Button className="bg-primary text-primary-foreground hover:opacity-90">
                     {t('news.readMore')}

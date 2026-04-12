@@ -184,14 +184,14 @@ export default function NewsPage() {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filtered.map((article) => (
                   <Card key={article.id} className="bg-card/90 border border-border overflow-hidden">
-                    <div className="relative overflow-hidden h-40">
+                    <div className="relative overflow-hidden h-52">
                       <Image
                         src={article.image}
                         alt={article.title}
                         fill
                         sizes="(max-width: 640px) 100vw, 640px"
                         unoptimized
-                        className="object-cover"
+                        className="object-cover object-[center_20%]"
                       />
                     </div>
                     <CardContent className="p-6">
