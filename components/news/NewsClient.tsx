@@ -7,11 +7,11 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
-import { detectArticleLang, normalizeCategory } from '@/lib/news'
+import { detectArticleLang, normalizeCategories } from '@/lib/news'
 import Image from 'next/image'
 
 type Lang = 'es' | 'en' | 'ca';
-type CategoryId = 'all' | 'health' | 'training';
+type CategoryId = 'all' | 'training' | 'championships' | 'events' | 'news';
 
 type Article = {
   id: string;
@@ -31,9 +31,9 @@ function normalizeLang(input?: string | null): Lang {
 }
 
 export default function NewsPage() {
-  const { t, lang: hookLang } = useTranslation() as unknown as {
+  const { t, language: hookLang } = useTranslation() as unknown as {
     t: (k: string) => string;
-    lang?: string;
+    language?: string;
   };
   const tt = (k: string) => (typeof t === 'function' ? t(k) : k);
 
@@ -90,7 +90,7 @@ export default function NewsPage() {
             date: item.isoDate,
             readTime: readTime,
             image: imageUrl,
-            categories: (item.categories || ['training']).map(normalizeCategory),
+            categories: normalizeCategories(item.categories) as CategoryId[],
             externalUrl: item.link,
             lang: detectedLang,
           };

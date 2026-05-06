@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
-import { detectArticleLang, normalizeCategory } from '@/lib/news'
+import { detectArticleLang, getPrimaryCategory } from '@/lib/news'
 import Image from 'next/image'
 
 type Lang = 'es' | 'en' | 'ca';
@@ -29,9 +29,9 @@ function normalizeLang(input?: string | null): Lang {
 }
 
 export default function NewsEvents() {
-  const { t, lang: hookLang } = useTranslation() as unknown as {
+  const { t, language: hookLang } = useTranslation() as unknown as {
     t: (k: string) => string;
-    lang?: string;
+    language?: string;
   };
 
   const [lang, setLang] = useState<Lang>(normalizeLang(hookLang));
@@ -85,7 +85,7 @@ export default function NewsEvents() {
             date: item.isoDate,
             readTime: readTime,
             image: imageUrl,
-            category: normalizeCategory(item.categories?.[0] || 'news'),
+            category: getPrimaryCategory(item.categories),
             href: item.link,
             lang: detectedLang,
           };

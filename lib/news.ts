@@ -3,18 +3,25 @@ type Lang = 'es' | 'en' | 'ca'
 const CATEGORY_MAPPING: Record<string, string> = {
   // Training / Formación
   'training': 'training',
+  'trainings': 'training',
   'formación': 'training',
+  'formaciones': 'training',
   'formacio': 'training',
   'formació': 'training',
+  'formacions': 'training',
   
   // Championships / Campeonatos
   'championship': 'championships',
   'championships': 'championships',
   'campeonato': 'championships',
+  'campeonatos': 'championships',
+  'campionat': 'championships',
   'campionats': 'championships',
   'campeonats': 'championships',
   'torneo': 'championships',
+  'torneos': 'championships',
   'tournament': 'championships',
+  'tournaments': 'championships',
   
   // Events / Eventos
   'event': 'events',
@@ -22,16 +29,21 @@ const CATEGORY_MAPPING: Record<string, string> = {
   'evento': 'events',
   'eventos': 'events',
   'acontecimiento': 'events',
-  'acontecimiento': 'events',
+  'acontecimientos': 'events',
   'acte': 'events',
   'actes': 'events',
   'aconteciment': 'events',
+  'esdeveniment': 'events',
+  'esdeveniments': 'events',
   
   // News (default)
   'news': 'news',
+  'new': 'news',
   'noticias': 'news',
+  'noticies': 'news',
   'notícies': 'news',
   'noticia': 'news',
+  'notícia': 'news',
 }
 
 function normalizeCategory(category: string): string {
@@ -39,10 +51,20 @@ function normalizeCategory(category: string): string {
   return CATEGORY_MAPPING[normalized] || 'news'
 }
 
+function normalizeCategories(categories?: string[] | null): string[] {
+  const normalized = (categories || []).map(normalizeCategory)
+  return Array.from(new Set(normalized))
+}
+
+function getPrimaryCategory(categories?: string[] | null): string {
+  const normalized = normalizeCategories(categories)
+  return normalized.find((category) => category !== 'news') || normalized[0] || 'news'
+}
+
 const LANGUAGE_TAGS: Record<Lang, string[]> = {
-  es: ['es', 'esp', 'espanol', 'español', 'castellano', 'spanish'],
-  en: ['en', 'eng', 'english', 'ingles', 'inglés'],
-  ca: ['ca', 'cat', 'catalan', 'català', 'catala', 'català'],
+  es: ['es', 'esp', 'espanol', 'español', 'castellano', 'spanish', 'noticias', 'noticia', 'formacion', 'formación', 'campeonato', 'campeonatos', 'evento', 'eventos'],
+  en: ['en', 'eng', 'english', 'ingles', 'inglés', 'news', 'training', 'trainings', 'championship', 'championships', 'event', 'events', 'tournament', 'tournaments'],
+  ca: ['ca', 'cat', 'catalan', 'català', 'catala', 'noticies', 'notícies', 'noticia', 'notícia', 'formacio', 'formació', 'campionat', 'campionats', 'esdeveniment', 'esdeveniments'],
 }
 
 const LANGUAGE_HINTS: Record<Lang, RegExp[]> = {
@@ -118,5 +140,4 @@ export function detectArticleLang(article: {
   return 'en'
 }
 
-export { detectArticleLang, normalizeCategory }
-
+export { detectArticleLang, getPrimaryCategory, normalizeCategories, normalizeCategory }
