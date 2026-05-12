@@ -7,7 +7,7 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
-import type { Lang, NewsArticle, NewsCategory } from '@/lib/news'
+import { getArticleSlug, type Lang, type NewsArticle, type NewsCategory } from '@/lib/news'
 import Image from 'next/image'
 
 type CategoryId = NewsCategory
@@ -74,6 +74,12 @@ export default function NewsPage() {
   }, [articles])
 
   const [selected, setSelected] = useState<CategoryId>('all')
+
+  useEffect(() => {
+    if (selected === 'all') return
+    if (categories.includes(selected)) return
+    setSelected('all')
+  }, [categories, selected])
 
   const filtered = useMemo(() => {
     if (selected === 'all') return articles
@@ -158,7 +164,7 @@ export default function NewsPage() {
                       </div>
                       <h3 className="text-xl font-bold mb-2">{article.title}</h3>
                       <p className="text-white/80 mb-4">{article.excerpt}</p>
-                      <Link href={article.externalUrl} target="_blank" rel="noopener noreferrer">
+                      <Link href={`/news/${getArticleSlug(article)}`}>
                         <Button className="bg-primary text-primary-foreground hover:opacity-90">
                           {tt('news.readFullStory')}
                           <ArrowRight className="ml-2 h-4 w-4" />

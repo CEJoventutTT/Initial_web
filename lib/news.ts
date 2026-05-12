@@ -13,6 +13,35 @@ export type NewsArticle = {
   lang: Lang
 }
 
+function normalizeText(input?: string | null) {
+  return (input || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
+function slugify(input: string) {
+  return normalizeText(input)
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function getArticleIdSuffix(article: Pick<NewsArticle, 'id' | 'externalUrl'>) {
+  const source = article.id || article.externalUrl
+  const match = source.match(/([a-f0-9]{12})(?:\?|$)/i)
+  return match ? match[1].toLowerCase() : ''
+}
+
+export function getArticleSlug(article: Pick<NewsArticle, 'id' | 'title' | 'externalUrl'>) {
+  const base = slugify(article.title) || 'article'
+  const suffix = getArticleIdSuffix(article)
+  return suffix ? `${base}-${suffix}` : base
+}
+
+export function getArticleBySlug<T extends NewsArticle>(articles: T[], slug: string) {
+  return articles.find((article) => getArticleSlug(article) === slug) || null
+}
+
 const CATEGORY_MAPPING: Record<string, string> = {
   // Training / Formación
   'training': 'training',
@@ -93,13 +122,6 @@ const LANGUAGE_HINTS: Record<Lang, RegExp[]> = {
     /[àèòç]/g,
     /l·l/g,
   ],
-}
-
-function normalizeText(input?: string | null) {
-  return (input || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
 }
 
 function stripHtml(input?: string | null) {

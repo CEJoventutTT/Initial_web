@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
-import type { Lang, NewsArticle } from '@/lib/news'
-import { getPrimaryCategory } from '@/lib/news'
+import { getArticleSlug, getPrimaryCategory, type Lang, type NewsArticle } from '@/lib/news'
 import Image from 'next/image'
 
 function normalizeLang(input?: string | null): Lang {
@@ -112,7 +111,7 @@ export default function NewsEvents() {
               </CardHeader>
 
               <CardContent className="mt-auto p-6 pt-0">
-                <Link href={article.externalUrl} target="_blank" rel="noopener noreferrer">
+                <Link href={`/news/${getArticleSlug(article)}`}>
                   <Button className="bg-primary text-primary-foreground hover:opacity-90">
                     {t('news.readMore')}
                     <ArrowRight className="ml-2 h-4 w-4" />
