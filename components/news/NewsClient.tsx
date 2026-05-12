@@ -7,23 +7,10 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
-import { detectArticleLang, normalizeCategories } from '@/lib/news'
+import type { Lang, NewsArticle, NewsCategory } from '@/lib/news'
 import Image from 'next/image'
 
-type Lang = 'es' | 'en' | 'ca';
-type CategoryId = 'all' | 'training' | 'championships' | 'events' | 'news';
-
-type Article = {
-  id: string;
-  title: string;
-  excerpt: string;
-  date: string;
-  readTime: string;
-  image: string;
-  categories: CategoryId[];
-  externalUrl: string;
-  lang: Lang;
-};
+type CategoryId = NewsCategory
 
 function normalizeLang(input?: string | null): Lang {
   const v = (input || 'es').slice(0, 2).toLowerCase();
@@ -55,7 +42,7 @@ export default function NewsPage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
-  const [allArticles, setAllArticles] = useState<Article[]>([]);
+  const [allArticles, setAllArticles] = useState<NewsArticle[]>([]);
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -63,40 +50,8 @@ export default function NewsPage() {
         if (!response.ok) {
           throw new Error('Failed to fetch news');
         }
-        const items = await response.json();
-        
-        const articles = items.map((item: any) => {
-          const content = item['content:encoded'] || '';
-          const imageUrlMatch = content.match(/<img[^>]+src="([^">]+)"/);
-          const imageUrl = imageUrlMatch ? imageUrlMatch[1] : '/placeholder.jpg';
-
-          const excerptMatch = content.replace(/<[^>]*>/g, '').substring(0, 150);
-          
-          // Estimate read time
-          const words = content.split(' ').length;
-          const readTime = `${Math.ceil(words / 200)} min read`;
-
-          const detectedLang = detectArticleLang({
-            title: item.title,
-            content,
-            categories: item.categories,
-          });
-
-
-          return {
-            id: item.guid,
-            title: item.title,
-            excerpt: excerptMatch,
-            date: item.isoDate,
-            readTime: readTime,
-            image: imageUrl,
-            categories: normalizeCategories(item.categories) as CategoryId[],
-            externalUrl: item.link,
-            lang: detectedLang,
-          };
-        });
-
-        setAllArticles(articles);
+        const items = await response.json() as NewsArticle[];
+        setAllArticles(items);
       } catch (err: unknown) {
         console.error('Failed to fetch news', err);
       }

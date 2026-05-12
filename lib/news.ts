@@ -1,4 +1,17 @@
-type Lang = 'es' | 'en' | 'ca'
+export type Lang = 'es' | 'en' | 'ca'
+export type NewsCategory = 'all' | 'training' | 'championships' | 'events' | 'news'
+
+export type NewsArticle = {
+  id: string
+  title: string
+  excerpt: string
+  date: string
+  readTime: string
+  image: string
+  categories: Exclude<NewsCategory, 'all'>[]
+  externalUrl: string
+  lang: Lang
+}
 
 const CATEGORY_MAPPING: Record<string, string> = {
   // Training / Formación

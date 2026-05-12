@@ -1,15 +1,11 @@
-import { NextResponse } from 'next/server';
-import Parser from 'rss-parser';
+import { NextResponse } from 'next/server'
+import news from '@/data/news.json'
+import type { NewsArticle } from '@/lib/news'
 
 export async function GET() {
-  const parser = new Parser();
-  const feedUrl = 'https://medium.com/feed/@ce.joventut.tt';
+  const items = [...(news as NewsArticle[])].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  )
 
-  try {
-    const feed = await parser.parseURL(feedUrl);
-    return NextResponse.json(feed.items);
-  } catch (error) {
-    console.error('Error fetching or parsing RSS feed:', error);
-    return NextResponse.json({ error: 'Failed to fetch news' }, { status: 500 });
-  }
+  return NextResponse.json(items)
 }
