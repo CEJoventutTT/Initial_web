@@ -1,28 +1,30 @@
 import Parser from 'rss-parser'
 import {
+  getSupabaseAdminClient,
+  loadNewsFromSupabase,
+  upsertNewsToSupabase,
+} from './supabase-news-utils.mjs'
+import {
   articleExists,
   buildExcerpt,
   detectArticleLang,
   estimateReadTime,
   extractMediumId,
-  loadNews,
   normalizeCategories,
   parseArgs,
-  resolveRepoPath,
-  saveNews,
   toIsoDate,
 } from './news-sync-utils.mjs'
 
 async function main() {
   const options = parseArgs(process.argv.slice(2))
-  const newsPath = resolveRepoPath(options.output || 'data/news.json')
   const rssUrl = options.url || 'https://medium.com/feed/@ce.joventut.tt'
   const dryRun = options['dry-run'] === 'true'
 
   const parser = new Parser()
+  const supabase = getSupabaseAdminClient()
   const [feed, existing] = await Promise.all([
     parser.parseURL(rssUrl),
-    loadNews(newsPath),
+    loadNewsFromSupabase(supabase),
   ])
 
   const additions = []
@@ -62,9 +64,9 @@ async function main() {
     return
   }
 
-  await saveNews([...existing, ...additions], newsPath)
+  const rows = await upsertNewsToSupabase(supabase, additions)
 
-  console.log(`Synced ${additions.length} news items from RSS into ${newsPath}`)
+  console.log(`Synced ${rows.length} news items from RSS into Supabase`)
 }
 
 main().catch((error) => {

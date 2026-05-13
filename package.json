@@ -8,6 +8,7 @@
     "dev": "next dev",
     "lint": "eslint --no-warn-ignored",
     "news:import-csv": "node scripts/import-news-from-csv.mjs",
+    "news:seed-supabase": "node scripts/seed-news-supabase.mjs",
     "news:sync-rss": "node scripts/sync-news-from-rss.mjs",
     "start": "next start"
   },

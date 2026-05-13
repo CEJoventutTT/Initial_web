@@ -1,6 +1,7 @@
 // app/api/coach/sessions/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { getSupabaseServiceRoleKey, getSupabaseUrl } from '@/lib/supabase/env'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -17,8 +18,8 @@ function randomKey(len = 20) {
 
 export async function POST(req: Request) {
   try {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    const url = getSupabaseUrl()
+    const serviceKey = getSupabaseServiceRoleKey()
     if (!url || !serviceKey) {
       console.error('[sessions.create] missing env', { hasURL: !!url, hasService: !!serviceKey })
       return NextResponse.json({ error: 'server_misconfigured' }, { status: 500 })

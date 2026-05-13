@@ -175,4 +175,4 @@ export function detectArticleLang(article: {
   return 'en'
 }
 
-export { detectArticleLang, getPrimaryCategory, normalizeCategories, normalizeCategory }
+export { getPrimaryCategory, normalizeCategories, normalizeCategory }

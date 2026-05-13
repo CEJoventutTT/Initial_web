@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireSupabaseAdminConfig, requireSupabaseConfig } from '@/lib/supabase/env'
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   // timeout defensivo (evita colgados)
@@ -11,9 +12,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     if (!token) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
     // Cliente “usuario” (JWT del request)
+    const { url: supabaseUrl, anonKey } = requireSupabaseConfig()
     const userClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      supabaseUrl,
+      anonKey,
       {
         global: { headers: { Authorization: `Bearer ${token}` } },
         auth: { autoRefreshToken: false, persistSession: false },
@@ -52,9 +54,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     }
 
     // 3) Borra con Service Role (server-only)
+    const { serviceRoleKey } = requireSupabaseAdminConfig()
     const admin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      supabaseUrl,
+      serviceRoleKey
     )
 
     // Primero asistencia

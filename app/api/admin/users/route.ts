@@ -1,6 +1,7 @@
 // app/api/admin/user/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { getSupabaseUrl, getSupabaseServiceRoleKey } from '@/lib/supabase/env'
 
 type Role = 'student' | 'coach' | 'admin' | 'parent'
 
@@ -15,8 +16,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const url = getSupabaseUrl()
+  const serviceKey = getSupabaseServiceRoleKey()
   if (!url || !serviceKey) {
     return NextResponse.json({ error: 'server_misconfigured' }, { status: 500 })
   }

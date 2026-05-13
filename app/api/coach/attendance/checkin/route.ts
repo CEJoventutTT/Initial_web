@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
+import { requireSupabaseConfig } from '@/lib/supabase/env'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,10 +38,17 @@ export async function POST(req: Request) {
 
     // 2) supabase SSR + usuario
     const cookieStore = await cookies()
+    const { url: supabaseUrl, anonKey } = requireSupabaseConfig()
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { cookies: { get: (name: string) => cookieStore.get(name)?.value } }
+      supabaseUrl,
+      anonKey,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll()
+          },
+        },
+      }
     )
 
     const { data: authUser, error: userErr } = await supabase.auth.getUser()
