@@ -11,10 +11,11 @@
     "colabora": "Col·labora"
   },
   "hero": {
-    "title": "Aprèn, entrena i domina",
-    "subtitle": "el Tennis de Taula mentre et diverteixes",
-    "description": "Millorem la salut, el benestar i la cohesió social a través del tennis de taula a Eivissa",
-    "joinClub": "Uneix-te al Club",
+    "title": "Entrenaments de 17.30 h a 19.00 h a Es Cubells",
+    "subtitle": "",
+    "description": "Sala Polivalent del Poliesportiu des Cubells. Primera classe gratuïta.",
+    "requestFirstClass": "Sol·licita la primera classe de prova",
+    "joinClub": "Inscriu-te al club",
     "exploreTrainings": "Explorar Entrenaments"
   },
   "legal": {

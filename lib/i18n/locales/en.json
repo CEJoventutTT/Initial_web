@@ -11,10 +11,11 @@
     "colabora": "Collaborate"
   },
   "hero": {
-    "title": "Learn, train and master",
-    "subtitle": "Table Tennis while having fun",
-    "description": "We improve health, well-being, and social cohesion through table tennis in Ibiza.",
-    "joinClub": "Join the Club",
+    "title": "Training sessions from 5:30 pm to 7:00 pm in Es Cubells",
+    "subtitle": "",
+    "description": "Multipurpose Hall at Es Cubells Sports Centre. First class free.",
+    "requestFirstClass": "Book your first free class",
+    "joinClub": "Join the club",
     "exploreTrainings": "Explore Trainings"
   },
   "legal": {

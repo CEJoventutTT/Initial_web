@@ -10,10 +10,11 @@
     "login": "Iniciar Sesión"
   },
   "hero": {
-    "title": "Aprende, entrena y domina",
-    "subtitle": "el Tenis de Mesa mientras te diviertes",
-    "description": "Únete al Club Esportiu Joventut y libera tu potencial. Desde principiantes hasta campeones, entrenamos a todos.",
-    "joinClub": "Únete al Club",
+    "title": "Entrenamientos de 17:30h a 19:00h en Es Cubells",
+    "subtitle": "",
+    "description": "Sala Polivalente del Polideportivo des Cubells. Primera clase gratuita.",
+    "requestFirstClass": "Solicitar primera clase de prueba",
+    "joinClub": "Inscríbete al club",
     "exploreTrainings": "Explorar Entrenamientos"
   },
   "about": {
