@@ -10,10 +10,11 @@
     "login": "Login"
   },
   "hero": {
-    "title": "Learn, train and master",
-    "subtitle": "Table Tennis while having fun",
-    "description": "Join Club Esportiu Joventut and unlock your potential. From beginners to champions, we train everyone.",
-    "joinClub": "Join the Club",
+    "title": "Training sessions from 5:30 pm to 7:00 pm in Es Cubells",
+    "subtitle": "",
+    "description": "Multipurpose Hall at Es Cubells Sports Centre. First class free.",
+    "requestFirstClass": "Book your first free class",
+    "joinClub": "Join the club",
     "exploreTrainings": "Explore Trainings"
   },
   "about": {

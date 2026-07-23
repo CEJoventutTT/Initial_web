@@ -11,10 +11,11 @@
     "colabora": "Colabora"
   },
   "hero": {
-    "title": "Aprende, entrena y domina",
-    "subtitle": "el Tenis de Mesa mientras te diviertes",
-    "description": "Mejoramos la salud, el bienestar y la cohesión social a través del tenis de mesa en Ibiza.",
-    "joinClub": "Únete al Club",
+    "title": "Entrenamientos de 17:30h a 19:00h en Es Cubells",
+    "subtitle": "",
+    "description": "Sala Polivalente del Polideportivo des Cubells. Primera clase gratuita.",
+    "requestFirstClass": "Solicitar primera clase de prueba",
+    "joinClub": "Inscríbete al club",
     "exploreTrainings": "Explorar Entrenamientos"
   },
   "legal": {
