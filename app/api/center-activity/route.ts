@@ -52,6 +52,12 @@ function htmlUser(data: Application) {
 export async function POST(request: Request) {
   try {
     const data = Schema.parse(await request.json())
+    const validateOnly = new URL(request.url).searchParams.get('validateOnly') === 'true'
+
+    if (validateOnly) {
+      return NextResponse.json({ ok: true })
+    }
+
     const from = `${process.env.BRAND_FROM_NAME || 'CE Joventut TT'} <${process.env.BRAND_FROM_EMAIL!}>`
     const adminEmail = process.env.REQUESTS_INBOX_EMAIL!
 
