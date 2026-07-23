@@ -299,13 +299,25 @@
     "loveGameDesc": "Programes adaptats per a infants, adolescents, adults i gent gran, amb un enfocament inclusiu.",
 
     "becomeMember": "Sol·licitar activitat",
-    "title": "Sol·licitar activitat al teu centre",
-    "description": "Estem oberts a col·laboracions amb escoles, associacions i entitats per apropar el tennis de taula com a eina de salut, inclusió i cohesió social.",
-    "completeApplication": "Completa el formulari per sol·licitar una activitat",
-    "applicationDesc": "Indica’ns les dades del teu centre o entitat i ens posarem en contacte amb tu al més aviat possible.",
+    "title": "Apunta't al Club",
+    "description": "",
+    "completeApplication": "Completa el formulari per formar part del moviment",
+    "applicationDesc": "Indica'ns les teves dades i ens posarem en contacte amb tu per començar els entrenaments.",
     "activityRequest": "Sol·licitud d’activitat",
     "reviewMessage": "Revisarem la teva sol·licitud i et contactarem en menys de 24 hores.",
-    "submitApplication": "Enviar sol·licitud",
+    "submitApplication": "Enviar inscripció",
+    "fullName": "Nom i cognoms",
+    "birthDate": "Data de naixement",
+    "referralSource": "Com ens has conegut?",
+    "competitionInterest": "T'interessa participar en competicions?",
+    "eventInterest": "T'interessa participar en campus, tornejos i esdeveniments del club?",
+    "options": {
+      "yes": "Sí",
+      "no": "No",
+      "later": "Més endavant"
+    },
+    "dataProtectionTitle": "PROTECCIÓ DE DADES",
+    "dataProtectionConsent": "He estat informat/ada que les dades facilitades seran tractades pel Club Esportiu Joventut TT amb la finalitat de gestionar la inscripció, la participació en activitats esportives i les comunicacions relacionades amb l'activitat del club, i que puc exercir els drets d'accés, rectificació, supressió i la resta de drets reconeguts per la normativa vigent en matèria de protecció de dades (info@cejoventut.com)",
 
     "centerInfo": "Dades del centre o entitat",
     "centerName": "Nom del centre o entitat",
@@ -317,14 +329,14 @@
       "healthcare": "Centre sanitari / social",
       "other": "Altra"
     },
-    "municipality": "Municipi",
+    "municipality": "Municipi de residència",
     "address": "Adreça",
     "locationNotes": "Indicacions d’accés / notes de localització",
 
     "contactPerson": "Persona de contacte",
     "contactName": "Nom i cognoms",
     "role": "Càrrec o funció",
-    "email": "Email",
+    "email": "Correu electrònic",
     "phone": "Telèfon",
 
     "participants": "Participants",

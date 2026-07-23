@@ -299,13 +299,25 @@
     "loveGameDesc": "Programs adapted for children, teenagers, adults, and seniors with an inclusive approach.",
 
     "becomeMember": "Request activity",
-    "title": "Request an activity at your center",
-    "description": "We are open to collaborations with schools, associations, and organizations to bring table tennis as a tool for health, inclusion, and social cohesion.",
-    "completeApplication": "Complete the form to request an activity",
-    "applicationDesc": "Provide your center or organization details and we will get back to you as soon as possible.",
+    "title": "Join the Club",
+    "description": "",
+    "completeApplication": "Complete the form to be part of the movement",
+    "applicationDesc": "Provide your details and we will contact you to start training.",
     "activityRequest": "Activity request",
     "reviewMessage": "We will review your request and contact you within 24 hours.",
-    "submitApplication": "Send request",
+    "submitApplication": "Submit registration",
+    "fullName": "Full name",
+    "birthDate": "Date of birth",
+    "referralSource": "How did you hear about us?",
+    "competitionInterest": "Are you interested in participating in competitions?",
+    "eventInterest": "Are you interested in participating in club camps, tournaments and events?",
+    "options": {
+      "yes": "Yes",
+      "no": "No",
+      "later": "Later"
+    },
+    "dataProtectionTitle": "DATA PROTECTION",
+    "dataProtectionConsent": "I have been informed that the data provided will be processed by Club Esportiu Joventut TT for the purpose of managing registration, participation in sports activities and communications related to the club's activity. I may exercise the rights of access, rectification, erasure and other rights recognized by current data protection regulations (info@cejoventut.com)",
 
     "centerInfo": "Center / Organization details",
     "centerName": "Center / Organization name",
@@ -317,7 +329,7 @@
       "healthcare": "Healthcare / social center",
       "other": "Other"
     },
-    "municipality": "Municipality",
+    "municipality": "Municipality of residence",
     "address": "Address",
     "locationNotes": "Access directions / location notes",
 
