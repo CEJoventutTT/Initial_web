@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
+  env: {
+    NEXT_PUBLIC_CEJTT_SUPABASE_URL:
+      process.env.NEXT_PUBLIC_CEJTT_SUPABASE_URL || process.env.CEJTT_SUPABASE_URL,
   },
   images: {
     unoptimized: true,

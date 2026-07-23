@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabaseBrowser } from '@/lib/supabase/client'
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 
 function parseHashTokens() {
   if (typeof window === 'undefined') return null
@@ -77,7 +78,7 @@ export default function UpdatePasswordPage() {
       setLoading(false)
 
       // Suscríbete a cambios por si llega tarde
-      const { data: sub } = supabase.auth.onAuthStateChange((_ev, s) => {
+      const { data: sub } = supabase.auth.onAuthStateChange((_ev: AuthChangeEvent, s: Session | null) => {
         if (s && !hasSession) setHasSession(true)
       })
       unsub = () => sub.subscription.unsubscribe()

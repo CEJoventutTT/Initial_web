@@ -1,6 +1,7 @@
 // app/api/coach/attendance/qr/[id]/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireSupabaseAdminConfig, requireSupabaseConfig } from '@/lib/supabase/env'
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const ac = new AbortController()
@@ -9,9 +10,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
     if (!token) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
+    const { url: supabaseUrl, anonKey } = requireSupabaseConfig()
     const userClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      supabaseUrl,
+      anonKey,
       {
         global: { headers: { Authorization: `Bearer ${token}` } },
         auth: { autoRefreshToken: false, persistSession: false },
@@ -45,9 +47,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     if (!owns || owns.length === 0) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
 
     // 3) borrar con service role
+    const { serviceRoleKey } = requireSupabaseAdminConfig()
     const admin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      supabaseUrl,
+      serviceRoleKey
     )
 
     const { error: delAttErr } = await admin

@@ -1,6 +1,6 @@
 const REQUIRED_SUPABASE_ENV = [
-  'NEXT_PUBLIC_SUPABASE_URL',
-  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  'CEJTT_SUPABASE_URL',
+  'NEXT_PUBLIC_CEJTT_SUPABASE_ANON_KEY',
 ] as const
 
 export function getMissingSupabaseEnv() {
