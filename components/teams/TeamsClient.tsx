@@ -4,10 +4,11 @@ import Navigation from '@/components/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Trophy, Calendar, Users } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
+import Image from 'next/image'
 
 export default function TeamsPage() {
   const { t } = useTranslation()
-  const tt = typeof t === 'function' ? t : ((k: string, v?: any) => k)
+  const tt = typeof t === 'function' ? t : ((k: string) => k)
 
   // Mantengo la estructura, pero vacío (cuando tengas datos, rellena aquí).
   const teams: Array<{
@@ -107,9 +108,11 @@ export default function TeamsPage() {
                                 className="flex items-center justify-between p-3 rounded-lg bg-muted border border-border"
                               >
                                 <div className="flex items-center space-x-3">
-                                  <img
-                                    src="/placeholder.svg?height=40&width=40"
+                                  <Image
+                                    src="/placeholder.svg"
                                     alt={player.name}
+                                    width={40}
+                                    height={40}
                                     className="w-10 h-10 rounded-full"
                                   />
                                   <div>

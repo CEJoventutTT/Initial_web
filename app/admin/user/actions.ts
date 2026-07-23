@@ -2,6 +2,7 @@
 'use server'
 
 import { createClient } from '@supabase/supabase-js'
+import { requireSupabaseAdminConfig } from '@/lib/supabase/env'
 
 type ActionState = {
   ok: boolean
@@ -26,9 +27,10 @@ export async function createUserAdmin(
     const rawSite = process.env.NEXT_PUBLIC_SUPABASE_SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
     const site = rawSite.replace(/\/+$/, '')
 
+    const { url, serviceRoleKey } = requireSupabaseAdminConfig()
     const admin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      url,
+      serviceRoleKey,
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
 

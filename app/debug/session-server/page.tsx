@@ -1,8 +1,11 @@
 // app/debug/session-server/page.tsx
 import { supabaseServer } from '@/lib/supabase/server'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function DebugSessionServer() {
-  const supabase = supabaseServer()
+  const supabase = await supabaseServer()
   const { data: { session }, error } = await supabase.auth.getSession()
 
   return (

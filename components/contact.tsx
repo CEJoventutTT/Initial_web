@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Globe, Send, Camera, Play } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 
 export default function Contact() {
@@ -66,10 +66,10 @@ export default function Contact() {
           <div className="space-y-8">
             <div className="grid sm:grid-cols-2 gap-6">
               {[
-                { Icon: MapPin, title: t('contact.address'), text: 'Sant Josep de sa Talaia, Illes Balears' },
+                { Icon: MapPin, title: t('contact.address'), text: t('contact.addressText') },
                 { Icon: Phone, title: t('contact.phone'), text: '+34 644 978 857' },
                 { Icon: Mail, title: t('contact.email'), text: 'ce.joventut.tt@gmail.com' },
-                { Icon: Clock, title: t('contact.hours'), text: <>Mon-Fri: 6AM-10PM<br/>Sat-Sun: 8AM-8PM</> },
+                { Icon: Clock, title: t('contact.hours'), text: t('contact.hoursText') },
               ].map(({ Icon, title, text }, i) => (
                 <Card key={i} className="bg-card/90 border border-border">
                   <CardContent className="p-6 flex items-start">
@@ -91,7 +91,7 @@ export default function Contact() {
                 <div className="h-64 rounded-lg overflow-hidden">
                   <iframe
                     title="Club Esportiu Joventut Location"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12415.734093844387!2d1.280252792137169!3d38.92549689089395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129949614ad9f0d3%3A0x6cce44d20050db7e!2s07830%20Sant%20Josep%20de%20sa%20Talaia%2C%20Balearic%20Islands!5e0!3m2!1sen!2ses!4v1757024345328!5m2!1sen!2ses"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3105.749143817533!2d1.2679257746398818!3d38.88398084749785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12994c13259afd3d%3A0x6db48846076a52cf!2sClub%20de%20Tir%20Amb%20Arc%20Es%20Cubells!5e0!3m2!1sen!2ses!4v1775927578112!5m2!1sen!2ses"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -107,7 +107,7 @@ export default function Contact() {
             <div className="text-center">
               <h3 className="text-foreground font-medium mb-4">{t('contact.followUs')}</h3>
               <div className="flex justify-center gap-3">
-                {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
+                {[Globe, Send, Camera, Play].map((Icon, i) => (
                   <Button
                     key={i}
                     size="sm"

@@ -2,9 +2,31 @@
 import { ReactNode } from 'react'
 import { redirect } from 'next/navigation'
 import { supabaseServer } from '@/lib/supabase/server'
+import { getMissingSupabaseEnv, hasSupabaseEnv } from '@/lib/env'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function CoachLayout({ children }: { children: ReactNode }) {
-  const supabase = supabaseServer()
+  if (!hasSupabaseEnv()) {
+    return (
+      <div className="min-h-screen bg-brand-dark text-white bg-hero-gradient-deep">
+        <div className="mx-auto max-w-3xl px-4 py-12">
+          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-6">
+            <h1 className="text-2xl font-bold">Configuracion pendiente</h1>
+            <p className="mt-2 text-white/80">
+              El panel del coach necesita variables de entorno de Supabase.
+            </p>
+            <p className="mt-3 text-sm text-white/70">
+              Faltan: {getMissingSupabaseEnv().join(', ')}
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const supabase = await supabaseServer()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) redirect('/login')
 

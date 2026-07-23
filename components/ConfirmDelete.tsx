@@ -1,7 +1,7 @@
 'use client'
 
 type Props = {
-  id: string
+  id: string | number
   action: (formData: FormData) => void | Promise<void> // Server Action
   message?: string
   className?: string

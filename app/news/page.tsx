@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: 'https://cejoventut.com/news-events' },
+    alternates: { canonical: 'https://cejoventut.com/news' },
   }
 }
 

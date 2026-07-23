@@ -185,7 +185,7 @@
     "studentsLabel": "estudiantes",
     "coachLabel": "Entrenador:",
     "locationLabel": "Ubicación:",
-    "locationClub": "Sant Josep de sa Talaia",
+    "locationClub": "Diseminado Polígono 31, 11035, 07839 Es Cubells",
     "enrollNow": "Inscribirse Ahora",
     "specialPrograms": "Programas Especiales",
     "specialProgramsDesc": "Opciones de entrenamiento adicionales para necesidades específicas",
@@ -265,14 +265,10 @@
     "about": "Sobre {author}",
     "categories": {
       "all": "Todos",
-      "tournament": "Torneo",
-      "facilityUpdate": "Actualización de Instalaciones",
-      "programLaunch": "Lanzamiento de Programa",
-      "memberSpotlight": "Miembro Destacado",
-      "results": "Resultados",
-      "health": "Salud",
       "training": "Formación",
-      "announcement": "Anuncio"
+      "championships": "Campeonatos",
+      "events": "Eventos",
+      "news": "Noticias"
     },
     "viewAllNews": "Ver Todas las Noticias",
     "emptyTitle": "A punto de arrancar",
@@ -427,10 +423,10 @@
     "message": "Mensaje",
     "sendMessageBtn": "Enviar Mensaje",
     "sending": "Enviando...",
-    "addressText": "Club Robinson 350, 07830, Sant Josep de sa Talaia",
+    "addressText": "Polideportivo Es Cubells\nDiseminado Polígono 31, 11035, 07839 Es Cubells",
     "phoneText": "+34 644 978 857",
     "emailText": "ce.joventut.tt@gmail.com",
-    "hoursText": "Mon-Fri: 6AM-10PM\nSat-Sun: 8AM-8PM"
+    "hoursText": "Lunes-Jueves: 17h-19h"
   },
   "common": {
     "month": "/mes",

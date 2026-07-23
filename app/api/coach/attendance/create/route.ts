@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/supabase/env";
 
 export async function POST(req: Request) {
   try {
+    const url = getSupabaseUrl();
+    const serviceKey = getSupabaseServiceRoleKey();
+    if (!url || !serviceKey) {
+      return NextResponse.json({ error: "server_misconfigured" }, { status: 500 });
+    }
+
+    const supabase = createClient(url, serviceKey);
     const { programId } = await req.json();
     if (!programId) return NextResponse.json({ error: "programId requerido" }, { status: 400 });
 

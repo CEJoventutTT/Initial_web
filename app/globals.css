@@ -1,7 +1,6 @@
-@import 'flag-icons/css/flag-icons.min.css';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@config "../tailwind.config.ts";
+@import "tailwindcss";
+@import "flag-icons/css/flag-icons.min.css";
 
 /* Tokens globales */
 :root{
@@ -27,3 +26,23 @@ body { font-family: var(--font-inter); background: var(--color-dark); color: var
 .text-brand-teal{ color: var(--color-teal) !important; }
 .text-brand-red { color: var(--color-red)  !important; }
 .text-brand-dark{ color: var(--color-dark)!important; }
+
+/* Compatibilidad con clases heredadas del proyecto */
+.bg-dark { background-color: var(--color-dark) !important; }
+.font-inter { font-family: var(--font-inter) !important; }
+
+@layer utilities {
+  .bg-hero-gradient {
+    background-image: linear-gradient(to bottom, #262425 0%, #262425 15%, #4e7a75 40%, #6bbfa0 100%);
+  }
+
+  .bg-hero-gradient-deep {
+    background-image: linear-gradient(to bottom, rgba(38, 36, 37, 0.95) 0%, #3f6561 32%, #5d8c87 100%);
+  }
+
+  .bg-panel-glow {
+    background-image:
+      radial-gradient(circle at top, rgba(107, 191, 160, 0.16), transparent 38%),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  }
+}

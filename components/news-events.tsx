@@ -6,31 +6,19 @@ import { Button } from '@/components/ui/button'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
-
-type Lang = 'es' | 'en' | 'ca';
-
-type Article = {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  readTime: string;
-  image: string;
-  category: string;
-  href: string;
-  lang: Lang;
-};
+import { getArticleSlug, getPrimaryCategory, type Lang, type NewsArticle } from '@/lib/news'
+import Image from 'next/image'
 
 function normalizeLang(input?: string | null): Lang {
-  const v = (input || 'es').slice(0, 2).toLowerCase();
-  return v === 'es' || v === 'en' || v === 'ca' ? (v as Lang) : 'es';
+  const v = (input || 'es').slice(0, 2).toLowerCase()
+  return v === 'es' || v === 'en' || v === 'ca' ? (v as Lang) : 'es'
 }
 
 export default function NewsEvents() {
-  const { t, lang: hookLang } = useTranslation() as unknown as {
-    t: (k: string) => string;
-    lang?: string;
-  };
+  const { t, language: hookLang } = useTranslation() as unknown as {
+    t: (k: string) => string
+    language?: string
+  }
 
   const [lang, setLang] = useState<Lang>(normalizeLang(hookLang));
   useEffect(() => {
@@ -50,84 +38,28 @@ export default function NewsEvents() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
-  const [allArticles, setAllArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  const [allArticles, setAllArticles] = useState<NewsArticle[]>([])
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        setLoading(true);
-        const response = await fetch('/api/news');
+        const response = await fetch('/api/news')
         if (!response.ok) {
-          throw new Error('Failed to fetch news');
+          throw new Error('Failed to fetch news')
         }
-        const items = await response.json();
-        
-        const articles = items.map((item: any) => {
-          const content = item['content:encoded'] || '';
-          const imageUrlMatch = content.match(/<img[^>]+src="([^">]+)"/);
-          const imageUrl = imageUrlMatch ? imageUrlMatch[1] : '/placeholder.jpg';
-
-          const description = content.replace(/<[^>]*>/g, '').substring(0, 150);
-          
-          const words = content.split(' ').length;
-          const readTime = `${Math.ceil(words / 200)} min read`;
-
-          const title = item.title.toLowerCase();
-          let detectedLang: Lang;
-
-          // Prioritize Catalan-specific characters that don't appear in Spanish.
-          if (/[àèòç]|l·l/.test(title)) {
-            detectedLang = 'ca';
-          } 
-          // Then check for Spanish-specific characters.
-          else if (/[ñ]/.test(title)) {
-            detectedLang = 'es';
-          }
-          // Handle shared accented characters which create ambiguity.
-          else if (/[áéíóúüï]/.test(title)) {
-            // Use word checks for disambiguation
-            if (/\b(per|amb|dels|als|les|els|seva|nostra|vostra|aquesta|mateix|doncs|gairebé)\b/.test(title) || /\s+i\s+/.test(title)) {
-                 detectedLang = 'ca';
-            } else {
-                 detectedLang = 'es';
-            }
-          } 
-          // No accents, no specific characters, likely English.
-          else {
-            detectedLang = 'en';
-          }
-
-          return {
-            id: item.guid,
-            title: item.title,
-            description: description,
-            date: item.isoDate,
-            readTime: readTime,
-            image: imageUrl,
-            category: item.categories?.[0] || 'General',
-            href: item.link,
-            lang: detectedLang,
-          };
-        });
-
-        setAllArticles(articles);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        const items = (await response.json()) as NewsArticle[]
+        setAllArticles(items)
+      } catch (err: unknown) {
+        console.error('Failed to fetch news', err)
       }
-    };
+    }
 
-    fetchNews();
-  }, []);
+    fetchNews()
+  }, [])
 
   const news = useMemo(() => {
-    const byLang = allArticles.filter(n => n.lang === lang);
-    return byLang.length ? byLang.slice(0, 4) : allArticles.filter(n => n.lang === 'es').slice(0, 4);
-  }, [lang, allArticles]);
+    const byLang = allArticles.filter((article) => article.lang === lang)
+    return byLang.length ? byLang.slice(0, 4) : allArticles.filter((article) => article.lang === 'es').slice(0, 4)
+  }, [lang, allArticles])
 
   const formatDate = (dateStr: string) => {
     if (!mounted) return ''
@@ -147,36 +79,39 @@ export default function NewsEvents() {
           {news.map((article, index) => (
             <Card
               key={index}
-              className="bg-white/5 border border-white/10 hover:scale-[1.01] transition-transform duration-300 overflow-hidden"
+              className="flex h-full flex-col overflow-hidden border border-white/10 bg-white/5 transition-transform duration-300 hover:scale-[1.01]"
             >
-              <div className="relative overflow-hidden">
-                <img
+              <div className="relative overflow-hidden h-56 md:h-64 lg:h-72">
+                <Image
                   src={article.image || '/placeholder.svg'}
                   alt={article.title}
-                  className="w-full h-48 object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 768px"
+                  unoptimized
+                  className="object-cover object-[center_20%]"
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">
-                    {article.category}
+                    {getPrimaryCategory(article.categories)}
                   </span>
                 </div>
               </div>
 
-              <CardHeader>
+              <CardHeader className="p-6 pb-4">
                 <div className="flex items-center text-sm text-white/70 mb-2">
                   <Calendar className="mr-1 h-4 w-4" />
                   {mounted ? formatDate(article.date) : <span className="opacity-0">--/--/----</span>}
                   <Clock className="ml-4 mr-1 h-4 w-4" />
                   {article.readTime}
                 </div>
-                <CardTitle className="text-white">{article.title}</CardTitle>
-                <CardDescription className="text-white/80">
-                  {article.description}
+                <CardTitle className="text-white text-xl leading-tight">{article.title}</CardTitle>
+                <CardDescription className="text-white/80 line-clamp-3">
+                  {article.excerpt}
                 </CardDescription>
               </CardHeader>
 
-              <CardContent>
-                <Link href={article.href} target="_blank" rel="noopener noreferrer">
+              <CardContent className="mt-auto p-6 pt-0">
+                <Link href={`/news/${getArticleSlug(article)}`}>
                   <Button className="bg-primary text-primary-foreground hover:opacity-90">
                     {t('news.readMore')}
                     <ArrowRight className="ml-2 h-4 w-4" />

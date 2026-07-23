@@ -1,9 +1,9 @@
 // hooks/useRotateQR.ts
 'use client'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabaseBrowser } from '@/lib/supabase/client'
 
 export function useRotateQR() {
-  const supabase = createClientComponentClient()
+  const supabase = supabaseBrowser()
 
   return async function rotate(sessionId: number) {
     const { data: { session } } = await supabase.auth.getSession()

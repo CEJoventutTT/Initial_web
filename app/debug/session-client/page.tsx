@@ -2,10 +2,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabaseBrowser } from '@/lib/supabase/client'
 
 export default function DebugSessionClient() {
-  const supabase = createClientComponentClient()
+  const supabase = supabaseBrowser()
   const [sessionJSON, setSessionJSON] = useState('cargando...')
 
   useEffect(() => {

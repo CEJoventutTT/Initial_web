@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Award } from 'lucide-react'
+import Image from 'next/image'
 
 type BadgeRow = {
   id: number
@@ -25,7 +26,7 @@ export default function BadgesSection({ items }: { items: BadgeRow[] }) {
               <div className="text-center">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 bg-[#BF0F30]">
                   {b.badges?.icon_url
-                    ? <img src={b.badges.icon_url} alt={b.badges.name} className="w-12 h-12 object-cover rounded-full" />
+                    ? <Image src={b.badges.icon_url} alt={b.badges.name} width={48} height={48} unoptimized className="w-12 h-12 object-cover rounded-full" />
                     : <span className="text-2xl text-white">🏅</span>
                   }
                 </div>

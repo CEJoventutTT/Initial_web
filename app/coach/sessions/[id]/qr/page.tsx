@@ -2,17 +2,26 @@
 import { cookies, headers } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import CopyButton from '@/components/CopyButton'
+import Image from 'next/image'
+import { requireSupabaseConfig } from '@/lib/supabase/env'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export default async function SessionQrPage({ params }: { params: { id: string } }) {
-  const id = params.id
+export default async function SessionQrPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const cookieStore = await cookies()
+  const { url, anonKey } = requireSupabaseConfig()
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { get: (name: string) => cookieStore.get(name)?.value } }
+    url,
+    anonKey,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+      },
+    }
   )
 
   const { data, error } = await supabase
@@ -94,9 +103,12 @@ export default async function SessionQrPage({ params }: { params: { id: string }
             <div className="flex flex-col items-center justify-center gap-4">
               {attendUrl ? (
                 <>
-                  <img
+                  <Image
                     src={qrSrc!}
                     alt="Código QR"
+                    width={300}
+                    height={300}
+                    unoptimized
                     className="h-[300px] w-[300px] rounded-lg bg-white p-2 shadow-soft"
                   />
                   <div className="max-w-full overflow-x-auto rounded-md border border-white/10 bg-white/5 p-3 font-mono text-xs text-white/90">

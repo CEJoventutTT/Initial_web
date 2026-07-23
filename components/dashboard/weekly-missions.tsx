@@ -10,7 +10,7 @@ const iconMap: Record<string, any> = {
 export default function WeeklyMissions({
   missions
 }: {
-  missions: Array<{ quest_id:number; progress:any; status:string; quests:{ title:string; description:string; xp_reward:number; steps:any } }>
+  missions: Array<{ quest_id:number; progress:any; status:string; quests:{ title:string; description:string; xp_reward:number; steps:any } | null }>
 }) {
   return (
     <div className="space-y-6">
@@ -24,8 +24,11 @@ export default function WeeklyMissions({
 
       <div className="grid gap-4">
         {missions.map((m) => {
+          const quest = m.quests
+          if (!quest) return null
+
           // Un solo paso (simple) o el primero de varios
-          const step = Array.isArray(m.quests.steps) ? m.quests.steps[0] : m.quests.steps
+          const step = Array.isArray(quest.steps) ? quest.steps[0] : quest.steps
           const metric = step?.metric ?? 'attendance_present'
           const target = Number(step?.target ?? 1)
           const progress = Number(m.progress?.[metric] ?? 0)
@@ -47,13 +50,13 @@ export default function WeeklyMissions({
                   </div>
 
                   <div className="flex-1">
-                    <h3 className="text-white font-semibold text-lg mb-1">{m.quests.title}</h3>
-                    <p className="text-white/70 text-sm mb-4">{m.quests.description}</p>
+                    <h3 className="text-white font-semibold text-lg mb-1">{quest.title}</h3>
+                    <p className="text-white/70 text-sm mb-4">{quest.description}</p>
 
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-white/80">Progress: {progress}/{target}</span>
-                        <span className="font-medium" style={{ color: '#2C6DFF' }}>+{m.quests.xp_reward} XP</span>
+                        <span className="font-medium" style={{ color: '#2C6DFF' }}>+{quest.xp_reward} XP</span>
                       </div>
 
                       <div className="w-full h-2 rounded bg-white/10 overflow-hidden">

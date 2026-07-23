@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabaseBrowser } from '@/lib/supabase/client'
 
 type Props = {
   sessionId: number
@@ -12,7 +12,7 @@ type Props = {
 
 export default function RotateQrButton({ sessionId, size = 'sm' }: Props) {
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = supabaseBrowser()
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState<string | null>(null)
   const [attendUrl, setAttendUrl] = useState<string | null>(null)

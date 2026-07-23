@@ -1,11 +1,7 @@
 // app/api/admin/user/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // SOLO en servidor
-)
+import { getSupabaseUrl, getSupabaseServiceRoleKey } from '@/lib/supabase/env'
 
 type Role = 'student' | 'coach' | 'admin' | 'parent'
 
@@ -19,6 +15,17 @@ export async function POST(req: Request) {
   if (!hasAdminKey(req)) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
+
+  const url = getSupabaseUrl()
+  const serviceKey = getSupabaseServiceRoleKey()
+  if (!url || !serviceKey) {
+    return NextResponse.json({ error: 'server_misconfigured' }, { status: 500 })
+  }
+
+  const supabaseAdmin = createClient(
+    url,
+    serviceKey
+  )
 
   const body = (await req.json()) as {
     email?: string

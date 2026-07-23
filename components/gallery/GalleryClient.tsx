@@ -5,10 +5,11 @@ import Navigation from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
+import Image from 'next/image'
 
 export default function GalleryClient() {
   const { t } = useTranslation()
-  const tt = typeof t === 'function' ? t : ((k: string, v?: any) => k)
+  const tt = typeof t === 'function' ? t : ((k: string) => k)
 
   const [selectedImage, setSelectedImage] = useState<number | null>(null)
   const [selectedCategory, setSelectedCategory] = useState('All')
@@ -23,7 +24,6 @@ export default function GalleryClient() {
     ? images
     : images.filter(img => img.category === selectedCategory)
 
-  const openLightbox  = (index: number) => setSelectedImage(index)
   const closeLightbox = () => setSelectedImage(null)
   const nextImage = () => { if (selectedImage !== null) setSelectedImage((selectedImage + 1) % filteredImages.length) }
   const prevImage = () => { if (selectedImage !== null) setSelectedImage((selectedImage - 1 + filteredImages.length) % filteredImages.length) }
@@ -108,9 +108,11 @@ export default function GalleryClient() {
         {selectedImage !== null && filteredImages.length > 0 && (
           <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
             <div className="relative max-w-6xl max-h-full">
-              <img
+              <Image
                 src={filteredImages[selectedImage].src || '/placeholder.svg'}
                 alt={filteredImages[selectedImage].title}
+                width={1600}
+                height={900}
                 className="max-w-full max-h-[80vh] object-contain"
                 draggable={false}
               />

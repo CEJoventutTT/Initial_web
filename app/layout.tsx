@@ -6,7 +6,6 @@ import { TranslationProvider, type Language } from "@/lib/i18n"
 import { Toaster } from "@/components/ui/toaster"
 import FooterLegal from "@/components/footer-legal"
 import CookieConsent from "@/components/cookie-consent"
-import AuthHashCatcher from "@/components/auth-hash-catcher"
 
 // Carga SSR de diccionarios
 async function loadDict(lang: Language) {
@@ -73,10 +72,10 @@ export default async function RootLayout({
               "image": "https://cejoventut.com/10.jpg",
               "address": {
                 "@type": "PostalAddress",
-                "streetAddress": " ",
-                "addressLocality": "Sant Josep de sa Talaia",
+                "streetAddress": "Diseminado Polígono 31, 11035",
+                "addressLocality": "Es Cubells",
                 "addressRegion": "Illes Balears",
-                "postalCode": "07830",
+                "postalCode": "07839",
                 "addressCountry": "ES"
               },
               "sport": "TableTennis",

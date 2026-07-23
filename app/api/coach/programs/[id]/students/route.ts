@@ -1,14 +1,14 @@
 // app/api/coach/programs/[id]/students/route.ts
 import { NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { supabaseServer } from '@/lib/supabase/server'
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const supabase = createRouteHandlerClient({ cookies })
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const supabase = await supabaseServer()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
-  const programId = Number(params.id)
+  const { id } = await params
+  const programId = Number(id)
 
   // RLS: verás sólo si eres coach del programa
   const { data, error } = await supabase
@@ -20,12 +20,13 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   return NextResponse.json({ students: data ?? [] })
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const supabase = createRouteHandlerClient({ cookies })
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const supabase = await supabaseServer()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
-  const programId = Number(params.id)
+  const { id } = await params
+  const programId = Number(id)
   const { user_id } = await req.json()
 
   const { error } = await supabase
@@ -36,12 +37,13 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   return NextResponse.json({ ok: true })
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-  const supabase = createRouteHandlerClient({ cookies })
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const supabase = await supabaseServer()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
-  const programId = Number(params.id)
+  const { id } = await params
+  const programId = Number(id)
   const { user_id } = await req.json()
 
   const { error } = await supabase

@@ -7,21 +7,10 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
+import { getArticleSlug, type Lang, type NewsArticle, type NewsCategory } from '@/lib/news'
+import Image from 'next/image'
 
-type Lang = 'es' | 'en' | 'ca';
-type CategoryId = 'all' | 'health' | 'training';
-
-type Article = {
-  id: string;
-  title: string;
-  excerpt: string;
-  date: string;
-  readTime: string;
-  image: string;
-  categories: CategoryId[];
-  externalUrl: string;
-  lang: Lang;
-};
+type CategoryId = NewsCategory
 
 function normalizeLang(input?: string | null): Lang {
   const v = (input || 'es').slice(0, 2).toLowerCase();
@@ -29,9 +18,9 @@ function normalizeLang(input?: string | null): Lang {
 }
 
 export default function NewsPage() {
-  const { t, lang: hookLang } = useTranslation() as unknown as {
+  const { t, language: hookLang } = useTranslation() as unknown as {
     t: (k: string) => string;
-    lang?: string;
+    language?: string;
   };
   const tt = (k: string) => (typeof t === 'function' ? t(k) : k);
 
@@ -53,76 +42,18 @@ export default function NewsPage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
-  const [allArticles, setAllArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  const [allArticles, setAllArticles] = useState<NewsArticle[]>([]);
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        setLoading(true);
         const response = await fetch('/api/news');
         if (!response.ok) {
           throw new Error('Failed to fetch news');
         }
-        const items = await response.json();
-        
-        const articles = items.map((item: any) => {
-          const content = item['content:encoded'] || '';
-          const imageUrlMatch = content.match(/<img[^>]+src="([^">]+)"/);
-          const imageUrl = imageUrlMatch ? imageUrlMatch[1] : '/placeholder.jpg';
-
-          const excerptMatch = content.replace(/<[^>]*>/g, '').substring(0, 150);
-          
-          // Estimate read time
-          const words = content.split(' ').length;
-          const readTime = `${Math.ceil(words / 200)} min read`;
-
-          const title = item.title.toLowerCase();
-          let detectedLang: Lang;
-
-          // Prioritize Catalan-specific characters that don't appear in Spanish.
-          if (/[àèòç]|l·l/.test(title)) {
-            detectedLang = 'ca';
-          } 
-          // Then check for Spanish-specific characters.
-          else if (/[ñ]/.test(title)) {
-            detectedLang = 'es';
-          }
-          // Handle shared accented characters which create ambiguity.
-          else if (/[áéíóúüï]/.test(title)) {
-            // Use word checks for disambiguation
-            if (/\b(per|amb|dels|als|les|els|seva|nostra|vostra|aquesta|mateix|doncs|gairebé)\b/.test(title) || /\s+i\s+/.test(title)) {
-                 detectedLang = 'ca';
-            } else {
-                 detectedLang = 'es';
-            }
-          } 
-          // No accents, no specific characters, likely English.
-          else {
-            detectedLang = 'en';
-          }
-
-
-          return {
-            id: item.guid,
-            title: item.title,
-            excerpt: excerptMatch,
-            date: item.isoDate,
-            readTime: readTime,
-            image: imageUrl,
-            categories: item.categories || ['training'],
-            externalUrl: item.link,
-            lang: detectedLang,
-          };
-        });
-
-        setAllArticles(articles);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        const items = await response.json() as NewsArticle[];
+        setAllArticles(items);
+      } catch (err: unknown) {
+        console.error('Failed to fetch news', err);
       }
     };
 
@@ -143,6 +74,12 @@ export default function NewsPage() {
   }, [articles])
 
   const [selected, setSelected] = useState<CategoryId>('all')
+
+  useEffect(() => {
+    if (selected === 'all') return
+    if (categories.includes(selected)) return
+    setSelected('all')
+  }, [categories, selected])
 
   const filtered = useMemo(() => {
     if (selected === 'all') return articles
@@ -208,11 +145,16 @@ export default function NewsPage() {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filtered.map((article) => (
                   <Card key={article.id} className="bg-card/90 border border-border overflow-hidden">
-                    <img
-                      src={article.image}
-                      alt={article.title}
-                      className="w-full h-40 object-cover"
-                    />
+                    <div className="relative overflow-hidden h-52">
+                      <Image
+                        src={article.image}
+                        alt={article.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 640px"
+                        unoptimized
+                        className="object-cover object-[center_20%]"
+                      />
+                    </div>
                     <CardContent className="p-6">
                       <div className="flex items-center text-sm text-white/70 mb-2">
                         <Calendar className="mr-2 h-4 w-4" />
@@ -222,7 +164,7 @@ export default function NewsPage() {
                       </div>
                       <h3 className="text-xl font-bold mb-2">{article.title}</h3>
                       <p className="text-white/80 mb-4">{article.excerpt}</p>
-                      <Link href={article.externalUrl} target="_blank" rel="noopener noreferrer">
+                      <Link href={`/news/${getArticleSlug(article)}`}>
                         <Button className="bg-primary text-primary-foreground hover:opacity-90">
                           {tt('news.readFullStory')}
                           <ArrowRight className="ml-2 h-4 w-4" />

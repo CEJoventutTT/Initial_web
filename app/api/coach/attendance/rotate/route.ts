@@ -1,12 +1,18 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireSupabaseAdminConfig } from '@/lib/supabase/env'
 
-export async function PUT(_req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request) {
+  const { url: supabaseUrl, serviceRoleKey } = requireSupabaseAdminConfig()
   const admin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    supabaseUrl,
+    serviceRoleKey
   )
-  const id = Number(params.id)
+
+  const body = await req.json().catch(() => null)
+  const url = new URL(req.url)
+  const rawId = body?.id ?? url.searchParams.get('id')
+  const id = Number(rawId)
   if (!Number.isFinite(id)) return NextResponse.json({ error: 'invalid_id' }, { status: 400 })
 
   const key = Math.random().toString(36).slice(2, 12) + Math.random().toString(36).slice(2, 12)

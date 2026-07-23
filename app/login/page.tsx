@@ -1,10 +1,10 @@
 'use client'
 import { useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { supabaseBrowser } from '@/lib/supabase/client'
 
 export default function LoginForm() {
-  const supabase = createClientComponentClient()
+  const supabase = supabaseBrowser()
   const router = useRouter()
   const sp = useSearchParams()
   const next = sp.get('next') || '/dashboard'
@@ -17,11 +17,11 @@ export default function LoginForm() {
     e.preventDefault()
     setLoading(true); setMsg(null)
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) { setMsg(error.message); return }
       router.replace(next)
-    } catch (err: any) {
-      setMsg(err?.message || 'No se pudo contactar con el servicio de autenticación.')
+    } catch (err: unknown) {
+      setMsg(err instanceof Error ? err.message : 'No se pudo contactar con el servicio de autenticación.')
     } finally {
       setLoading(false)
     }

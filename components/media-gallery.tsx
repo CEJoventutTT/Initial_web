@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
+import Image from 'next/image'
 
 export default function MediaGallery() {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -39,13 +40,18 @@ export default function MediaGallery() {
                 style={{ transform: `translateX(-${currentSlide * 100}%)` }}
               >
                 {photos.map((photo, index) => (
-                  <img
+                  <div
                     key={index}
-                    src={photo || '/placeholder.svg'}
-                    alt={`Gallery image ${index + 1}`}
-                    className="w-full h-80 object-cover flex-shrink-0"
-                    draggable={false}
-                  />
+                    className="relative w-full h-80 flex-shrink-0"
+                  >
+                    <Image
+                      src={photo || '/placeholder.svg'}
+                      alt={`Gallery image ${index + 1}`}
+                      fill
+                      className="object-cover"
+                      draggable={false}
+                    />
+                  </div>
                 ))}
               </div>
 
@@ -86,11 +92,11 @@ export default function MediaGallery() {
             <h3 className="text-2xl font-medium text-white mb-6">{t('gallery.featuredVideo')}</h3>
 
             <div className="relative rounded-lg overflow-hidden bg-white/5 border border-white/10">
-              <img
-                src="/placeholder.svg?height=320&width=600"
+              <Image
+                src="/placeholder.svg"
                 alt="Training video thumbnail"
+                fill
                 className="w-full h-80 object-cover"
-                draggable={false}
               />
               <div className="absolute inset-0 bg-brand-dark/40 flex items-center justify-center">
                 <Button
@@ -115,12 +121,12 @@ export default function MediaGallery() {
             <div className="mt-6 space-y-4">
               {/* Video item 1 */}
               <div className="flex items-center gap-4 p-4 bg-white/5 rounded-lg border border-white/10">
-                <div className="relative">
-                  <img
-                    src="/placeholder.svg?height=80&width=120"
+                <div className="relative w-20 h-12">
+                  <Image
+                    src="/placeholder.svg"
                     alt="Video thumbnail"
-                    className="w-20 h-12 object-cover rounded"
-                    draggable={false}
+                    fill
+                    className="object-cover rounded"
                   />
                   <div className="absolute inset-0 bg-brand-dark/40 flex items-center justify-center rounded">
                     <Play className="h-4 w-4 text-white" />
@@ -136,12 +142,12 @@ export default function MediaGallery() {
 
               {/* Video item 2 */}
               <div className="flex items-center gap-4 p-4 bg-white/5 rounded-lg border border-white/10">
-                <div className="relative">
-                  <img
-                    src="/placeholder.svg?height=80&width=120"
+                <div className="relative w-20 h-12">
+                  <Image
+                    src="/placeholder.svg"
                     alt="Video thumbnail"
-                    className="w-20 h-12 object-cover rounded"
-                    draggable={false}
+                    fill
+                    className="object-cover rounded"
                   />
                   <div className="absolute inset-0 bg-brand-dark/40 flex items-center justify-center rounded">
                     <Play className="h-4 w-4 text-white" />

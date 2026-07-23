@@ -1,5 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Calendar, Clock } from 'lucide-react'
+import Image from 'next/image'
 
 export default function WelcomeSection({ name }: { name: string }) {
   const currentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
@@ -11,9 +12,11 @@ export default function WelcomeSection({ name }: { name: string }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <div className="relative">
-              <img
-                src="/placeholder.svg?height=80&width=80"
+              <Image
+                src="/placeholder.svg"
                 alt="Profile"
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-full border-4 border-white/20"
               />
               <div className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-2 border-white"></div>

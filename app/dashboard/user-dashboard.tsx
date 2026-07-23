@@ -13,7 +13,7 @@ type SessionItem   = { id:number; program_id:number; starts_at:string; ends_at:s
 type TrainingLog   = { id:number; session_type:string; duration_min:number; notes:string|null; created_at:string }
 type BadgeItem     = { id:number; granted_at:string; badges: { code:string; name:string; icon_url:string|null } | null }
 type LeaderItem    = { user_id:string; full_name:string|null; total_xp:number }
-type MissionItem   = { quest_id:number; progress:any; status:string; quests:{ title:string; description:string; xp_reward:number; steps:any } }
+type MissionItem   = { quest_id:number; progress:any; status:string; quests:{ title:string; description:string; xp_reward:number; steps:any } | null }
 type AttendanceLog = { id:number; session_id:number; program_id:number; checked_at:string }
 
 export default function UserDashboard(props: {

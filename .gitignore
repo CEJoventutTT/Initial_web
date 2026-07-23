@@ -11,6 +11,7 @@ node_modules
 dist
 build
 out
+tsconfig.tsbuildinfo
 
 # Logs
 npm-debug.log*
@@ -29,3 +30,4 @@ Thumbs.db
 
 # Vercel
 .vercel
+tmp

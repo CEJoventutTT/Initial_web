@@ -3,16 +3,18 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import ConfirmDelete from '@/components/ConfirmDelete'
+import { getMissingSupabaseEnv, hasSupabaseEnv } from '@/lib/env'
+import { requireSupabaseConfig } from '@/lib/supabase/env'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 type AttendanceSession = {
-  id: string
-  program_id: string | null
+  id: number
+  program_id: number | null
   start_at: string
   end_at: string
-  secret: string
+  secret: string | null
   active: boolean | null
   created_at: string
 }
@@ -21,16 +23,20 @@ type AttendanceSession = {
 async function getSupabaseForAction() {
   'use server'
   const cookieStore = await cookies()
+  const { url, anonKey } = requireSupabaseConfig()
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    anonKey,
     {
       cookies: {
-        get: (name: string) => cookieStore.get(name)?.value,
-        set: (name: string, value: string, options: any) =>
-          cookieStore.set({ name, value, ...options }),
-        remove: (name: string, options: any) =>
-          cookieStore.delete({ name, ...options }),
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options)
+          })
+        },
       },
     }
   )
@@ -38,7 +44,7 @@ async function getSupabaseForAction() {
 }
 
 // -------------------- ACTIONS --------------------
-export async function createSession(formData: FormData) {
+async function createSession(formData: FormData) {
   'use server'
   const supabase = await getSupabaseForAction()
   const program_id = (formData.get('program_id') as string)?.trim() || null
@@ -53,7 +59,7 @@ export async function createSession(formData: FormData) {
   revalidatePath('/coach/sessions')
 }
 
-export async function toggleActive(formData: FormData) {
+async function toggleActive(formData: FormData) {
   'use server'
   const supabase = await getSupabaseForAction()
   const id = formData.get('id') as string
@@ -67,7 +73,7 @@ export async function toggleActive(formData: FormData) {
   revalidatePath('/coach/sessions')
 }
 
-export async function updateProgramId(formData: FormData) {
+async function updateProgramId(formData: FormData) {
   'use server'
   const supabase = await getSupabaseForAction()
   const id = formData.get('id') as string
@@ -82,7 +88,7 @@ export async function updateProgramId(formData: FormData) {
   revalidatePath('/coach/sessions')
 }
 
-export async function deleteSession(formData: FormData) {
+async function deleteSession(formData: FormData) {
   'use server'
   const supabase = await getSupabaseForAction()
   const id = formData.get('id') as string
@@ -94,20 +100,46 @@ export async function deleteSession(formData: FormData) {
 
 // -------------------- PAGE (RSC) --------------------
 export default async function CoachSessionsPage() {
+  if (!hasSupabaseEnv()) {
+    return (
+      <main className="min-h-[70vh] bg-brand-dark bg-panel-glow p-6">
+        <div className="mx-auto max-w-3xl">
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-5">
+            <h1 className="text-3xl font-extrabold tracking-tight">
+              Sesiones de asistencia
+            </h1>
+            <p className="mt-3 text-white/80">
+              Esta pantalla necesita configuracion de Supabase para mostrar y crear sesiones.
+            </p>
+            <p className="mt-2 text-sm text-white/70">
+              Faltan: {getMissingSupabaseEnv().join(', ')}
+            </p>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
   const cookieStore = await cookies()
+  const { url, anonKey } = requireSupabaseConfig()
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    anonKey,
     {
-      cookies: { get: (name: string) => cookieStore.get(name)?.value },
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+      },
     }
   )
 
   const { data, error } = await supabase
     .from('attendance_sessions')
-    .select<AttendanceSession>('id, program_id, start_at, end_at, secret, active, created_at')
+    .select('id, program_id, start_at, end_at, secret, active, created_at')
     .order('created_at', { ascending: false })
     .limit(50)
+  const sessions = (data ?? []) as AttendanceSession[]
 
   if (error) {
     return (
@@ -185,7 +217,7 @@ export default async function CoachSessionsPage() {
         </section>
 
         {/* Tabla sesiones */}
-        {!data || data.length === 0 ? (
+        {!sessions || sessions.length === 0 ? (
           <p className="text-white/80">No hay sesiones creadas todavía.</p>
         ) : (
           <section className="rounded-xl border border-border/60 bg-card/80 p-0 shadow-card overflow-hidden">
@@ -202,7 +234,7 @@ export default async function CoachSessionsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((s) => {
+                  {sessions.map((s) => {
                     const isPast = new Date(s.end_at).getTime() < Date.now()
                     return (
                       <tr key={s.id} className="border-t border-border/60 hover:bg-white/[0.04]">

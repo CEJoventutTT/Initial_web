@@ -6,15 +6,15 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { supabaseServer } from '@/lib/supabase/server'
 
-function getOrigin() {
-  const h = headers()
+async function getOrigin() {
+  const h = await headers()
   const proto = h.get('x-forwarded-proto') ?? 'http'
   const host  = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000'
   return `${proto}://${host}`
 }
 
 async function getAccessToken() {
-  const supabase = supabaseServer()
+  const supabase = await supabaseServer()
   const { data: { session } } = await supabase.auth.getSession()
   return session?.access_token ?? null
 }
@@ -24,7 +24,7 @@ export async function createSessionAction(formData: FormData) {
   const starts_at  = String(formData.get('starts_at') || '')
   const ends_at    = String(formData.get('ends_at') || '')
 
-  const origin = getOrigin()
+  const origin = await getOrigin()
   const token  = await getAccessToken()
   if (!token) throw new Error('unauthorized')
 
@@ -50,7 +50,7 @@ export async function createSessionAction(formData: FormData) {
 export async function deleteSessionAction(formData: FormData) {
   const id = Number(formData.get('session_id'))
 
-  const origin = getOrigin()
+  const origin = await getOrigin()
   const token  = await getAccessToken()
   if (!token) throw new Error('unauthorized')
 
