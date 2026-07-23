@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import emailjs from '@emailjs/browser'
 import Navigation from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -25,6 +26,25 @@ const initialFormData = {
   dataProtectionConsent: false,
 }
 
+function getEmailError(error: unknown) {
+  if (error instanceof Error && error.message) return error.message
+
+  if (typeof error === 'object' && error !== null) {
+    const response = error as { status?: unknown; text?: unknown; message?: unknown }
+    const status = typeof response.status === 'number' ? ` (${response.status})` : ''
+    const detail =
+      typeof response.text === 'string'
+        ? response.text
+        : typeof response.message === 'string'
+          ? response.message
+          : ''
+
+    if (detail) return `No se pudo enviar el correo${status}: ${detail}`
+  }
+
+  return 'No se pudo enviar el correo. Inténtalo de nuevo más tarde.'
+}
+
 export default function JoinPage() {
   const { t } = useTranslation()
   const { toast } = useToast()
@@ -44,25 +64,65 @@ export default function JoinPage() {
 
     try {
       setSubmitting(true)
-      const response = await fetch('/api/center-activity', {
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error('EmailJS no está configurado')
+      }
+
+      const validationResponse = await fetch('/api/center-activity?validateOnly=true', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
 
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}))
-        throw new Error(error?.error || 'REQUEST_FAILED')
+      if (!validationResponse.ok) {
+        const validationError = await validationResponse.json().catch(() => null)
+        throw new Error(validationError?.error || 'Los datos de la inscripción no son válidos')
       }
+
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          firstName: formData.fullName,
+          lastName: '',
+          email: formData.email,
+          phone: formData.phone,
+          subject: `Nueva inscripción al club — ${formData.fullName} (${formData.municipality})`,
+          message: [
+            `Nombre y apellidos: ${formData.fullName}`,
+            `Fecha de nacimiento: ${formData.birthDate}`,
+            `Municipio de residencia: ${formData.municipality}`,
+            `Teléfono: ${formData.phone}`,
+            `Correo electrónico: ${formData.email}`,
+            `Cómo nos ha conocido: ${formData.referralSource}`,
+            `Interés en competiciones: ${interestLabel(formData.competitionInterest)}`,
+            `Interés en campus, torneos y eventos: ${interestLabel(formData.eventInterest)}`,
+            'Protección de datos: consentimiento aceptado',
+          ].join('\n'),
+        },
+        {
+          publicKey,
+          blockHeadless: true,
+          limitRate: {
+            id: 'join-application',
+            throttle: 15_000,
+          },
+        },
+      )
 
       toast({ title: t('common.success'), description: t('join.reviewMessage') })
       setFormData(initialFormData)
-    } catch (error: any) {
-      console.error('[Join] submit error:', error?.message || error)
+    } catch (error: unknown) {
+      const errorMessage = getEmailError(error)
+      console.warn(`[Join] ${errorMessage}`)
       toast({
         variant: 'destructive',
         title: t('common.error'),
-        description: error?.message || t('join.applicationDesc'),
+        description: errorMessage,
       })
     } finally {
       setSubmitting(false)
@@ -241,6 +301,7 @@ export default function JoinPage() {
                   <Button
                     type="submit"
                     disabled={!formData.dataProtectionConsent || submitting}
+                    suppressHydrationWarning
                     className="w-full bg-primary text-primary-foreground hover:opacity-90 py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? t('contact.sending') : t('join.submitApplication')}
@@ -254,3 +315,6 @@ export default function JoinPage() {
     </div>
   )
 }
+
+const interestLabel = (value: CompetitionInterest | EventInterest | '') =>
+  ({ yes: 'Sí', no: 'No', later: 'Más adelante', '': 'Sin indicar' })[value]
