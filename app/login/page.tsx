@@ -2,12 +2,15 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabaseBrowser } from '@/lib/supabase/client'
+import { safeInternalRedirect } from '@/lib/safe-redirect'
 
 export default function LoginForm() {
   const supabase = supabaseBrowser()
   const router = useRouter()
   const sp = useSearchParams()
-  const next = sp.get('next') || '/dashboard'
+  const next = safeInternalRedirect(
+    sp.get('next') ?? sp.get('redirect') ?? sp.get('redirectTo'),
+  )
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [msg, setMsg] = useState<string | null>(null)

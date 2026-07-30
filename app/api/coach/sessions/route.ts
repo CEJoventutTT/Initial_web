@@ -1,7 +1,10 @@
 // app/api/coach/sessions/route.ts
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-import { getSupabaseServiceRoleKey, getSupabaseUrl } from '@/lib/supabase/env'
+import {
+  authenticatedSupabase,
+  canManageProgram,
+  hasRole,
+} from '@/lib/supabase/request-auth'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -18,16 +21,13 @@ function randomKey(len = 20) {
 
 export async function POST(req: Request) {
   try {
-    const url = getSupabaseUrl()
-    const serviceKey = getSupabaseServiceRoleKey()
-    if (!url || !serviceKey) {
-      console.error('[sessions.create] missing env', { hasURL: !!url, hasService: !!serviceKey })
-      return NextResponse.json({ error: 'server_misconfigured' }, { status: 500 })
+    const { supabase, user } = await authenticatedSupabase(req)
+    if (!user) {
+      return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
     }
-
-    const supabase = createClient(url, serviceKey, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    if (!(await hasRole(supabase, user.id, ['coach', 'admin']))) {
+      return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+    }
 
     const body = await req.json().catch(() => null)
     if (!body) return NextResponse.json({ error: 'invalid_body' }, { status: 400 })
@@ -40,12 +40,17 @@ export async function POST(req: Request) {
       body.ends_at ??
       new Date(Date.now() + 10 * 60_000).toISOString()
 
-    if (!programId) return NextResponse.json({ error: 'program_id_required' }, { status: 400 })
+    const numericProgramId = Number(programId)
+    if (!Number.isSafeInteger(numericProgramId) || numericProgramId <= 0) {
+      return NextResponse.json({ error: 'invalid_program_id' }, { status: 400 })
+    }
+    if (!(await canManageProgram(supabase, numericProgramId))) {
+      return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+    }
 
     const payload = {
-      program_id: Number(programId),
+      program_id: numericProgramId,
       qr_key: randomKey(20),
-      secret: crypto.randomUUID(),
       active: true,
       expires_at: null,
       // ⬇️ Usa los nombres REALES de tus columnas
@@ -56,17 +61,17 @@ export async function POST(req: Request) {
     const { data, error } = await supabase
       .from('attendance_sessions')
       .insert(payload)
-      .select('id, program_id, qr_key, secret, active, start_at, end_at')
+      .select('id, program_id, active, start_at, end_at')
       .single()
 
     if (error) {
-      console.error('[sessions.create] insert_error', error)
-      return NextResponse.json({ error: error.message }, { status: 400 })
+      console.error('[sessions.create] insert_error', error.code)
+      return NextResponse.json({ error: 'session_create_failed' }, { status: 400 })
     }
 
     return NextResponse.json({ ok: true, session: data }, { status: 200 })
-  } catch (e: any) {
-    console.error('[sessions.create] server_error', e)
-    return NextResponse.json({ error: e.message ?? 'server_error' }, { status: 500 })
+  } catch (error) {
+    console.error('[sessions.create] server_error', error)
+    return NextResponse.json({ error: 'server_error' }, { status: 500 })
   }
 }

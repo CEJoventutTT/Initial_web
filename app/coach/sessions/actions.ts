@@ -2,46 +2,33 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { supabaseServer } from '@/lib/supabase/server'
 
-async function getOrigin() {
-  const h = await headers()
-  const proto = h.get('x-forwarded-proto') ?? 'http'
-  const host  = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000'
-  return `${proto}://${host}`
-}
-
-async function getAccessToken() {
+async function getAuthenticatedClient() {
   const supabase = await supabaseServer()
-  const { data: { session } } = await supabase.auth.getSession()
-  return session?.access_token ?? null
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('unauthorized')
+  return supabase
 }
 
 export async function createSessionAction(formData: FormData) {
   const program_id = Number(formData.get('program_id'))
-  const starts_at  = String(formData.get('starts_at') || '')
-  const ends_at    = String(formData.get('ends_at') || '')
-
-  const origin = await getOrigin()
-  const token  = await getAccessToken()
-  if (!token) throw new Error('unauthorized')
-
-  const res = await fetch(new URL('/api/coach/sessions', origin), {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      Authorization: `Bearer ${token}`, // 👈 Bearer REAL del usuario
-    },
-    body: JSON.stringify({ program_id, starts_at, ends_at }),
-    cache: 'no-store',
-  })
-
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}))
-    throw new Error(data?.error || `Failed (${res.status})`)
+  const start_at = new Date(String(formData.get('starts_at') || ''))
+  const end_at = new Date(String(formData.get('ends_at') || ''))
+  if (!Number.isSafeInteger(program_id) || program_id <= 0) throw new Error('invalid_program')
+  if (Number.isNaN(start_at.getTime()) || Number.isNaN(end_at.getTime()) || end_at <= start_at) {
+    throw new Error('invalid_dates')
   }
+
+  const supabase = await getAuthenticatedClient()
+  const { error } = await supabase.from('attendance_sessions').insert({
+    program_id,
+    start_at: start_at.toISOString(),
+    end_at: end_at.toISOString(),
+    active: true,
+  })
+  if (error) throw new Error('session_create_failed')
 
   revalidatePath('/coach/sessions')
   redirect('/coach/sessions')
@@ -50,22 +37,10 @@ export async function createSessionAction(formData: FormData) {
 export async function deleteSessionAction(formData: FormData) {
   const id = Number(formData.get('session_id'))
 
-  const origin = await getOrigin()
-  const token  = await getAccessToken()
-  if (!token) throw new Error('unauthorized')
-
-  const res = await fetch(new URL(`/api/coach/sessions/${id}`, origin), {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`, // 👈 Bearer REAL del usuario
-    },
-    cache: 'no-store',
-  })
-
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}))
-    throw new Error(data?.error || `Failed (${res.status})`)
-  }
+  if (!Number.isSafeInteger(id) || id <= 0) throw new Error('invalid_session')
+  const supabase = await getAuthenticatedClient()
+  const { error } = await supabase.from('attendance_sessions').delete().eq('id', id)
+  if (error) throw new Error('session_delete_failed')
 
   revalidatePath('/coach/sessions')
   redirect('/coach/sessions')

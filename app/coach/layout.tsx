@@ -27,13 +27,13 @@ export default async function CoachLayout({ children }: { children: ReactNode })
   }
 
   const supabase = await supabaseServer()
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) redirect('/login')
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   const { data: profile } = await supabase
     .from('profiles')
     .select('role')
-    .eq('user_id', session.user.id)
+    .eq('user_id', user.id)
     .single()
 
   if (!profile || !['coach', 'admin'].includes(profile.role)) {

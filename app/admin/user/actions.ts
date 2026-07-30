@@ -3,6 +3,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { requireSupabaseAdminConfig } from '@/lib/supabase/env'
+import { authenticatedSupabase, hasRole } from '@/lib/supabase/request-auth'
 
 type ActionState = {
   ok: boolean
@@ -16,6 +17,11 @@ export async function createUserAdmin(
   formData: FormData
 ): Promise<ActionState> {
   try {
+    const { supabase, user } = await authenticatedSupabase()
+    if (!user || !(await hasRole(supabase, user.id, ['admin']))) {
+      return { ok: false, error: 'No autorizado', message: null }
+    }
+
     const email = String(formData.get('email') || '').trim().toLowerCase()
     const fullName = String(formData.get('fullName') || '').trim()
     const role = String(formData.get('role') || 'student') as 'student' | 'coach' | 'admin' | 'parent'
@@ -43,7 +49,7 @@ export async function createUserAdmin(
 
     if (inviteErr) {
       // Fallback: crear user + recovery link
-      const tmp = 'Temp_' + Math.random().toString(36).slice(2, 10) + '!9'
+      const tmp = `Temp_${crypto.randomUUID()}!9`
       const { data: created, error: createErr } = await admin.auth.admin.createUser({
         email,
         password: tmp,
@@ -78,11 +84,11 @@ export async function createUserAdmin(
       }
     }
 
-    const user = invited?.user
-    if (!user) return { ok: false, error: 'No se recibió user en la invitación', message: null }
+    const invitedUser = invited?.user
+    if (!invitedUser) return { ok: false, error: 'No se recibió user en la invitación', message: null }
 
     const { error: profErr } = await admin.from('profiles').upsert({
-      user_id: user.id,
+      user_id: invitedUser.id,
       full_name: fullName || null,
       role,
       locale,

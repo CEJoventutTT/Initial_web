@@ -31,3 +31,8 @@ Thumbs.db
 # Vercel
 .vercel
 tmp
+
+# Playwright
+playwright-report
+test-results
+blob-report

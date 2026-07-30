@@ -15,7 +15,7 @@ export default function Hero() {
       {/* Fondo con foto */}
       <div className="absolute inset-0">
         <Image
-          src="/portada.png"
+          src="/portada.webp"
           alt="Table tennis player in action at Club Esportiu Joventut, Sant Josep de sa Talaia"
           priority
           fill
