@@ -34,6 +34,7 @@ export default function Navigation() {
                 src="/logo.png"
                 alt="Club Esportiu Joventut"
                 fill
+                sizes="(min-width: 768px) 128px, 112px"
                 className="object-contain"
                 priority
               />

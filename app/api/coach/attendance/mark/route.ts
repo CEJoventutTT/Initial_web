@@ -4,10 +4,10 @@ import { supabaseServer } from '@/lib/supabase/server'
 
 export async function GET() {
   const supabase = await supabaseServer()
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
-  const uid = session.user.id
+  const uid = user.id
 
   // 1) Programas via coach_programs (multi-coach)
   const { data: progsBridge, error: bridgeErr } = await supabase

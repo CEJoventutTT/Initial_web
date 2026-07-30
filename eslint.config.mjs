@@ -7,6 +7,9 @@ export default defineConfig([
     ignores: [
       ".next/**",
       "node_modules/**",
+      "playwright-report/**",
+      "test-results/**",
+      "blob-report/**",
       "next-env.d.ts",
       "tsconfig.tsbuildinfo",
     ],

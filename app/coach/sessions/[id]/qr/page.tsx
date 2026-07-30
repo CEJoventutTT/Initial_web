@@ -1,5 +1,5 @@
 // app/coach/sessions/[id]/qr/page.tsx
-import { cookies, headers } from 'next/headers'
+import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import CopyButton from '@/components/CopyButton'
 import Image from 'next/image'
@@ -7,6 +7,15 @@ import { requireSupabaseConfig } from '@/lib/supabase/env'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+
+type CoachSessionQr = {
+  id: number
+  qr_key: string
+  expires_at: string | null
+  start_at: string
+  end_at: string | null
+  active: boolean
+}
 
 export default async function SessionQrPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -25,9 +34,7 @@ export default async function SessionQrPage({ params }: { params: Promise<{ id: 
   )
 
   const { data, error } = await supabase
-    .from('attendance_sessions')
-    .select('id, secret, start_at, end_at, active')
-    .eq('id', id)
+    .rpc('coach_session_qr', { p_session_id: Number(id) })
     .single()
 
   if (error || !data) {
@@ -40,27 +47,23 @@ export default async function SessionQrPage({ params }: { params: Promise<{ id: 
     )
   }
 
+  const session = data as CoachSessionQr
   const now = Date.now()
-  const start = new Date(data.start_at).getTime()
-  const end = new Date(data.end_at).getTime()
+  const start = new Date(session.start_at).getTime()
+  const end = session.end_at ? new Date(session.end_at).getTime() : Number.POSITIVE_INFINITY
 
   let status: string
   if (now < start) status = 'No iniciada'
   else if (now > end) status = 'Finalizada'
-  else status = data.active ? 'En curso' : 'Pausada'
+  else status = session.active ? 'En curso' : 'Pausada'
 
-  const siteEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '')
-  let siteBase = siteEnv
-  if (!siteBase) {
-    const h = await headers()
-    const host = h.get('x-forwarded-host') || h.get('host') || ''
-    const proto = (h.get('x-forwarded-proto') || 'https') + '://'
-    siteBase = host ? `${proto}${host}` : ''
-  }
+  const siteBase = (
+    process.env.NEXT_PUBLIC_SITE_URL || 'http://127.0.0.1:3000'
+  ).replace(/\/$/, '')
 
   const attendUrl =
     now <= end
-      ? `${siteBase}/attend?s=${encodeURIComponent(id)}&k=${encodeURIComponent(data.secret)}`
+      ? `${siteBase}/attend?s=${encodeURIComponent(id)}&k=${encodeURIComponent(session.qr_key)}`
       : null
 
   const qrSrc =
@@ -82,8 +85,8 @@ export default async function SessionQrPage({ params }: { params: Promise<{ id: 
         <section className="rounded-xl border border-border/60 bg-card/80 p-6 shadow-card backdrop-blur">
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2 text-white/85">
-              <p><span className="text-white/60">Inicio:</span> {new Date(data.start_at).toLocaleString()}</p>
-              <p><span className="text-white/60">Fin:</span> {new Date(data.end_at).toLocaleString()}</p>
+              <p><span className="text-white/60">Inicio:</span> {new Date(session.start_at).toLocaleString()}</p>
+              <p><span className="text-white/60">Fin:</span> {session.end_at ? new Date(session.end_at).toLocaleString() : 'Sin fecha'}</p>
               <p>
                 <span className="text-white/60">Estado:</span>{' '}
                 <span

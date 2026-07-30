@@ -43,9 +43,9 @@ export default async function DashboardPage() {
   }
 
   const supabase = await supabaseServer()
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session?.user) redirect('/login')
-  const uid = session.user.id
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  const uid = user.id
 
   const [
     profileRes,
@@ -122,7 +122,7 @@ export default async function DashboardPage() {
       <Navigation />
       <div className="pt-16">
         <UserDashboard
-          profile={{ name: profile?.full_name ?? session.user.email ?? 'Jugador/a' }}
+          profile={{ name: profile?.full_name ?? user.email ?? 'Jugador/a' }}
           totalXP={totalXP}
           streak={streak}
           xpByType={xpByType}

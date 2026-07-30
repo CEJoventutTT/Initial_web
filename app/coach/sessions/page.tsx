@@ -14,7 +14,6 @@ type AttendanceSession = {
   program_id: number | null
   start_at: string
   end_at: string
-  secret: string | null
   active: boolean | null
   created_at: string
 }
@@ -47,7 +46,8 @@ async function getSupabaseForAction() {
 async function createSession(formData: FormData) {
   'use server'
   const supabase = await getSupabaseForAction()
-  const program_id = (formData.get('program_id') as string)?.trim() || null
+  const program_id = Number(formData.get('program_id'))
+  if (!Number.isSafeInteger(program_id) || program_id <= 0) return
   const start_at = new Date(formData.get('start_at') as string).toISOString()
   const end_at = new Date(formData.get('end_at') as string).toISOString()
   const active = (formData.get('active') as string) === 'on'
@@ -77,7 +77,8 @@ async function updateProgramId(formData: FormData) {
   'use server'
   const supabase = await getSupabaseForAction()
   const id = formData.get('id') as string
-  const program_id = (formData.get('program_id') as string)?.trim() || null
+  const program_id = Number(formData.get('program_id'))
+  if (!Number.isSafeInteger(program_id) || program_id <= 0) return
 
   const { error } = await supabase
     .from('attendance_sessions')
@@ -136,7 +137,7 @@ export default async function CoachSessionsPage() {
 
   const { data, error } = await supabase
     .from('attendance_sessions')
-    .select('id, program_id, start_at, end_at, secret, active, created_at')
+    .select('id, program_id, start_at, end_at, active, created_at')
     .order('created_at', { ascending: false })
     .limit(50)
   const sessions = (data ?? []) as AttendanceSession[]
@@ -175,9 +176,13 @@ export default async function CoachSessionsPage() {
           </h2>
           <form action={createSession} className="grid gap-4 sm:grid-cols-5">
             <div className="sm:col-span-1">
-              <label className="mb-1 block text-sm text-white/70">Programa (opcional)</label>
+              <label className="mb-1 block text-sm text-white/70">Programa</label>
               <input
                 name="program_id"
+                type="number"
+                min="1"
+                step="1"
+                required
                 className="w-full rounded-md border border-input bg-white/5 px-3 py-2 text-white placeholder-white/40 outline-none focus:ring-2 focus:ring-accent"
               />
             </div>
@@ -246,6 +251,10 @@ export default async function CoachSessionsPage() {
                               name="program_id"
                               defaultValue={s.program_id ?? ''}
                               placeholder="program_id"
+                              type="number"
+                              min="1"
+                              step="1"
+                              required
                               className="w-48 rounded-md border border-input bg-white/5 px-2 py-1 text-white outline-none focus:ring-2 focus:ring-accent"
                             />
                             <button

@@ -1,72 +1,65 @@
-// app/api/coach/attendance/qr/[id]/route.ts
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-import { requireSupabaseAdminConfig, requireSupabaseConfig } from '@/lib/supabase/env'
+import crypto from 'node:crypto'
+import {
+  authenticatedSupabase,
+  canManageProgram,
+  hasRole,
+} from '@/lib/supabase/request-auth'
 
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const ac = new AbortController()
-  const t = setTimeout(() => ac.abort(), 12_000)
-  try {
-    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-    if (!token) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-
-    const { url: supabaseUrl, anonKey } = requireSupabaseConfig()
-    const userClient = createClient(
-      supabaseUrl,
-      anonKey,
-      {
-        global: { headers: { Authorization: `Bearer ${token}` } },
-        auth: { autoRefreshToken: false, persistSession: false },
-      }
-    )
-
-    const { data: { user }, error: userErr } = await userClient.auth.getUser({ signal: ac.signal } as any)
-    if (userErr || !user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-
-    const { id } = await params
-    const sessionId = Number(id)
-    if (!Number.isFinite(sessionId)) return NextResponse.json({ error: 'invalid_id' }, { status: 400 })
-
-    // 1) recuperar program_id desde attendance_sessions
-    const { data: s, error: sErr } = await userClient
-      .from('attendance_sessions')
-      .select('program_id')
-      .eq('id', sessionId)
-      .single()
-    if (sErr) return NextResponse.json({ error: sErr.message }, { status: 400 })
-    if (!s)   return NextResponse.json({ error: 'not_found' }, { status: 404 })
-
-    // 2) ownership
-    const { data: owns, error: ownErr } = await userClient
-      .from('coach_programs')
-      .select('id')
-      .eq('program_id', s.program_id)
-      .eq('coach_id', user.id)
-      .limit(1)
-    if (ownErr) return NextResponse.json({ error: ownErr.message }, { status: 400 })
-    if (!owns || owns.length === 0) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
-
-    // 3) borrar con service role
-    const { serviceRoleKey } = requireSupabaseAdminConfig()
-    const admin = createClient(
-      supabaseUrl,
-      serviceRoleKey
-    )
-
-    const { error: delAttErr } = await admin
-      .from('attendance_logs')
-      .delete()
-      .eq('session_id', sessionId)
-    if (delAttErr) return NextResponse.json({ error: delAttErr.message }, { status: 400 })
-
-    const { error: delSesErr } = await admin
-      .from('attendance_sessions')
-      .delete()
-      .eq('id', sessionId)
-    if (delSesErr) return NextResponse.json({ error: delSesErr.message }, { status: 400 })
-
-    return NextResponse.json({ ok: true })
-  } finally {
-    clearTimeout(t)
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { supabase, user } = await authenticatedSupabase(request)
+  if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  if (!(await hasRole(supabase, user.id, ['coach', 'admin']))) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
+
+  const sessionId = Number((await params).id)
+  if (!Number.isSafeInteger(sessionId) || sessionId <= 0) {
+    return NextResponse.json({ error: 'invalid_id' }, { status: 400 })
+  }
+
+  const { data: existing } = await supabase
+    .from('attendance_sessions')
+    .select('program_id')
+    .eq('id', sessionId)
+    .single()
+  if (!existing?.program_id || !(await canManageProgram(supabase, existing.program_id))) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+  }
+
+  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  if (!configuredSiteUrl) {
+    return NextResponse.json({ error: 'missing_site_url' }, { status: 500 })
+  }
+
+  let attendUrl: URL
+  try {
+    attendUrl = new URL('/attend', configuredSiteUrl)
+    if (!['http:', 'https:'].includes(attendUrl.protocol)) {
+      throw new Error('Unsupported site URL protocol')
+    }
+  } catch {
+    return NextResponse.json({ error: 'invalid_site_url' }, { status: 500 })
+  }
+
+  const expiresAt = new Date(Date.now() + 10 * 60_000).toISOString()
+  const key = crypto.randomBytes(24).toString('base64url')
+  const { data, error } = await supabase
+    .from('attendance_sessions')
+    .update({ qr_key: key, expires_at: expiresAt, active: true })
+    .eq('id', sessionId)
+    .select('id, expires_at')
+    .single()
+
+  if (error || !data) {
+    return NextResponse.json({ error: 'rotate_failed' }, { status: 400 })
+  }
+
+  attendUrl.searchParams.set('s', String(sessionId))
+  attendUrl.searchParams.set('k', key)
+
+  return NextResponse.json({ ok: true, session: data, attendUrl: attendUrl.toString() })
 }

@@ -12,9 +12,9 @@ export default function MediaGallery() {
 
   const photos = [
     '/placeholder-hoxca.png',
-    '/table-tennis-training.png',
-    '/table-tennis-celebration.png',
-    '/modern-table-tennis.png',
+    '/table-tennis-training.webp',
+    '/table-tennis-celebration.webp',
+    '/modern-table-tennis.webp',
     '/placeholder.svg?height=400&width=600'
   ]
 
@@ -48,6 +48,7 @@ export default function MediaGallery() {
                       src={photo || '/placeholder.svg'}
                       alt={`Gallery image ${index + 1}`}
                       fill
+                      sizes="(min-width: 1024px) 50vw, 100vw"
                       className="object-cover"
                       draggable={false}
                     />
