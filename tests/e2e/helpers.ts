@@ -3,8 +3,8 @@ import { expect, type Page } from '@playwright/test'
 type Role = 'admin' | 'coach' | 'student'
 
 const roleEnv: Record<Role, { email: string; password: string }> = {
-  admin: { email: 'ADMIN', password: 'ACCES' },
-  coach: { email: 'COACH', password: 'PASS' },
+  admin: { email: 'ADMIN', password: 'ADMIN_PASS' },
+  coach: { email: 'COACH', password: 'COACH_PASS' },
   student: { email: 'STUDENT', password: 'STUDENT_PASS' },
 }
 

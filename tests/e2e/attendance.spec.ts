@@ -7,7 +7,7 @@ test.describe('coach and attendance flow', () => {
   })
 
   test('coach can open the QR page for an assigned session', async ({ page }) => {
-    test.skip(!credentials('coach').configured, 'COACH/PASS are not configured')
+    test.skip(!credentials('coach').configured, 'COACH/COACH_PASS are not configured')
     await login(page, 'coach', '/coach/sessions')
 
     const qrLink = page.getByRole('link', { name: 'Mostrar QR' }).first()
@@ -18,7 +18,7 @@ test.describe('coach and attendance flow', () => {
   })
 
   test('student returns to attendance after login and invalid QR is rejected', async ({ page }) => {
-    test.skip(!credentials('coach').configured, 'COACH/PASS are not configured')
+    test.skip(!credentials('coach').configured, 'COACH/COACH_PASS are not configured')
     test.skip(!credentials('student').configured, 'STUDENT/STUDENT_PASS are not configured')
 
     await login(page, 'coach', '/coach/sessions')

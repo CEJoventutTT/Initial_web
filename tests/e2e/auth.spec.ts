@@ -12,13 +12,13 @@ test.describe('authentication and role authorization', () => {
   })
 
   test('administrator can open the user administration screen', async ({ page }) => {
-    test.skip(!credentials('admin').configured, 'ADMIN/ACCES are not configured')
+    test.skip(!credentials('admin').configured, 'ADMIN/ADMIN_PASS are not configured')
     await login(page, 'admin', '/admin/user')
     await expect(page.getByRole('heading', { name: 'Admin · Crear usuario' })).toBeVisible()
   })
 
   test('coach can open session management but not admin', async ({ page }) => {
-    test.skip(!credentials('coach').configured, 'COACH/PASS are not configured')
+    test.skip(!credentials('coach').configured, 'COACH/COACH_PASS are not configured')
     await login(page, 'coach', '/coach/sessions')
     await expect(page.getByRole('heading', { name: 'Panel del Coach' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Sesiones de asistencia' }).first()).toBeVisible()
