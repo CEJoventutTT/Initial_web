@@ -8,6 +8,7 @@ type Role = 'student' | 'coach' | 'admin' | 'parent'
 const requestWindow = new Map<string, { startedAt: number; count: number }>()
 const WINDOW_MS = 60_000
 const MAX_REQUESTS_PER_WINDOW = 10
+const MAX_TRACKED_CLIENTS = 10_000
 
 // helper: comprueba header x-admin-key
 function hasAdminKey(req: Request) {
@@ -16,10 +17,15 @@ function hasAdminKey(req: Request) {
 }
 
 function isRateLimited(req: Request) {
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const now = Date.now()
+  for (const [ip, window] of requestWindow) {
+    if (now - window.startedAt >= WINDOW_MS) requestWindow.delete(ip)
+  }
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const current = requestWindow.get(ip)
-  if (!current || now - current.startedAt >= WINDOW_MS) {
+  if (!current) {
+    if (requestWindow.size >= MAX_TRACKED_CLIENTS) return true
     requestWindow.set(ip, { startedAt: now, count: 1 })
     return false
   }
@@ -102,7 +108,10 @@ export async function POST(req: Request) {
     locale: 'es',
   })
   if (pErr) {
-    await deleteUserAfterProfileFailure(supabaseAdmin, data.user.id)
+    const rolledBack = await deleteUserAfterProfileFailure(supabaseAdmin, data.user.id)
+    if (!rolledBack) {
+      return NextResponse.json({ error: 'profile_creation_rollback_failed' }, { status: 500 })
+    }
     return NextResponse.json({ error: 'profile_creation_failed' }, { status: 500 })
   }
 
