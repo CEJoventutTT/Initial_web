@@ -2,11 +2,12 @@ import { existsSync } from 'node:fs'
 import { loadEnvFile } from 'node:process'
 import { defineConfig, devices } from '@playwright/test'
 
-for (const file of ['.env.test.local']) {
+// `.env.test.local` is loaded first so its dedicated test credentials take priority.
+for (const file of ['.env.test.local', '.env']) {
   if (existsSync(file)) loadEnvFile(file)
 }
 
-const requiredCredentials = ['ADMIN', 'ACCES', 'COACH', 'PASS', 'STUDENT', 'STUDENT_PASS']
+const requiredCredentials = ['ADMIN', 'ADMIN_PASS', 'COACH', 'COACH_PASS', 'STUDENT', 'STUDENT_PASS']
 if (process.env.CI) {
   const missing = requiredCredentials.filter((name) => !process.env[name])
   if (missing.length > 0) {

@@ -48,7 +48,9 @@ administrativos se reservan para la creación autenticada de usuarios.
 
 ## Pruebas end-to-end
 
-Las pruebas E2E solo cargan `.env.test.local`; no leen `.env` ni `.env.local`.
-Copia `.env.test.example` a `.env.test.local` y rellénalo con un proyecto
-Supabase y cuentas dedicadas a pruebas. En CI las seis credenciales de rol son
-obligatorias y la ejecución falla si falta alguna.
+Las pruebas E2E cargan `.env` y, si existe, `.env.test.local`, cuyas variables
+tienen prioridad. Para aislar las pruebas, copia `.env.test.example` a
+`.env.test.local` y rellénalo con un proyecto Supabase y cuentas dedicadas.
+En CI las seis variables de credenciales `ADMIN`, `ADMIN_PASS`, `COACH`,
+`COACH_PASS`, `STUDENT` y `STUDENT_PASS` son obligatorias y la ejecución falla
+si falta alguna.
