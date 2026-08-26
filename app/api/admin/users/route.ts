@@ -1,9 +1,14 @@
 // app/api/admin/user/route.ts
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { getSupabaseUrl, getSupabaseServiceRoleKey } from '@/lib/supabase/env'
 
 type Role = 'student' | 'coach' | 'admin' | 'parent'
+
+const requestWindow = new Map<string, { startedAt: number; count: number }>()
+const WINDOW_MS = 60_000
+const MAX_REQUESTS_PER_WINDOW = 10
+const MAX_TRACKED_CLIENTS = 10_000
 
 // helper: comprueba header x-admin-key
 function hasAdminKey(req: Request) {
@@ -11,9 +16,50 @@ function hasAdminKey(req: Request) {
   return !!process.env.ADMIN_API_KEY && headerKey === process.env.ADMIN_API_KEY
 }
 
+function isRateLimited(req: Request) {
+  const now = Date.now()
+  for (const [ip, window] of requestWindow) {
+    if (now - window.startedAt >= WINDOW_MS) requestWindow.delete(ip)
+  }
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const current = requestWindow.get(ip)
+  if (!current) {
+    if (requestWindow.size >= MAX_TRACKED_CLIENTS) return true
+    requestWindow.set(ip, { startedAt: now, count: 1 })
+    return false
+  }
+  current.count += 1
+  return current.count > MAX_REQUESTS_PER_WINDOW
+}
+
+async function deleteUserAfterProfileFailure(
+  supabaseAdmin: SupabaseClient,
+  userId: string,
+) {
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(userId)
+    if (!error) return true
+
+    if (attempt < 3) {
+      await new Promise((resolve) => setTimeout(resolve, 100 * attempt))
+    } else {
+      console.error('[admin/users] failed to rollback Auth user', {
+        userId,
+        error: error.message,
+      })
+    }
+  }
+
+  return false
+}
+
 export async function POST(req: Request) {
   if (!hasAdminKey(req)) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+  }
+  if (isRateLimited(req)) {
+    return NextResponse.json({ error: 'rate_limited' }, { status: 429 })
   }
 
   const url = getSupabaseUrl()
@@ -62,7 +108,11 @@ export async function POST(req: Request) {
     locale: 'es',
   })
   if (pErr) {
-    return NextResponse.json({ error: pErr.message }, { status: 400 })
+    const rolledBack = await deleteUserAfterProfileFailure(supabaseAdmin, data.user.id)
+    if (!rolledBack) {
+      return NextResponse.json({ error: 'profile_creation_rollback_failed' }, { status: 500 })
+    }
+    return NextResponse.json({ error: 'profile_creation_failed' }, { status: 500 })
   }
 
   // 3) (Opcional) Genera link de recuperación (set password)

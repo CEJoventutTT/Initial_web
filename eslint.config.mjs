@@ -10,6 +10,7 @@ export default defineConfig([
       "playwright-report/**",
       "test-results/**",
       "blob-report/**",
+      "tmp/**",
       "supabase/.temp/**",
       "next-env.d.ts",
       "tsconfig.tsbuildinfo",
