@@ -1,0 +1,127 @@
+name: Backup (DB)
+
+# Manual backup of the Supabase Postgres database. It runs in GitHub Actions,
+# independently of the hosting platform.
+#
+# Required secret:
+#   SUPABASE_DB_URL            Postgres session-pooler connection string,
+#                              including the password.
+# Optional offsite copy to an S3-compatible bucket (for example, Cloudflare R2):
+#   BACKUP_S3_BUCKET  BACKUP_S3_ENDPOINT  BACKUP_S3_ACCESS_KEY_ID  BACKUP_S3_SECRET_ACCESS_KEY
+# Optional repository variable for the offsite region (defaults to `auto` for R2):
+#   BACKUP_S3_REGION
+# Optional failure alert:
+#   BACKUP_ALERT_WEBHOOK       Webhook URL POSTed if the backup fails.
+
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Detect optional targets
+        id: targets
+        env:
+          S3_BUCKET: ${{ secrets.BACKUP_S3_BUCKET }}
+          S3_ENDPOINT: ${{ secrets.BACKUP_S3_ENDPOINT }}
+          S3_ACCESS_KEY_ID: ${{ secrets.BACKUP_S3_ACCESS_KEY_ID }}
+          S3_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_S3_SECRET_ACCESS_KEY }}
+          S3_REGION: ${{ vars.BACKUP_S3_REGION || 'auto' }}
+          ALERT: ${{ secrets.BACKUP_ALERT_WEBHOOK }}
+        run: |
+          set -euo pipefail
+          echo "alert=${ALERT:+true}" >> "$GITHUB_OUTPUT"
+
+          configured=0
+          for value in "$S3_BUCKET" "$S3_ENDPOINT" "$S3_ACCESS_KEY_ID" "$S3_SECRET_ACCESS_KEY"; do
+            if [ -n "$value" ]; then configured=$((configured + 1)); fi
+          done
+
+          if [ "$configured" -eq 0 ]; then
+            echo "s3=false" >> "$GITHUB_OUTPUT"
+          elif [ -z "$S3_BUCKET" ] || [ -z "$S3_ACCESS_KEY_ID" ] || [ -z "$S3_SECRET_ACCESS_KEY" ]; then
+            echo "::error::Offsite backup is partially configured; bucket and both credentials are required"
+            exit 1
+          elif [ "$S3_REGION" = "auto" ] && [ -z "$S3_ENDPOINT" ]; then
+            echo "::error::BACKUP_S3_ENDPOINT is required when BACKUP_S3_REGION is auto (Cloudflare R2)"
+            exit 1
+          else
+            echo "s3=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Install PostgreSQL 17 client
+        run: |
+          set -euo pipefail
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+            | sudo gpg --dearmor -o /usr/share/keyrings/pgdg.gpg
+          echo "deb [signed-by=/usr/share/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+            | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Stamp
+        id: stamp
+        run: echo "value=$(date -u +%Y%m%d-%H%M%S)" >> "$GITHUB_OUTPUT"
+
+      - name: Dump database
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          PG_DUMP=/usr/lib/postgresql/17/bin/pg_dump
+          if [ -z "${SUPABASE_DB_URL:-}" ]; then
+            echo "::error::SUPABASE_DB_URL secret is not set"
+            exit 1
+          fi
+          if [ ! -x "$PG_DUMP" ]; then
+            echo "::error::PostgreSQL 17 pg_dump was not installed"
+            exit 1
+          fi
+
+          "$PG_DUMP" --version
+          mkdir -p backup
+          "$PG_DUMP" "$SUPABASE_DB_URL" --format=custom --no-owner --no-privileges \
+            --file "backup/db-${{ steps.stamp.outputs.value }}.dump"
+          ls -lh backup
+
+      - name: Upload artifact (retained 30 days)
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: cejoventut-db-backup-${{ steps.stamp.outputs.value }}
+          path: backup/
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Offsite copy to S3 / R2 (optional)
+        if: ${{ steps.targets.outputs.s3 == 'true' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.BACKUP_S3_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_S3_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.BACKUP_S3_REGION || 'auto' }}
+          BUCKET: ${{ secrets.BACKUP_S3_BUCKET }}
+          ENDPOINT: ${{ secrets.BACKUP_S3_ENDPOINT }}
+        run: |
+          set -euo pipefail
+          aws s3 cp backup/ "s3://${BUCKET}/cejoventut/${{ steps.stamp.outputs.value }}/" \
+            --recursive ${ENDPOINT:+--endpoint-url "$ENDPOINT"}
+
+      - name: Alert on failure (optional)
+        if: ${{ failure() && steps.targets.outputs.alert == 'true' }}
+        env:
+          WEBHOOK: ${{ secrets.BACKUP_ALERT_WEBHOOK }}
+        run: |
+          curl -fsS -X POST -H 'Content-Type: application/json' \
+            -d "{\"text\":\"CE Joventut TT database backup FAILED: run ${{ github.run_id }}\"}" \
+            "$WEBHOOK" || true
