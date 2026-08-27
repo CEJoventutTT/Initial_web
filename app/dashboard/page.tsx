@@ -12,9 +12,9 @@ type BadgeItem = {
 
 type MissionItem = {
   quest_id: number
-  progress: any
+  progress: Record<string, number>
   status: string
-  quests: { title: string; description: string; xp_reward: number; steps: any } | null
+  quests: { title: string; description: string; xp_reward: number; steps: { metric?: string; target?: number } | Array<{ metric?: string; target?: number }> } | null
 }
 
 export const dynamic = 'force-dynamic'

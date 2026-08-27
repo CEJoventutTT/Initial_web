@@ -1,7 +1,16 @@
 import { Card, CardContent } from '@/components/ui/card'
-import { CheckCircle, Calendar as CalIcon, Trophy, MessageCircle, Zap } from 'lucide-react'
+import { CheckCircle, Calendar as CalIcon, Trophy, MessageCircle, Zap, type LucideIcon } from 'lucide-react'
 
-const iconMap: Record<string, any> = {
+type MissionStep = { metric?: string; target?: number }
+type MissionProgress = Record<string, number>
+type Mission = {
+  quest_id: number
+  progress: MissionProgress
+  status: string
+  quests: { title: string; description: string; xp_reward: number; steps: MissionStep | MissionStep[] } | null
+}
+
+const iconMap: Record<string, LucideIcon> = {
   attendance_present: CalIcon,
   match_win: Trophy,
   comment_post: MessageCircle,
@@ -10,7 +19,7 @@ const iconMap: Record<string, any> = {
 export default function WeeklyMissions({
   missions
 }: {
-  missions: Array<{ quest_id:number; progress:any; status:string; quests:{ title:string; description:string; xp_reward:number; steps:any } | null }>
+  missions: Mission[]
 }) {
   return (
     <div className="space-y-6">
