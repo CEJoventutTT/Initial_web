@@ -20,6 +20,7 @@ para las pruebas.
 npm run lint
 npx tsc --noEmit
 npm run build
+npm run test:jest
 node --experimental-strip-types --test tests/*.test.ts
 npm run test:e2e
 ```
