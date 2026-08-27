@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { Resend } from 'resend'
+import { createHash } from 'node:crypto'
+import { createClient } from '@supabase/supabase-js'
+import { requireSupabaseAdminConfig } from '@/lib/supabase/env'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const requestWindow = new Map<string, { startedAt: number; count: number }>()
 const WINDOW_MS = 60 * 60 * 1000
 const MAX_REQUESTS_PER_WINDOW = 5
-const MAX_TRACKED_CLIENTS = 10_000
+const MAX_BODY_BYTES = 20_000
 
 const Schema = z.object({
   fullName: z.string().trim().min(1).max(120),
@@ -71,34 +73,74 @@ function htmlUser(data: Application) {
   </div>`
 }
 
-function isRateLimited(request: Request) {
-  const now = Date.now()
-  for (const [key, value] of requestWindow) {
-    if (now - value.startedAt >= WINDOW_MS) requestWindow.delete(key)
+async function readJsonWithLimit(request: Request) {
+  if (!request.body) throw new SyntaxError('Missing request body')
+
+  const reader = request.body.getReader()
+  const chunks: Uint8Array[] = []
+  let totalBytes = 0
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+
+    totalBytes += value.byteLength
+    if (totalBytes > MAX_BODY_BYTES) {
+      await reader.cancel()
+      throw new RangeError('Request too large')
+    }
+    chunks.push(value)
   }
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
-  const current = requestWindow.get(ip)
-  if (!current) {
-    if (requestWindow.size >= MAX_TRACKED_CLIENTS) return true
-    requestWindow.set(ip, { startedAt: now, count: 1 })
-    return false
+
+  const body = new Uint8Array(totalBytes)
+  let offset = 0
+  for (const chunk of chunks) {
+    body.set(chunk, offset)
+    offset += chunk.byteLength
   }
-  current.count += 1
-  return current.count > MAX_REQUESTS_PER_WINDOW
+
+  return JSON.parse(new TextDecoder().decode(body)) as unknown
+}
+
+async function isRateLimited(request: Request) {
+  // Vercel provides this header from the connecting client. The fallback keeps
+  // local deployments behind a conventional proxy working as well.
+  const ip = request.headers.get('x-vercel-forwarded-for')
+    || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    || 'unknown'
+  const clientKey = createHash('sha256').update(ip).digest('hex')
+  const { url, serviceRoleKey } = requireSupabaseAdminConfig()
+  const supabase = createClient(url, serviceRoleKey)
+  const { data, error } = await supabase.rpc('consume_join_rate_limit', {
+    p_client_key: clientKey,
+    p_max_requests: MAX_REQUESTS_PER_WINDOW,
+    p_window_seconds: WINDOW_MS / 1000,
+  })
+
+  if (error || typeof data !== 'boolean') {
+    console.error('[center-activity] rate limit error:', error)
+    throw new Error('Rate limit unavailable')
+  }
+
+  return !data
 }
 
 export async function POST(request: Request) {
-  if (Number(request.headers.get('content-length') || 0) > 20_000) {
+  if (Number(request.headers.get('content-length') || 0) > MAX_BODY_BYTES) {
     return NextResponse.json({ ok: false, error: 'Request too large' }, { status: 413 })
   }
-  if (isRateLimited(request)) {
-    return NextResponse.json({ ok: false, error: 'Too many requests' }, { status: 429 })
-  }
   try {
+    if (await isRateLimited(request)) {
+      return NextResponse.json({ ok: false, error: 'Too many requests' }, { status: 429 })
+    }
+
     let body: unknown
     try {
-      body = await request.json()
-    } catch {
+      body = await readJsonWithLimit(request)
+    } catch (error) {
+      if (error instanceof RangeError) {
+        return NextResponse.json({ ok: false, error: 'Request too large' }, { status: 413 })
+      }
       return NextResponse.json({ ok: false, error: 'Invalid JSON' }, { status: 400 })
     }
     const data = Schema.parse(body)

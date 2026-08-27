@@ -40,8 +40,10 @@ Nunca commits `.env`, claves de Supabase ni credenciales de pruebas.
 
 La inscripción se procesa mediante `/api/center-activity`, en servidor, usando
 Resend. El navegador ya no envía solicitudes directamente a EmailJS. El endpoint
-valida el contenido, limita peticiones por IP, rechaza cuerpos grandes y escapa
-los datos antes de insertarlos en HTML de correo.
+valida el contenido, limita peticiones por IP mediante Supabase, rechaza cuerpos
+grandes incluso cuando se envían por streaming y escapa los datos antes de
+insertarlos en HTML de correo. Aplica también las migraciones de Supabase antes
+de desplegar el cambio.
 
 El dashboard usa tipos explícitos para progreso y pasos de misiones. Las pruebas
 E2E cubren también la navegación pública a noticias e inscripción. Consulta el
