@@ -5,7 +5,6 @@ import { createHash } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 import { requireSupabaseAdminConfig } from '@/lib/supabase/env'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 const WINDOW_MS = 60 * 60 * 1000
 const MAX_REQUESTS_PER_WINDOW = 5
 const MAX_BODY_BYTES = 20_000
@@ -155,6 +154,7 @@ export async function POST(request: Request) {
     if (!process.env.RESEND_API_KEY || !fromEmail || !adminEmail) {
       throw new Error('Email service is not configured')
     }
+    const resend = new Resend(process.env.RESEND_API_KEY)
     const from = `${process.env.BRAND_FROM_NAME || 'CE Joventut TT'} <${fromEmail}>`
 
     const admin = await resend.emails.send({
