@@ -11,6 +11,14 @@ test.describe('authentication and role authorization', () => {
     await expect(page).toHaveURL(/\/login\?next=(?:%2F|\/)admin(?:%2F|\/)user$/)
   })
 
+  test('visitor can open public news and join pages', async ({ page }) => {
+    await page.goto('/news')
+    await expect(page).toHaveURL(/\/news$/)
+    await page.goto('/join')
+    await expect(page).toHaveURL(/\/join$/)
+    await expect(page.locator('form')).toBeVisible()
+  })
+
   test('administrator can open the user administration screen', async ({ page }) => {
     test.skip(!credentials('admin').configured, 'ADMIN/ADMIN_PASS are not configured')
     await login(page, 'admin', '/admin/user')

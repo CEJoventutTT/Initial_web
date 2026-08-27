@@ -10,7 +10,7 @@ type Props = {
   profile?: { name: string }
   totalXP?: number
   xpByType?: Array<{ type:string; xp:number }>
-  weeklyMissions?: Array<{ quest_id:number; progress:any; status:string; quests:{ title:string; description:string; xp_reward:number; steps:any } | null }>
+  weeklyMissions?: Array<{ quest_id:number; progress: Record<string, number>; status:string; quests:{ title:string; description:string; xp_reward:number; steps: { metric?: string; target?: number } | Array<{ metric?: string; target?: number }> } | null }>
   recentLogs?: Array<{ id:number; session_type:string; duration_min:number; notes:string|null; created_at:string }>
   badges?: Array<{ id:number; granted_at:string; badges: { code:string; name:string; icon_url:string|null } | null }>
   leaderboard?: Array<{ user_id:string; full_name:string|null; total_xp:number }>
