@@ -50,6 +50,7 @@
     "@radix-ui/react-tooltip": "1.2.16",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
+    "@upstash/redis": "^1.38.3",
     "@yudiel/react-qr-scanner": "^2.6.0",
     "autoprefixer": "^10.5.4",
     "class-variance-authority": "^0.7.1",

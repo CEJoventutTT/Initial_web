@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { Resend } from 'resend'
 import { createHash } from 'node:crypto'
-import { createClient } from '@supabase/supabase-js'
-import { requireSupabaseAdminConfig } from '@/lib/supabase/env'
+import { consumeRateLimit } from '@/lib/rate-limit'
 
 const WINDOW_MS = 60 * 60 * 1000
 const MAX_REQUESTS_PER_WINDOW = 5
@@ -108,20 +107,13 @@ async function isRateLimited(request: Request) {
     || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
     || 'unknown'
   const clientKey = createHash('sha256').update(ip).digest('hex')
-  const { url, serviceRoleKey } = requireSupabaseAdminConfig()
-  const supabase = createClient(url, serviceRoleKey)
-  const { data, error } = await supabase.rpc('consume_join_rate_limit', {
-    p_client_key: clientKey,
-    p_max_requests: MAX_REQUESTS_PER_WINDOW,
-    p_window_seconds: WINDOW_MS / 1000,
-  })
+  const result = await consumeRateLimit(
+    `rate-limit:center-activity:${clientKey}`,
+    MAX_REQUESTS_PER_WINDOW,
+    WINDOW_MS / 1000,
+  )
 
-  if (error || typeof data !== 'boolean') {
-    console.error('[center-activity] rate limit error:', error)
-    throw new Error('Rate limit unavailable')
-  }
-
-  return !data
+  return result.limited
 }
 
 export async function POST(request: Request) {

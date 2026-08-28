@@ -7,6 +7,7 @@ import {
   normalizeCategories,
   type NewsArticle,
 } from '@/lib/news'
+import { invalidateNewsCache } from '@/lib/news-store'
 import { requireSupabaseAdminConfig } from '@/lib/supabase/env'
 
 const DEFAULT_RSS_URL = 'https://medium.com/feed/@ce.joventut.tt'
@@ -206,6 +207,8 @@ export async function syncNewsFromRss(rssUrl = DEFAULT_RSS_URL) {
     .select('id')
 
   if (error) throw error
+
+  await invalidateNewsCache()
 
   return {
     ok: true,

@@ -27,6 +27,8 @@ npm run test:e2e
 
 Las pruebas E2E requieren un `.env.test.local` con un proyecto y cuentas dedicadas;
 las variables necesarias están documentadas en [`.env.test.example`](.env.test.example).
+Las pruebas de Redis están aisladas mediante mocks de Jest y no necesitan
+credenciales de Upstash.
 
 ## Variables principales
 
@@ -34,6 +36,10 @@ las variables necesarias están documentadas en [`.env.test.example`](.env.test.
   `CEJTT_SUPABASE_SERVICE_ROLE_KEY` (solo servidor).
 - Cron: `CRON_SECRET`.
 - Inscripciones: `RESEND_API_KEY`, `BRAND_FROM_EMAIL` y `REQUESTS_INBOX_EMAIL`.
+- Redis: `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` (o sus alias
+  `KV_REST_API_URL` y `KV_REST_API_TOKEN`), solo en servidor. Consulta
+  [`docs/upstash-redis.md`](docs/upstash-redis.md) para la configuración y
+  operación.
 
 Nunca commits `.env`, claves de Supabase ni credenciales de pruebas.
 
@@ -41,10 +47,11 @@ Nunca commits `.env`, claves de Supabase ni credenciales de pruebas.
 
 La inscripción se procesa mediante `/api/center-activity`, en servidor, usando
 Resend. El navegador ya no envía solicitudes directamente a EmailJS. El endpoint
-valida el contenido, limita peticiones por IP mediante Supabase, rechaza cuerpos
+valida el contenido, limita peticiones por IP mediante Upstash Redis, rechaza cuerpos
 grandes incluso cuando se envían por streaming y escapa los datos antes de
-insertarlos en HTML de correo. Aplica también las migraciones de Supabase antes
-de desplegar el cambio.
+insertarlos en HTML de correo. Las noticias públicas se cachean en Redis durante
+cinco minutos y se invalidan al sincronizar el RSS. Aplica también las migraciones
+de Supabase antes de desplegar el cambio.
 
 El dashboard usa tipos explícitos para progreso y pasos de misiones. Las pruebas
 E2E cubren también la navegación pública a noticias e inscripción. Consulta el
