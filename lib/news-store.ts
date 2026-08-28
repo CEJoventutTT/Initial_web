@@ -2,7 +2,11 @@ import 'server-only'
 
 import { createClient } from '@supabase/supabase-js'
 import type { NewsArticle } from '@/lib/news'
+import { getRedis } from '@/lib/redis'
 import { requireSupabaseConfig } from '@/lib/supabase/env'
+
+const NEWS_CACHE_KEY = 'news:published:v1'
+const NEWS_CACHE_TTL_SECONDS = 300
 
 type NewsArticleRow = {
   id: string
@@ -31,6 +35,16 @@ function fromRow(row: NewsArticleRow): NewsArticle {
 }
 
 export async function getNews(): Promise<NewsArticle[]> {
+  const redis = getRedis()
+  if (redis) {
+    try {
+      const cachedNews = await redis.get<NewsArticle[]>(NEWS_CACHE_KEY)
+      if (cachedNews) return cachedNews
+    } catch (error) {
+      console.error('[news] Redis cache read failed:', error)
+    }
+  }
+
   const { url, anonKey } = requireSupabaseConfig()
   const supabase = createClient(url, anonKey, {
     auth: { autoRefreshToken: false, persistSession: false },
@@ -43,5 +57,26 @@ export async function getNews(): Promise<NewsArticle[]> {
     .order('date', { ascending: false })
 
   if (error) throw error
-  return ((data || []) as NewsArticleRow[]).map(fromRow)
+  const news = ((data || []) as NewsArticleRow[]).map(fromRow)
+
+  if (redis) {
+    try {
+      await redis.set(NEWS_CACHE_KEY, news, { ex: NEWS_CACHE_TTL_SECONDS })
+    } catch (error) {
+      console.error('[news] Redis cache write failed:', error)
+    }
+  }
+
+  return news
+}
+
+export async function invalidateNewsCache() {
+  const redis = getRedis()
+  if (!redis) return
+
+  try {
+    await redis.del(NEWS_CACHE_KEY)
+  } catch (error) {
+    console.error('[news] Redis cache invalidation failed:', error)
+  }
 }
