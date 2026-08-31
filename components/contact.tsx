@@ -32,25 +32,34 @@ export default function Contact() {
     try {
       const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
       const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+      const autoReplyTemplateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID2
       const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
 
       if (!serviceId || !templateId || !publicKey) {
         throw new Error('EmailJS no está configurado')
       }
 
+      const templateParams = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message
+      }
+
       await emailjs.send(
         serviceId,
         templateId,
-        {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          subject: formData.subject,
-          message: formData.message
-        },
+        templateParams,
         publicKey
       )
+
+      if (autoReplyTemplateId) {
+        void emailjs.send(serviceId, autoReplyTemplateId, templateParams, publicKey).catch((error) => {
+          console.error('EmailJS auto-reply error:', error)
+        })
+      }
       alert('✅ Tu mensaje ha sido enviado con éxito. Te responderemos en menos de 24h.')
       setFormData({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' })
     } catch (error) {
