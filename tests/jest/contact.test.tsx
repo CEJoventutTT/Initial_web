@@ -20,6 +20,7 @@ describe('contact form', () => {
   beforeEach(() => {
     process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID = 'service_test'
     process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID = 'template_test'
+    process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID2 = 'template_auto_reply_test'
     process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY = 'public_test'
     send.mockResolvedValue({ status: 200, text: 'OK' })
     jest.spyOn(window, 'alert').mockImplementation(() => undefined)
@@ -42,7 +43,8 @@ describe('contact form', () => {
     await user.click(screen.getByRole('button', { name: 'contact.sendMessageBtn' }))
 
     await waitFor(() => {
-      expect(send).toHaveBeenCalledWith(
+      expect(send).toHaveBeenNthCalledWith(
+        1,
         'service_test',
         'template_test',
         expect.objectContaining({
@@ -50,6 +52,17 @@ describe('contact form', () => {
           lastName: 'Lovelace',
           email: 'ada@example.test',
           subject: 'Consulta',
+        }),
+        'public_test',
+      )
+      expect(send).toHaveBeenNthCalledWith(
+        2,
+        'service_test',
+        'template_auto_reply_test',
+        expect.objectContaining({
+          firstName: 'Ada',
+          email: 'ada@example.test',
+          message: 'Mensaje de prueba',
         }),
         'public_test',
       )
