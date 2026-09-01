@@ -3,7 +3,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(20);
+select plan(22);
 
 select has_table('public', 'profiles', 'profiles exists');
 select has_table('public', 'attendance_sessions', 'attendance_sessions exists');
@@ -15,6 +15,28 @@ select has_function('public', 'claim_email_outbox', array['text', 'text', 'jsonb
 select has_function('public', 'mark_email_outbox_sent', array['uuid', 'text', 'text'], 'email outbox sent RPC exists');
 select has_function('public', 'mark_email_outbox_failed', array['uuid', 'text'], 'email outbox failed RPC exists');
 select has_function('public', 'claim_retryable_email_outbox', array['integer'], 'email retry claim RPC exists');
+
+select is(
+  (select should_send::text from public.claim_email_outbox(
+    'contact',
+    'pgtap-email-outbox-key',
+    '{"firstName":"Test"}'::jsonb,
+    '{"firstName":"Test"}'::jsonb
+  )),
+  'true',
+  'first email outbox claim is available for delivery'
+);
+
+select is(
+  (select should_send::text from public.claim_email_outbox(
+    'contact',
+    'pgtap-email-outbox-key',
+    '{"firstName":"Test"}'::jsonb,
+    '{"firstName":"Test"}'::jsonb
+  )),
+  'false',
+  'duplicate email outbox claim is not delivered twice'
+);
 
 insert into auth.users (
   id,

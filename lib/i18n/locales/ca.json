@@ -60,7 +60,7 @@
       "retention": "Terminis de conservació",
       "retentionText": "Les dades es conservaran durant la finalitat indicada o fins a sol·licitar la supressió, respectant els terminis legals.",
       "rights": "Drets ARSULIPO",
-      "rightsText": "Pot exercir accés, rectificació, supressió, limitació, portabilitat i oposició a ce.joventut.tt@gmail.com, adjuntant document identificatiu. Pot retirar el consentiment en qualsevol moment.",
+      "rightsText": "Pot exercir accés, rectificació, supressió, limitació, portabilitat i oposició a info@cejoventut.com, adjuntant document identificatiu. Pot retirar el consentiment en qualsevol moment.",
       "recipients": "Destinataris",
       "recipientsText": "No es cediran dades excepte obligació legal o a proveïdors necessaris, amb contractes d’encàrrec i confidencialitat.",
       "transfers": "Transferències internacionals",
@@ -104,7 +104,7 @@
       "l2": "Errades tècniques o indisponibilitat del lloc.",
       "l3": "Continguts publicats per tercers.",
       "claims": "Reclamacions",
-      "claimsText": "Reclamacions a ce.joventut.tt@gmail.com o davant organismes de consum competents.",
+      "claimsText": "Reclamacions a info@cejoventut.com o davant organismes de consum competents.",
       "law": "Legislació aplicable",
       "lawText": "Es regeix per la legislació espanyola. Competència dels Jutjats i Tribunals de Illes Balears."
     }
@@ -435,7 +435,7 @@
     "sending": "Enviant...",
     "addressText": "Polideportivo Es Cubells\nDiseminado Polígon 31, 11035, 07839 Es Cubells",
     "phoneText": "+34 644 978 857",
-    "emailText": "ce.joventut.tt@gmail.com",
+    "emailText": "info@cejoventut.com",
     "hoursText": "Dilluns-Dijous: 17h-19h"
   },
   "common": {

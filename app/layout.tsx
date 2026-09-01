@@ -79,7 +79,7 @@ export default async function RootLayout({
                 "addressCountry": "ES"
               },
               "sport": "TableTennis",
-              "email": "ce.joventut.tt@gmail.com"
+              "email": "info@cejoventut.com"
             })
           }}
         />
