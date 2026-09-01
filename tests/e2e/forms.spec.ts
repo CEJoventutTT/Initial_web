@@ -1,17 +1,9 @@
 import { expect, test } from '@playwright/test'
 
-const emailJsConfigured = Boolean(
-  process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
-  && process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
-  && process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
-)
-
-test('contact form submits through EmailJS without sending a real email', async ({ page }) => {
-  test.skip(!emailJsConfigured, 'EmailJS environment variables are not configured')
-
-  let emailJsRequest = false
-  await page.route('https://api.emailjs.com/**', async (route) => {
-    emailJsRequest = true
+test('contact form submits through the server endpoint without sending a real email', async ({ page }) => {
+  let contact: Record<string, unknown> | undefined
+  await page.route('**/api/contact', async (route) => {
+    contact = route.request().postDataJSON() as Record<string, unknown>
     await route.fulfill({ status: 200, body: 'OK' })
   })
 
@@ -30,7 +22,14 @@ test('contact form submits through EmailJS without sending a real email', async 
   const contactDialog = await dialog
   expect(contactDialog.message()).toContain('mensaje ha sido enviado')
   await contactDialog.accept()
-  expect(emailJsRequest).toBe(true)
+  await expect.poll(() => contact).toEqual({
+    firstName: 'Ada',
+    lastName: 'Lovelace',
+    email: 'ada@example.test',
+    phone: '+34600111222',
+    subject: 'Consulta de prueba',
+    message: 'Mensaje de prueba sin envío real.',
+  })
 })
 
 test('join form sends a valid application to the server endpoint', async ({ page }) => {

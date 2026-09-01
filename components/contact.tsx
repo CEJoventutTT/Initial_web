@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import emailjs from '@emailjs/browser'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -30,40 +29,18 @@ export default function Contact() {
     setIsSubmitting(true)
 
     try {
-      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
-      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
-      const autoReplyTemplateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID2
-      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      const result = await response.json().catch(() => null)
+      if (!response.ok) throw new Error(result?.error || 'No se pudo enviar el mensaje')
 
-      if (!serviceId || !templateId || !publicKey) {
-        throw new Error('EmailJS no está configurado')
-      }
-
-      const templateParams = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        subject: formData.subject,
-        message: formData.message
-      }
-
-      await emailjs.send(
-        serviceId,
-        templateId,
-        templateParams,
-        publicKey
-      )
-
-      if (autoReplyTemplateId) {
-        void emailjs.send(serviceId, autoReplyTemplateId, templateParams, publicKey).catch((error) => {
-          console.error('EmailJS auto-reply error:', error)
-        })
-      }
       alert('✅ Tu mensaje ha sido enviado con éxito. Te responderemos en menos de 24h.')
       setFormData({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' })
     } catch (error) {
-      console.error('EmailJS error:', error)
+      console.error('Contact delivery error:', error)
       alert('❌ Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.')
     } finally {
       setIsSubmitting(false)
