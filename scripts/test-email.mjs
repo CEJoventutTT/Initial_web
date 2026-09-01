@@ -33,9 +33,11 @@ function requireEnv(names) {
 
 async function testEmailJs() {
   requireEnv([
-    'NEXT_PUBLIC_EMAILJS_SERVICE_ID',
-    'NEXT_PUBLIC_EMAILJS_TEMPLATE_ID',
-    'NEXT_PUBLIC_EMAILJS_PUBLIC_KEY',
+    'EMAILJS_SERVICE_ID',
+    'EMAILJS_CONTACT_TEMPLATE_ID',
+    'EMAILJS_AUTO_REPLY_TEMPLATE_ID',
+    'EMAILJS_PUBLIC_KEY',
+    'EMAILJS_PRIVATE_KEY',
   ])
 
   if (dryRun) return { provider: 'EmailJS', result: 'configuración válida (sin enviar)' }
@@ -44,10 +46,10 @@ async function testEmailJs() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-      template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-      user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
-      accessToken: process.env.EMAILJS_PRIVATE_KEY || undefined,
+      service_id: process.env.EMAILJS_SERVICE_ID,
+      template_id: process.env.EMAILJS_CONTACT_TEMPLATE_ID,
+      user_id: process.env.EMAILJS_PUBLIC_KEY,
+      accessToken: process.env.EMAILJS_PRIVATE_KEY,
       template_params: {
         firstName: 'Prueba',
         lastName: 'EmailJS',
