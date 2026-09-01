@@ -3,13 +3,18 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(14);
+select plan(20);
 
 select has_table('public', 'profiles', 'profiles exists');
 select has_table('public', 'attendance_sessions', 'attendance_sessions exists');
 select has_table('public', 'attendance_logs', 'attendance_logs exists');
 select has_function('public', 'check_in_attendance', array['bigint', 'text'], 'check-in RPC exists');
 select has_function('public', 'coach_session_qr', array['bigint'], 'coach QR RPC exists');
+select has_table('public', 'email_outbox', 'email outbox exists');
+select has_function('public', 'claim_email_outbox', array['text', 'text', 'jsonb', 'jsonb'], 'email outbox claim RPC exists');
+select has_function('public', 'mark_email_outbox_sent', array['uuid', 'text', 'text'], 'email outbox sent RPC exists');
+select has_function('public', 'mark_email_outbox_failed', array['uuid', 'text'], 'email outbox failed RPC exists');
+select has_function('public', 'claim_retryable_email_outbox', array['integer'], 'email retry claim RPC exists');
 
 insert into auth.users (
   id,
@@ -107,6 +112,13 @@ select throws_ok(
   '42501',
   'permission denied for table attendance_sessions',
   'student cannot read QR secrets'
+);
+
+select throws_ok(
+  $$select * from public.email_outbox$$,
+  '42501',
+  'permission denied for table email_outbox',
+  'student cannot read email outbox records'
 );
 
 select is(
