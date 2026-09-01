@@ -31,8 +31,8 @@ export default function FooterLegal() {
           <span>·</span>
           <span>
             {" "}
-            <a href="mailto:ce.joventut.tt@gmail.com" className="hover:text-white">
-              ce.joventut.tt@gmail.com
+            <a href="mailto:info@cejoventut.com" className="hover:text-white">
+              info@cejoventut.com
             </a>
           </span>
           <span>·</span>
