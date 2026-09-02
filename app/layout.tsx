@@ -84,9 +84,9 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="font-inter bg-dark text-white">
+      <body className="min-h-screen flex flex-col font-inter bg-dark text-white">
         <TranslationProvider initialLanguage={lang} dictionary={dict}>
-          {children}
+          <main className="flex flex-1 flex-col">{children}</main>
 
           {/* Aviso de cookies */}
           <CookieConsent />
