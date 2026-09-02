@@ -3,39 +3,54 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(22);
+select plan(23);
 
 select has_table('public', 'profiles', 'profiles exists');
 select has_table('public', 'attendance_sessions', 'attendance_sessions exists');
 select has_table('public', 'attendance_logs', 'attendance_logs exists');
 select has_function('public', 'check_in_attendance', array['bigint', 'text'], 'check-in RPC exists');
 select has_function('public', 'coach_session_qr', array['bigint'], 'coach QR RPC exists');
-select has_table('public', 'email_outbox', 'email outbox exists');
-select has_function('public', 'claim_email_outbox', array['text', 'text', 'jsonb', 'jsonb'], 'email outbox claim RPC exists');
-select has_function('public', 'mark_email_outbox_sent', array['uuid', 'text', 'text'], 'email outbox sent RPC exists');
-select has_function('public', 'mark_email_outbox_failed', array['uuid', 'text'], 'email outbox failed RPC exists');
-select has_function('public', 'claim_retryable_email_outbox', array['integer'], 'email retry claim RPC exists');
+select has_table('public', 'email_requests', 'email requests exists');
+select has_table('public', 'email_deliveries', 'email deliveries exists');
+select has_function('public', 'claim_email_deliveries', array['text', 'text', 'jsonb', 'jsonb'], 'email delivery claim RPC exists');
+select has_function('public', 'mark_email_delivery_sent', array['uuid', 'text', 'text'], 'email delivery sent RPC exists');
+select has_function('public', 'claim_retryable_email_deliveries', array['integer'], 'email delivery retry claim RPC exists');
 
 select is(
-  (select should_send::text from public.claim_email_outbox(
+  (select bool_and(should_send)::text from public.claim_email_deliveries(
     'contact',
-    'pgtap-email-outbox-key',
+    'pgtap-email-request-key-0001',
     '{"firstName":"Test"}'::jsonb,
     '{"firstName":"Test"}'::jsonb
   )),
   'true',
-  'first email outbox claim is available for delivery'
+  'first email delivery claim is available for delivery'
 );
 
 select is(
-  (select should_send::text from public.claim_email_outbox(
+  (select bool_and(should_send)::text from public.claim_email_deliveries(
     'contact',
-    'pgtap-email-outbox-key',
+    'pgtap-email-request-key-0001',
     '{"firstName":"Test"}'::jsonb,
     '{"firstName":"Test"}'::jsonb
   )),
   'false',
-  'duplicate email outbox claim is not delivered twice'
+  'duplicate email delivery claim is not delivered twice'
+);
+
+update public.email_deliveries
+set claimed_at = now() - interval '16 minutes'
+where idempotency_key = 'pgtap-email-request-key-0001:notice';
+
+select is(
+  (select bool_or(should_send)::text from public.claim_email_deliveries(
+    'contact',
+    'pgtap-email-request-key-0001',
+    '{"firstName":"Test"}'::jsonb,
+    '{"firstName":"Test"}'::jsonb
+  )),
+  'true',
+  'expired email delivery lease is reclaimed'
 );
 
 insert into auth.users (
@@ -137,10 +152,10 @@ select throws_ok(
 );
 
 select throws_ok(
-  $$select * from public.email_outbox$$,
+  $$select * from public.email_deliveries$$,
   '42501',
-  'permission denied for table email_outbox',
-  'student cannot read email outbox records'
+  'permission denied for table email_deliveries',
+  'student cannot read email delivery records'
 );
 
 select is(

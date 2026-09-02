@@ -1,49 +1,56 @@
 import 'server-only'
 
-import { createHash } from 'node:crypto'
 import type { EmailFlow, TemplateParams } from '@/lib/email/contracts'
-import { claimOutboxEntry, claimRetryableOutbox, markOutboxFailed, markOutboxSent } from '@/lib/email/outbox'
+import { claimOutboxEntries, claimRetryableDeliveries, markDeliveryFailed, markDeliverySent } from '@/lib/email/outbox'
 import { deliverEmail, type DeliveryResult } from '@/lib/email/transport'
 
 export async function submitEmail(
   flow: EmailFlow,
   notice: TemplateParams,
   acknowledgement: TemplateParams,
-  normalizedPayload: unknown,
-): Promise<DeliveryResult & { duplicate: boolean }> {
-  const idempotencyKey = createHash('sha256')
-    .update(`${flow}:${JSON.stringify(normalizedPayload)}`)
-    .digest('hex')
-  const entry = await claimOutboxEntry(flow, idempotencyKey, notice, acknowledgement)
-
-  if (!entry.should_send) {
-    if (entry.status === 'sent' && (entry.provider === 'emailjs' || entry.provider === 'resend')) {
-      return { provider: entry.provider, id: entry.provider_id, duplicate: true }
+  requestKey: string,
+): Promise<DeliveryResult & { duplicate: boolean; pending: boolean }> {
+  const entries = await claimOutboxEntries(flow, requestKey, notice, acknowledgement)
+  const claimed = entries.filter((entry) => entry.should_send)
+  if (claimed.length === 0) {
+    const sent = entries.find((entry) => entry.status === 'sent' && (entry.provider === 'emailjs' || entry.provider === 'resend'))
+    if (sent) {
+      return {
+        provider: sent.provider as DeliveryResult['provider'],
+        id: sent.provider_id,
+        duplicate: true,
+        pending: entries.some((entry) => entry.status !== 'sent'),
+      }
     }
-    throw new Error('A delivery with these details is already being processed')
+    throw new Error('A delivery with this request id is already being processed')
   }
 
-  try {
-    const result = await deliverEmail(flow, notice, acknowledgement, idempotencyKey)
-    await markOutboxSent(entry.id, result.provider, result.id)
-    return { ...result, duplicate: false }
-  } catch (error) {
-    await markOutboxFailed(entry.id, error)
-    throw error
+  let result: DeliveryResult | null = null
+  for (const entry of claimed) {
+    try {
+      result = await deliverEmail(entry.kind, entry.template, entry.idempotency_key)
+      await markDeliverySent(entry.id, result.provider, result.id)
+    } catch (error) {
+      await markDeliveryFailed(entry.id, error)
+      if (result) return { ...result, duplicate: false, pending: true }
+      throw error
+    }
   }
+  if (!result) throw new Error('No email deliveries were claimed')
+  return { ...result, duplicate: false, pending: false }
 }
 
 export async function retryPendingEmail(maxEntries = 10) {
-  const entries = await claimRetryableOutbox(maxEntries)
+  const entries = await claimRetryableDeliveries(maxEntries)
   let sent = 0
   let failed = 0
   for (const entry of entries) {
     try {
-      const result = await deliverEmail(entry.flow, entry.notice, entry.acknowledgement, entry.idempotency_key)
-      await markOutboxSent(entry.id, result.provider, result.id)
+      const result = await deliverEmail(entry.kind, entry.template, entry.idempotency_key)
+      await markDeliverySent(entry.id, result.provider, result.id)
       sent += 1
     } catch (error) {
-      await markOutboxFailed(entry.id, error)
+      await markDeliveryFailed(entry.id, error)
       failed += 1
     }
   }

@@ -43,6 +43,7 @@ export default function JoinPage() {
   const { toast } = useToast()
   const [submitting, setSubmitting] = useState(false)
   const [formData, setFormData] = useState(initialFormData)
+  const [requestId, setRequestId] = useState(() => crypto.randomUUID())
 
   const handleInputChange = <K extends keyof typeof formData>(
     field: K,
@@ -59,7 +60,7 @@ export default function JoinPage() {
       setSubmitting(true)
       const response = await fetch('/api/center-activity', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Idempotency-Key': requestId },
         body: JSON.stringify(formData),
       })
       const result = await response.json().catch(() => null)
@@ -67,6 +68,7 @@ export default function JoinPage() {
 
       toast({ title: t('common.success'), description: t('join.reviewMessage') })
       setFormData(initialFormData)
+      setRequestId(crypto.randomUUID())
     } catch (error: unknown) {
       const errorMessage = getRequestError(error)
       console.warn(`[Join] ${errorMessage}`)

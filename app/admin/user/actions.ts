@@ -1,7 +1,7 @@
 // app/admin/users/actions.ts
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { requireSupabaseAdminConfig } from '@/lib/supabase/env'
 import { authenticatedSupabase, hasRole } from '@/lib/supabase/request-auth'
 
@@ -10,6 +10,13 @@ type ActionState = {
   error: string | null
   message: string | null
   recoveryUrl?: string | null
+}
+
+async function rollbackAuthUser(admin: SupabaseClient<any>, userId: string) {
+  const { error } = await admin.auth.admin.deleteUser(userId)
+  if (!error) return null
+  console.error('[admin/users] unable to compensate Auth user', { userId, error: error.message })
+  return `La cuenta se creó, pero no pudo completarse ni revertirse (id: ${userId}). Requiere reconciliación manual.`
 }
 
 export async function createUserAdmin(
@@ -27,7 +34,8 @@ export async function createUserAdmin(
     const role = String(formData.get('role') || 'student') as 'student' | 'coach' | 'admin' | 'parent'
     const locale = 'es'
 
-    if (!email) return { ok: false, error: 'Falta email', message: null }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'Email no válido', message: null }
+    if (!['student', 'coach', 'admin', 'parent'].includes(role)) return { ok: false, error: 'Rol no válido', message: null }
 
     // ⚠️ Normaliza dominio SIN barra final
     const rawSite = process.env.NEXT_PUBLIC_SUPABASE_SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
@@ -66,7 +74,10 @@ export async function createUserAdmin(
         email,
         options: { redirectTo: `${site}/auth/update-password` }, // ⬅️ igual aquí
       })
-      if (linkErr) return { ok: false, error: `invite falló y generateLink también: ${linkErr.message}`, message: null }
+      if (linkErr) {
+        const reconciliation = await rollbackAuthUser(admin, userId)
+        return { ok: false, error: reconciliation ?? `invite falló y generateLink también: ${linkErr.message}`, message: null }
+      }
 
       const { error: profErr } = await admin.from('profiles').upsert({
         user_id: userId,
@@ -74,7 +85,10 @@ export async function createUserAdmin(
         role,
         locale,
       })
-      if (profErr) return { ok: false, error: `profiles.upsert: ${profErr.message}`, message: null }
+      if (profErr) {
+        const reconciliation = await rollbackAuthUser(admin, userId)
+        return { ok: false, error: reconciliation ?? `profiles.upsert: ${profErr.message}`, message: null }
+      }
 
       return {
         ok: true,
@@ -93,7 +107,10 @@ export async function createUserAdmin(
       role,
       locale,
     })
-    if (profErr) return { ok: false, error: `profiles.upsert: ${profErr.message}`, message: null }
+    if (profErr) {
+      const reconciliation = await rollbackAuthUser(admin, invitedUser.id)
+      return { ok: false, error: reconciliation ?? `profiles.upsert: ${profErr.message}`, message: null }
+    }
 
     return {
       ok: true,

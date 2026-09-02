@@ -19,6 +19,7 @@ export default function Contact() {
     message: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [requestId, setRequestId] = useState(() => crypto.randomUUID())
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -31,7 +32,7 @@ export default function Contact() {
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Idempotency-Key': requestId },
         body: JSON.stringify(formData),
       })
       const result = await response.json().catch(() => null)
@@ -39,6 +40,7 @@ export default function Contact() {
 
       alert('✅ Tu mensaje ha sido enviado con éxito. Te responderemos en menos de 24h.')
       setFormData({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' })
+      setRequestId(crypto.randomUUID())
     } catch (error) {
       console.error('Contact delivery error:', error)
       alert('❌ Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.')

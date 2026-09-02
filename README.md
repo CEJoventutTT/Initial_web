@@ -49,9 +49,18 @@ La inscripción se procesa mediante `/api/center-activity`, en servidor, usando
 Resend. El navegador ya no envía solicitudes directamente a EmailJS. El endpoint
 valida el contenido, limita peticiones por IP mediante Upstash Redis, rechaza cuerpos
 grandes incluso cuando se envían por streaming y escapa los datos antes de
-insertarlos en HTML de correo. Las noticias públicas se cachean en Redis durante
-cinco minutos y se invalidan al sincronizar el RSS. Aplica también las migraciones
-de Supabase antes de desplegar el cambio.
+insertarlos en HTML de correo. Cada formulario genera y reutiliza un encabezado
+`Idempotency-Key` durante sus reintentos; una solicitud se divide en un aviso al
+club y un acuse al usuario, con estado y reintento independientes. Las
+reclamaciones de correo caducan a los quince minutos para poder recuperar un
+proceso interrumpido; esto mantiene una semántica al menos una vez ante una
+respuesta ambigua del proveedor. Aplica también las migraciones de Supabase antes
+de desplegar el cambio.
+
+El alta de usuarios se realiza exclusivamente desde `/admin/user`, con sesión y rol
+de administrador. Cuando Supabase no puede enviar la invitación, el panel muestra
+un enlace de recuperación de un solo uso para compartir manualmente; no debe
+copiarse en logs ni sistemas de analítica.
 
 El dashboard usa tipos explícitos para progreso y pasos de misiones. Las pruebas
 E2E cubren también la navegación pública a noticias e inscripción. Consulta el
