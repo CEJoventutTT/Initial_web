@@ -39,34 +39,29 @@ export default function UpdatePasswordPage() {
       setErr(null)
       setMsg(null)
 
-      // 1) ¿Viene con ?code=... ? intenta intercambio (PKCE)
+      // The recovery request uses the implicit flow, so its session arrives in
+      // the URL fragment. A PKCE link cannot be exchanged safely here because
+      // its verifier only exists in the browser where the request was started.
       const url = new URL(window.location.href)
       const code = url.searchParams.get('code')
       if (code) {
-        // Primero intenta con el code directo
-        const { error: exchErr1 } = await supabase.auth.exchangeCodeForSession(code)
-        if (exchErr1) {
-          // Algunos setups requieren pasar la URL completa
-          const { error: exchErr2 } = await supabase.auth.exchangeCodeForSession(window.location.href as unknown as string)
-          if (exchErr2) {
-            console.error('exchangeCodeForSession falló:', exchErr1.message, ' / ', exchErr2.message)
-          }
-        }
-      } else {
-        // 2) ¿Viene con #access_token y refresh_token? setea sesión manualmente
-        const tokens = parseHashTokens()
-        if (tokens?.access_token && tokens?.refresh_token) {
-          const { error } = await supabase.auth.setSession({
-            access_token: tokens.access_token,
-            refresh_token: tokens.refresh_token,
-          })
-          if (error) {
-            console.error('setSession error:', error.message)
-          }
+        setErr('Este enlace se generó con una versión anterior. Solicita uno nuevo para restablecer la contraseña.')
+        setLoading(false)
+        return
+      }
+
+      const tokens = parseHashTokens()
+      if (tokens?.access_token && tokens?.refresh_token) {
+        const { error } = await supabase.auth.setSession({
+          access_token: tokens.access_token,
+          refresh_token: tokens.refresh_token,
+        })
+        if (error) {
+          setErr('No se ha podido validar el enlace. Solicita uno nuevo e inténtalo de nuevo.')
         }
       }
 
-      // 3) Comprueba sesión (dos intentos por si el SDK tarda un tick)
+      // Comprueba sesión (dos intentos por si el SDK tarda un tick)
       let { data: { session } } = await supabase.auth.getSession()
       if (!session) {
         await new Promise(r => setTimeout(r, 80))
@@ -129,9 +124,7 @@ export default function UpdatePasswordPage() {
       <div className="min-h-screen flex items-center justify-center bg-brand-dark text-white px-4">
         <div className="w-full max-w-md bg-white/5 border border-white/10 rounded p-6 text-center">
           <h1 className="text-xl font-bold mb-2">Enlace no válido o caducado</h1>
-          <p className="text-white/70 mb-4">
-            Abre el link directamente desde el correo (no lo copies/pegues) o solicita una nueva invitación.
-          </p>
+          <p className="text-white/70 mb-4">{err ?? 'Solicita un nuevo enlace de recuperación e inténtalo de nuevo.'}</p>
         </div>
       </div>
     )
