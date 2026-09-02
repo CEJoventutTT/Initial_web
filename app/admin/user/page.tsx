@@ -19,7 +19,12 @@ function SubmitButton() {
   )
 }
 
-const initialState = { ok: false, error: null as string | null, message: null as string | null }
+const initialState = {
+  ok: false,
+  error: null as string | null,
+  message: null as string | null,
+  recoveryUrl: null as string | null,
+}
 
 export default function AdminUsersPage() {
   const [state, formAction] = useActionState(createUserAdmin, initialState)
@@ -74,9 +79,16 @@ export default function AdminUsersPage() {
         <p className="text-red-500 text-sm">Error: {state.error}</p>
       )}
       {state?.ok && (
-        <p className="text-green-600 text-sm whitespace-pre-line">
-          {state.message}
-        </p>
+        <div className="space-y-2 text-sm">
+          <p className="text-green-600 whitespace-pre-line">{state.message}</p>
+          {state.recoveryUrl && (
+            <div className="rounded border border-amber-400 bg-amber-50 p-3 text-amber-950">
+              <p className="font-medium">Enlace de recuperación (secreto y de un solo uso)</p>
+              <p className="mt-1 break-all select-all">{state.recoveryUrl}</p>
+              <p className="mt-1">Cópialo y compártelo únicamente con la persona invitada.</p>
+            </div>
+          )}
+        </div>
       )}
     </div>
   )

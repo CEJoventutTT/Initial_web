@@ -42,9 +42,12 @@ describe('join form', () => {
     fireEvent.submit(document.querySelector('form')!)
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith('/api/center-activity', {
+      expect(global.fetch).toHaveBeenCalledWith('/api/center-activity', expect.objectContaining({
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+          'Idempotency-Key': expect.stringMatching(/^[A-Za-z0-9_-]{16,128}$/),
+        }),
         body: JSON.stringify({
           fullName: 'Ada Lovelace',
           birthDate: '2000-01-01',
@@ -56,7 +59,7 @@ describe('join form', () => {
           eventInterest: 'no',
           dataProtectionConsent: true,
         }),
-      })
+      }))
       expect(toast).toHaveBeenCalledWith({
         title: 'common.success',
         description: 'join.reviewMessage',

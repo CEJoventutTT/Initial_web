@@ -35,13 +35,10 @@ describe('email transport', () => {
   })
 
   it('sends the club notice and acknowledgement through EmailJS server credentials', async () => {
-    await expect(deliverEmail('contact', notice, acknowledgement, 'request-1')).resolves.toEqual({ provider: 'emailjs', id: null })
-    expect(fetchMock).toHaveBeenCalledTimes(2)
+    await expect(deliverEmail('notice', notice, 'request-1:notice')).resolves.toEqual({ provider: 'emailjs', id: null })
+    expect(fetchMock).toHaveBeenCalledTimes(1)
     expect(JSON.parse(fetchMock.mock.calls[0][1].body as string)).toMatchObject({
       service_id: 'service_test', template_id: 'template_contact_test', accessToken: 'private_test', template_params: notice,
-    })
-    expect(JSON.parse(fetchMock.mock.calls[1][1].body as string)).toMatchObject({
-      template_id: 'template_auto_reply_test', template_params: acknowledgement,
     })
   }, 5_000)
 
@@ -54,8 +51,8 @@ describe('email transport', () => {
     const send = jest.fn().mockResolvedValue({ data: null, error: { message: 'Rejected' } })
     jest.mocked(Resend).mockImplementation(() => ({ emails: { send } }) as never)
 
-    await expect(deliverEmail('join', notice, acknowledgement, 'request-2')).resolves.toEqual({ provider: 'emailjs', id: null })
+    await expect(deliverEmail('acknowledgement', acknowledgement, 'request-2:acknowledgement')).resolves.toEqual({ provider: 'emailjs', id: null })
     expect(send).toHaveBeenCalledTimes(1)
-    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock).toHaveBeenCalledTimes(1)
   }, 5_000)
 })
