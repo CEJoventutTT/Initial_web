@@ -2,27 +2,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabaseBrowser } from '@/lib/supabase/client'
-import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
-
-function parseHashTokens() {
-  if (typeof window === 'undefined') return null
-  const hash = window.location.hash?.replace(/^#/, '') || ''
-  if (!hash) return null
-  const params = new URLSearchParams(hash)
-  const access_token = params.get('access_token')
-  const refresh_token = params.get('refresh_token')
-  const type = params.get('type') // invite | recovery | magiclink | signup
-  if (access_token && refresh_token) {
-    return { access_token, refresh_token, type }
-  }
-  return null
-}
 
 export default function UpdatePasswordPage() {
   const supabase = supabaseBrowser()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [loading, setLoading] = useState(true)
   const [hasSession, setHasSession] = useState(false)
@@ -32,60 +18,24 @@ export default function UpdatePasswordPage() {
   const [err, setErr] = useState<string | null>(null)
 
   useEffect(() => {
-    let unsub: (() => void) | undefined
-
     async function ensureSession() {
       setLoading(true)
       setErr(null)
       setMsg(null)
 
-      // The recovery request uses the implicit flow, so its session arrives in
-      // the URL fragment. A PKCE link cannot be exchanged safely here because
-      // its verifier only exists in the browser where the request was started.
-      const url = new URL(window.location.href)
-      const code = url.searchParams.get('code')
-      if (code) {
-        setErr('Este enlace se generó con una versión anterior. Solicita uno nuevo para restablecer la contraseña.')
+      if (searchParams.get('error') === 'recovery_link_invalid') {
+        setErr('Este enlace no es válido o ha caducado. Solicita uno nuevo para restablecer la contraseña.')
         setLoading(false)
         return
       }
 
-      const tokens = parseHashTokens()
-      if (tokens?.access_token && tokens?.refresh_token) {
-        const { error } = await supabase.auth.setSession({
-          access_token: tokens.access_token,
-          refresh_token: tokens.refresh_token,
-        })
-        if (error) {
-          setErr('No se ha podido validar el enlace. Solicita uno nuevo e inténtalo de nuevo.')
-        }
-      }
-
-      // Comprueba sesión (dos intentos por si el SDK tarda un tick)
-      let { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        await new Promise(r => setTimeout(r, 80))
-        const again = await supabase.auth.getSession()
-        session = again.data.session
-      }
-
-      setHasSession(!!session)
+      const { data: { session } } = await supabase.auth.getSession()
+      setHasSession(Boolean(session))
       setLoading(false)
-
-      // Suscríbete a cambios por si llega tarde
-      const { data: sub } = supabase.auth.onAuthStateChange((_ev: AuthChangeEvent, s: Session | null) => {
-        if (s && !hasSession) setHasSession(true)
-      })
-      unsub = () => sub.subscription.unsubscribe()
     }
 
     ensureSession()
-
-    return () => {
-      if (unsub) unsub()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [searchParams, supabase])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()

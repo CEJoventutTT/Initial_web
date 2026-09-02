@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { supabaseBrowser, supabaseImplicitBrowser } from '@/lib/supabase/client'
+import { supabaseBrowser } from '@/lib/supabase/client'
 import { safeInternalRedirect } from '@/lib/safe-redirect'
 
 type Notice = { kind: 'error' | 'success'; text: string } | null
@@ -43,10 +43,15 @@ export default function LoginForm() {
     setLoading(true)
     setNotice(null)
     try {
-      const { error } = await supabaseImplicitBrowser().auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/update-password`,
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': crypto.randomUUID(),
+        },
+        body: JSON.stringify({ email }),
       })
-      if (error) { setError(); return }
+      if (!response.ok) { setError(); return }
       setNotice({ kind: 'success', text: 'Si existe una cuenta con este email, recibirás un enlace para restablecer tu contraseña.' })
     } catch {
       setError()
