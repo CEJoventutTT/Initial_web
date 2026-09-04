@@ -2,7 +2,8 @@
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import CopyButton from '@/components/CopyButton'
-import Image from 'next/image'
+import QRCode from './qr-client'
+import RotateQrButton from '@/components/coach/RotateQrButton'
 import { requireSupabaseConfig } from '@/lib/supabase/env'
 
 export const dynamic = 'force-dynamic'
@@ -66,12 +67,6 @@ export default async function SessionQrPage({ params }: { params: Promise<{ id: 
       ? `${siteBase}/attend?s=${encodeURIComponent(id)}&k=${encodeURIComponent(session.qr_key)}`
       : null
 
-  const qrSrc =
-    attendUrl &&
-    `https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=${encodeURIComponent(
-      attendUrl
-    )}`
-
   return (
     <main className="min-h-[60vh] bg-brand-dark bg-panel-glow p-6">
       <div className="mx-auto max-w-3xl space-y-6">
@@ -106,14 +101,7 @@ export default async function SessionQrPage({ params }: { params: Promise<{ id: 
             <div className="flex flex-col items-center justify-center gap-4">
               {attendUrl ? (
                 <>
-                  <Image
-                    src={qrSrc!}
-                    alt="Código QR"
-                    width={300}
-                    height={300}
-                    unoptimized
-                    className="h-[300px] w-[300px] rounded-lg bg-white p-2 shadow-soft"
-                  />
+                  <div className="rounded-lg bg-white p-4 shadow-soft"><QRCode value={attendUrl} /></div>
                   <div className="max-w-full overflow-x-auto rounded-md border border-white/10 bg-white/5 p-3 font-mono text-xs text-white/90">
                     {attendUrl}
                   </div>
@@ -127,6 +115,7 @@ export default async function SessionQrPage({ params }: { params: Promise<{ id: 
                     </a>
                     <CopyButton text={attendUrl} />
                   </div>
+                  <RotateQrButton sessionId={session.id} />
                 </>
               ) : (
                 <div className="w-full rounded-md border border-red-500/30 bg-red-500/10 p-4 text-center text-red-300">

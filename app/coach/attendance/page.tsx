@@ -1,67 +1,26 @@
-// app/attend/page.tsx
-'use client'
+import { supabaseServer } from '@/lib/supabase/server'
+import { markAttendanceManually } from './actions'
 
-import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { supabaseBrowser } from '@/lib/supabase/client'
+type Session = { id: number; program_id: number; start_at: string; end_at: string | null; programs: { name: string } | null }
 
-export default function AttendPage() {
-  const supabase = supabaseBrowser()
-  const router = useRouter()
-  const qp = useSearchParams()
-  const s = qp.get('s')
-  const k = qp.get('k')
+export const dynamic = 'force-dynamic'
 
-  const [msg, setMsg] = useState<string | null>(null)
-  const [ok, setOk] = useState<boolean | null>(null)
+export default async function CoachAttendancePage() {
+  const supabase = await supabaseServer()
+  const { data: sessionsData } = await supabase.from('attendance_sessions').select('id, program_id, start_at, end_at, programs(name)').order('start_at', { ascending: false }).limit(30)
+  const sessions = (sessionsData ?? []) as unknown as Session[]
+  const studentsBySession = await Promise.all(sessions.map(async (session) => {
+    const { data } = await supabase.from('enrollments').select('user_id, profiles!inner(full_name)').eq('program_id', session.program_id).eq('status', 'active')
+    return [session.id, data ?? []] as const
+  }))
+  const students = new Map(studentsBySession)
 
-  useEffect(() => {
-    (async () => {
-      if (!s || !k) {
-        setOk(false)
-        setMsg('Código inválido.')
-        return
-      }
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        // redirige a login y vuelve aquí
-        router.push(`/login?redirect=${encodeURIComponent(`/attend?s=${s}&k=${k}`)}`)
-        return
-      }
-      try {
-        const res = await fetch('/api/coach/attendance/checkin', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ session_id: Number(s), key: k })
-        })
-        const data = await res.json()
-        if (res.ok) {
-          setOk(true)
-          setMsg(data.status === 'present'
-            ? `¡Asistencia registrada! +${data.xp} XP (puntual)`
-            : `Llegaste tarde. +${data.xp} XP`)
-          // opcional: ir al dashboard
-          // setTimeout(()=> router.push('/dashboard'), 1200)
-        } else {
-          setOk(false)
-          setMsg(data.detail || data.error || 'No se pudo registrar la asistencia.')
-        }
-      } catch (e: unknown) {
-        setOk(false)
-        setMsg(e instanceof Error ? e.message : String(e))
-      }
-    })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [s, k])
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-brand-dark text-white px-4">
-      <div className="w-full max-w-md bg-white/5 border border-white/10 rounded p-6 text-center">
-        <h1 className="text-xl font-bold mb-2">Registro de asistencia</h1>
-        {ok === null && <p className="text-white/70">Procesando…</p>}
-        {ok === true && <p className="text-green-400">{msg}</p>}
-        {ok === false && <p className="text-red-400">{msg}</p>}
-      </div>
-    </div>
-  )
+  return <main className="space-y-6">
+    <header><h2 className="text-2xl font-bold">Asistencia manual</h2><p className="mt-1 text-white/70">Marca a un alumno matriculado cuando no pueda usar el QR.</p></header>
+    {sessions.length === 0 && <p className="rounded border border-white/15 p-4 text-white/70">No hay sesiones disponibles.</p>}
+    <div className="space-y-4">{sessions.map((session) => {
+      const sessionStudents = students.get(session.id) ?? []
+      return <section key={session.id} className="rounded border border-white/15 p-4"><div className="mb-3"><h3 className="font-semibold">{session.programs?.name ?? `Programa ${session.program_id}`}</h3><p className="text-sm text-white/70">{new Date(session.start_at).toLocaleString()} {session.end_at ? `— ${new Date(session.end_at).toLocaleString()}` : ''}</p></div>{sessionStudents.length === 0 ? <p className="text-sm text-white/60">No hay alumnos activos en este programa.</p> : <div className="flex flex-wrap gap-2">{sessionStudents.map((row: any) => <form action={markAttendanceManually} key={row.user_id}><input type="hidden" name="session_id" value={session.id} /><input type="hidden" name="student_id" value={row.user_id} /><button type="submit" className="rounded border border-white/20 px-3 py-2 text-sm hover:bg-white/10">Marcar: {Array.isArray(row.profiles) ? row.profiles[0]?.full_name : row.profiles?.full_name || row.user_id}</button></form>)}</div>}</section>
+    })}</div>
+  </main>
 }

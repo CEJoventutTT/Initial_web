@@ -4,6 +4,7 @@ import { ZodError } from 'zod'
 import { acknowledgementParams, applicationSchema, joinTemplateParams } from '@/lib/email/contracts'
 import { submitEmail } from '@/lib/email/submit'
 import { consumeRateLimit } from '@/lib/rate-limit'
+import { saveMembershipApplication } from '@/lib/membership-applications'
 
 const WINDOW_MS = 60 * 60 * 1000
 const MAX_REQUESTS_PER_WINDOW = 5
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
     }
     const body = await readJsonWithLimit(request)
     const application = applicationSchema.parse(body)
+    await saveMembershipApplication(application, requestId)
     const notice = joinTemplateParams(application)
     const result = await submitEmail('join', notice, acknowledgementParams('join', notice), requestId)
     return NextResponse.json(

@@ -2,13 +2,18 @@ import { existsSync } from 'node:fs'
 import { loadEnvFile } from 'node:process'
 import { defineConfig, devices } from '@playwright/test'
 
-// `.env.test.local` is loaded first so its dedicated test credentials take priority.
-for (const file of ['.env.test.local', '.env']) {
-  if (existsSync(file)) loadEnvFile(file)
+// Playwright deliberately never loads `.env`: E2E must target a dedicated project.
+if (existsSync('.env.test.local')) loadEnvFile('.env.test.local')
+
+for (const [target, source] of [['ADMIN', 'ADMIN2'], ['ADMIN_PASS', 'ADMIN_PASS2'], ['COACH', 'COACH2'], ['COACH_PASS', 'COACH_PASS2']] as const) {
+  if (process.env[source]) process.env[target] = process.env[source]
 }
 
 const requiredCredentials = ['ADMIN', 'ADMIN_PASS', 'COACH', 'COACH_PASS', 'STUDENT', 'STUDENT_PASS']
-if (process.env.CI) {
+if (process.env.E2E_TEST_ENV !== '1') {
+  throw new Error('E2E_TEST_ENV=1 is required. Configure .env.test.local for a dedicated Supabase test project.')
+}
+if (process.env.CI || process.env.E2E_TEST_ENV === '1') {
   const missing = requiredCredentials.filter((name) => !process.env[name])
   if (missing.length > 0) {
     throw new Error(`Missing required E2E environment variables: ${missing.join(', ')}`)

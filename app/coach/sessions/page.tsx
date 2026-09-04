@@ -48,12 +48,15 @@ async function createSession(formData: FormData) {
   const supabase = await getSupabaseForAction()
   const program_id = Number(formData.get('program_id'))
   if (!Number.isSafeInteger(program_id) || program_id <= 0) return
-  const start_at = new Date(formData.get('start_at') as string).toISOString()
-  const end_at = new Date(formData.get('end_at') as string).toISOString()
+  const startDate = new Date(formData.get('start_at') as string)
+  const endDate = new Date(formData.get('end_at') as string)
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || endDate <= startDate) return
+  const start_at = startDate.toISOString()
+  const end_at = endDate.toISOString()
   const active = (formData.get('active') as string) === 'on'
 
   const { error } = await supabase.from('attendance_sessions').insert([
-    { program_id, start_at, end_at, active },
+    { program_id, start_at, end_at, expires_at: end_at, active },
   ])
   if (error) console.error('createSession error:', error.message)
   revalidatePath('/coach/sessions')
