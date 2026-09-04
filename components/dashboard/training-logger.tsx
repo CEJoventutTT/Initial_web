@@ -103,7 +103,7 @@ export default function TrainingLogger({
 
               <div className="flex space-x-4">
                 <Button type="submit" disabled={loading} className="bg-[#BF0F30] hover:bg-[#a50c28] text-white">
-                  {loading ? 'Saving…' : 'Log Session (+100 XP)'}
+                  {loading ? 'Saving…' : 'Log Session (+10 XP)'}
                 </Button>
                 <Button type="button" variant="outline" onClick={() => setIsLogging(false)} className="border-white/15 text-white/80 hover:bg-white/10">
                   Cancel
@@ -148,7 +148,7 @@ export default function TrainingLogger({
                 </div>
                 <div className="text-right">
                   <div className="font-bold" style={{ color: '#6BBFA0' }}>
-                    +100 XP
+                    +10 XP
                   </div>
                 </div>
               </div>

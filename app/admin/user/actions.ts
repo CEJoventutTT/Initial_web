@@ -4,8 +4,9 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { requireSupabaseAdminConfig } from '@/lib/supabase/env'
 import { authenticatedSupabase, hasRole } from '@/lib/supabase/request-auth'
+import { revalidatePath } from 'next/cache'
 
-type ActionState = {
+export type ActionState = {
   ok: boolean
   error: string | null
   message: string | null
@@ -120,5 +121,94 @@ export async function createUserAdmin(
     }
   } catch (e: any) {
     return { ok: false, error: String(e?.message || e), message: null }
+  }
+}
+
+async function requireAdmin() {
+  const { supabase, user } = await authenticatedSupabase()
+  if (!user || !(await hasRole(supabase, user.id, ['admin']))) throw new Error('No autorizado')
+  return { supabase, user }
+}
+
+const operationInitialState: ActionState = { ok: false, error: null, message: null }
+
+function operationError(error: unknown): ActionState {
+  console.error('[admin/user] operation failed', error)
+  return { ...operationInitialState, error: 'No se pudo guardar el cambio. Revisa los datos e inténtalo de nuevo.' }
+}
+
+async function requireProfileRole(supabase: Awaited<ReturnType<typeof authenticatedSupabase>>['supabase'], userId: string, roles: string[]) {
+  const { data, error } = await supabase.from('profiles').select('role').eq('user_id', userId).maybeSingle()
+  if (error) throw error
+  if (!data || !roles.includes(data.role)) throw new Error('El perfil seleccionado no tiene el rol requerido')
+}
+
+export async function reviewApplication(_: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    const { supabase, user } = await requireAdmin()
+    const id = String(formData.get('application_id') || '')
+    const status = String(formData.get('status') || '')
+    const internalNotes = String(formData.get('internal_notes') || '').trim().slice(0, 5_000)
+    if (!id || !['new', 'contacted', 'approved', 'rejected', 'archived'].includes(status)) throw new Error('Solicitud no válida')
+    const { data, error } = await supabase.from('membership_applications').update({ status, internal_notes: internalNotes || null, reviewed_by: user.id, reviewed_at: new Date().toISOString() }).eq('id', id).select('id').maybeSingle()
+    if (error) throw error
+    if (!data) throw new Error('Solicitud no encontrada')
+    revalidatePath('/admin/user')
+    return { ...operationInitialState, ok: true, message: 'Revisión guardada.' }
+  } catch (error) {
+    return operationError(error)
+  }
+}
+
+export async function createProgram(_: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    const { supabase } = await requireAdmin()
+    const name = String(formData.get('name') || '').trim().slice(0, 120)
+    const description = String(formData.get('description') || '').trim().slice(0, 2_000)
+    const coachId = String(formData.get('coach_id') || '') || null
+    if (!name) throw new Error('El nombre del programa es obligatorio')
+    if (coachId) await requireProfileRole(supabase, coachId, ['coach', 'admin'])
+    const { error } = await supabase.from('programs').insert({ name, description: description || null, coach_id: coachId })
+    if (error) throw error
+    revalidatePath('/admin/user')
+    return { ...operationInitialState, ok: true, message: 'Programa creado.' }
+  } catch (error) {
+    return operationError(error)
+  }
+}
+
+export async function assignCoach(_: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    const { supabase } = await requireAdmin()
+    const programId = Number(formData.get('program_id'))
+    const coachId = String(formData.get('coach_id') || '')
+    if (!Number.isSafeInteger(programId) || programId <= 0 || !coachId) throw new Error('Asignación no válida')
+    await requireProfileRole(supabase, coachId, ['coach', 'admin'])
+    const { error } = await supabase
+      .from('coach_programs')
+      .upsert({ coach_id: coachId, program_id: programId }, { onConflict: 'coach_id,program_id', ignoreDuplicates: true })
+    if (error) throw error
+    revalidatePath('/admin/user')
+    return { ...operationInitialState, ok: true, message: 'Entrenador asignado.' }
+  } catch (error) {
+    return operationError(error)
+  }
+}
+
+export async function enrollStudent(_: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    const { supabase } = await requireAdmin()
+    const programId = Number(formData.get('program_id'))
+    const userId = String(formData.get('user_id') || '')
+    if (!Number.isSafeInteger(programId) || programId <= 0 || !userId) throw new Error('Matrícula no válida')
+    await requireProfileRole(supabase, userId, ['student'])
+    const { error } = await supabase
+      .from('enrollments')
+      .upsert({ user_id: userId, program_id: programId, status: 'active' }, { onConflict: 'user_id,program_id' })
+    if (error) throw error
+    revalidatePath('/admin/user')
+    return { ...operationInitialState, ok: true, message: 'Alumno matriculado.' }
+  } catch (error) {
+    return operationError(error)
   }
 }

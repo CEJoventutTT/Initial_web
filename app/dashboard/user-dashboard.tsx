@@ -9,7 +9,7 @@ import WeeklyMissions from '@/components/dashboard/weekly-missions'
 import Leaderboard from '@/components/dashboard/leaderboard'
 import TrainingLogger from '@/components/dashboard/training-logger'
 
-type SessionItem   = { id:number; program_id:number; starts_at:string; ends_at:string }
+type SessionItem   = { id:number; program_id:number; program_name:string; start_at:string; end_at:string|null }
 type TrainingLog   = { id:number; session_type:string; duration_min:number; notes:string|null; created_at:string }
 type BadgeItem     = { id:number; granted_at:string; badges: { code:string; name:string; icon_url:string|null } | null }
 type LeaderItem    = { user_id:string; full_name:string|null; total_xp:number }
@@ -46,6 +46,22 @@ export default function UserDashboard(props: {
         <div className="lg:col-span-2 space-y-8">
           <WelcomeSection name={props.profile.name} />
           <StatsPanel totalXP={props.totalXP} xpByType={props.xpByType} />
+
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <h2 className="mb-3 text-lg font-semibold">Próximas sesiones</h2>
+            {props.sessions.length === 0 ? (
+              <p className="text-white/60">No tienes sesiones programadas.</p>
+            ) : (
+              <ul className="divide-y divide-white/10">
+                {props.sessions.map((session) => (
+                  <li key={session.id} className="flex items-center justify-between gap-4 py-3">
+                    <span className="text-sm text-white/85">{session.program_name}</span>
+                    <time className="shrink-0 text-right text-sm text-white/70">{new Date(session.start_at).toLocaleString()}</time>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
 
           {/* Asistencias recientes */}
           <section className="rounded-2xl bg-white/5 border border-white/10 p-5">

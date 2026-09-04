@@ -5,9 +5,11 @@ import { POST as contactPost } from '@/app/api/contact/route'
 import { POST as joinPost } from '@/app/api/center-activity/route'
 import { submitEmail } from '@/lib/email/submit'
 import { consumeRateLimit } from '@/lib/rate-limit'
+import { saveMembershipApplication } from '@/lib/membership-applications'
 
 jest.mock('@/lib/email/submit', () => ({ submitEmail: jest.fn() }))
 jest.mock('@/lib/rate-limit', () => ({ consumeRateLimit: jest.fn() }))
+jest.mock('@/lib/membership-applications', () => ({ saveMembershipApplication: jest.fn() }))
 
 const joinApplication = {
   fullName: 'Ada Lovelace',
@@ -24,6 +26,7 @@ const joinApplication = {
 beforeEach(() => {
   jest.mocked(consumeRateLimit).mockResolvedValue({ limited: false, remaining: 4 })
   jest.mocked(submitEmail).mockResolvedValue({ provider: 'emailjs', id: null, duplicate: false, pending: false })
+  jest.mocked(saveMembershipApplication).mockResolvedValue(undefined)
 })
 
 afterEach(() => jest.resetAllMocks())
@@ -58,6 +61,7 @@ describe('email form routes', () => {
     }), expect.objectContaining({
       subject: 'Hemos recibido tu inscripción — CE Joventut TT',
     }), 'join-request-0000001')
+    expect(saveMembershipApplication).toHaveBeenCalledWith(expect.objectContaining({ fullName: 'Ada Lovelace' }), 'join-request-0000001')
   })
 
   it('does not call the provider when the contact rate limit is exhausted', async () => {
