@@ -13,6 +13,18 @@ export type ActionState = {
   recoveryUrl?: string | null
 }
 
+function inviteRedirectOrigin() {
+  const rawSite = process.env.NODE_ENV === 'production'
+    ? 'https://cejoventut.com'
+    : process.env.NEXT_PUBLIC_SITE_URL || 'http://127.0.0.1:3000'
+
+  try {
+    return new URL(rawSite).origin
+  } catch {
+    throw new Error('La URL pública configurada para las invitaciones no es válida')
+  }
+}
+
 async function rollbackAuthUser(admin: SupabaseClient<any>, userId: string) {
   const { error } = await admin.auth.admin.deleteUser(userId)
   if (!error) return null
@@ -38,9 +50,7 @@ export async function createUserAdmin(
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'Email no válido', message: null }
     if (!['student', 'coach', 'admin', 'parent'].includes(role)) return { ok: false, error: 'Rol no válido', message: null }
 
-    // ⚠️ Normaliza dominio SIN barra final
-    const rawSite = process.env.NEXT_PUBLIC_SUPABASE_SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-    const site = rawSite.replace(/\/+$/, '')
+    const site = inviteRedirectOrigin()
 
     const { url, serviceRoleKey } = requireSupabaseAdminConfig()
     const admin = createClient(
@@ -53,7 +63,7 @@ export async function createUserAdmin(
     const { data: invited, error: inviteErr } =
       await admin.auth.admin.inviteUserByEmail(email, {
         data: { full_name: fullName || null, role, locale },
-        redirectTo: `${site}/auth/update-password`,  // ⬅️ usa la constante site
+        redirectTo: `${site}/auth/update-password`,
       })
 
     if (inviteErr) {
@@ -73,7 +83,7 @@ export async function createUserAdmin(
       const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
         type: 'recovery',
         email,
-        options: { redirectTo: `${site}/auth/update-password` }, // ⬅️ igual aquí
+        options: { redirectTo: `${site}/auth/update-password` },
       })
       if (linkErr) {
         const reconciliation = await rollbackAuthUser(admin, userId)
