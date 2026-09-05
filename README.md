@@ -65,3 +65,9 @@ copiarse en logs ni sistemas de analítica.
 El dashboard usa tipos explícitos para progreso y pasos de misiones. Las pruebas
 E2E cubren también la navegación pública a noticias e inscripción. Consulta el
 detalle completo en [`docs/pr05.md`](docs/pr05.md).
+
+## Backoffice
+
+El panel operativo está en `/admin`, con solicitudes, personas, programas y seguimiento de correos. Los entrenadores gestionan sesiones y asistencia desde `/coach/sessions` y `/coach/attendance`.
+
+Consulta [implementación, pruebas y orden de despliegue](docs/backoffice-implementacion.md). Las mejoras requieren la migración `20260905120000_backoffice_operations.sql`. Para probar el circuito con datos locales: `npm run test:backoffice:local`.

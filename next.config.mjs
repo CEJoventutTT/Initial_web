@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: process.env.BACKOFFICE_TEST_BUILD_DIR || '.next',
   env: {
     NEXT_PUBLIC_CEJTT_SUPABASE_URL:
       process.env.NEXT_PUBLIC_CEJTT_SUPABASE_URL || process.env.CEJTT_SUPABASE_URL,

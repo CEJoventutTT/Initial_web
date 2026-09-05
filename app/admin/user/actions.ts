@@ -1,224 +1,382 @@
-// app/admin/users/actions.ts
 'use server'
 
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js'
 import { requireSupabaseAdminConfig } from '@/lib/supabase/env'
-import { authenticatedSupabase, hasRole } from '@/lib/supabase/request-auth'
-import { revalidatePath } from 'next/cache'
+import {
+  checked,
+  InputError,
+  numberField,
+  operation,
+  requireOperator,
+  textField,
+} from '@/lib/backoffice/server'
+import type { ActionState } from '@/lib/backoffice/state'
+export type { ActionState } from '@/lib/backoffice/state'
 
-export type ActionState = {
-  ok: boolean
-  error: string | null
-  message: string | null
-  recoveryUrl?: string | null
-}
-
-function inviteRedirectOrigin() {
-  const rawSite = process.env.NODE_ENV === 'production'
+function inviteOrigin() {
+  return process.env.NODE_ENV === 'production'
     ? 'https://cejoventut.com'
-    : process.env.NEXT_PUBLIC_SITE_URL || 'http://127.0.0.1:3000'
-
-  try {
-    return new URL(rawSite).origin
-  } catch {
-    throw new Error('La URL pública configurada para las invitaciones no es válida')
-  }
-}
-
-async function rollbackAuthUser(admin: SupabaseClient<any>, userId: string) {
-  const { error } = await admin.auth.admin.deleteUser(userId)
-  if (!error) return null
-  console.error('[admin/users] unable to compensate Auth user', { userId, error: error.message })
-  return `La cuenta se creó, pero no pudo completarse ni revertirse (id: ${userId}). Requiere reconciliación manual.`
+    : new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://127.0.0.1:3000')
+        .origin
 }
 
 export async function createUserAdmin(
-  prevState: ActionState,
-  formData: FormData
+  _: ActionState,
+  form: FormData,
 ): Promise<ActionState> {
-  try {
-    const { supabase, user } = await authenticatedSupabase()
-    if (!user || !(await hasRole(supabase, user.id, ['admin']))) {
-      return { ok: false, error: 'No autorizado', message: null }
-    }
-
-    const email = String(formData.get('email') || '').trim().toLowerCase()
-    const fullName = String(formData.get('fullName') || '').trim()
-    const role = String(formData.get('role') || 'student') as 'student' | 'coach' | 'admin' | 'parent'
-    const locale = 'es'
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'Email no válido', message: null }
-    if (!['student', 'coach', 'admin', 'parent'].includes(role)) return { ok: false, error: 'Rol no válido', message: null }
-
-    const site = inviteRedirectOrigin()
-
-    const { url, serviceRoleKey } = requireSupabaseAdminConfig()
-    const admin = createClient(
-      url,
-      serviceRoleKey,
-      { auth: { autoRefreshToken: false, persistSession: false } }
+  return operation(async () => {
+    const { supabase } = await requireOperator()
+    const email = textField(form, 'email', 254).toLowerCase()
+    const name = textField(form, 'fullName', 120)
+    const role = textField(form, 'role') || 'student'
+    const applicationId = textField(form, 'application_id')
+    if (
+      !name ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+      !['student', 'coach', 'admin'].includes(role)
     )
-
-    // 1) Invite con redirect permitido
-    const { data: invited, error: inviteErr } =
-      await admin.auth.admin.inviteUserByEmail(email, {
-        data: { full_name: fullName || null, role, locale },
-        redirectTo: `${site}/auth/update-password`,
-      })
-
-    if (inviteErr) {
-      // Fallback: crear user + recovery link
-      const tmp = `Temp_${crypto.randomUUID()}!9`
-      const { data: created, error: createErr } = await admin.auth.admin.createUser({
-        email,
-        password: tmp,
-        email_confirm: true,
-        user_metadata: { full_name: fullName || null, role, locale },
-      })
-      if (createErr) return { ok: false, error: `auth.createUser: ${createErr.message}`, message: null }
-
-      const userId = created.user?.id
-      if (!userId) return { ok: false, error: 'No se pudo obtener el user id', message: null }
-
-      const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
-        type: 'recovery',
-        email,
-        options: { redirectTo: `${site}/auth/update-password` },
-      })
-      if (linkErr) {
-        const reconciliation = await rollbackAuthUser(admin, userId)
-        return { ok: false, error: reconciliation ?? `invite falló y generateLink también: ${linkErr.message}`, message: null }
-      }
-
-      const { error: profErr } = await admin.from('profiles').upsert({
-        user_id: userId,
-        full_name: fullName || null,
-        role,
-        locale,
-      })
-      if (profErr) {
-        const reconciliation = await rollbackAuthUser(admin, userId)
-        return { ok: false, error: reconciliation ?? `profiles.upsert: ${profErr.message}`, message: null }
-      }
-
-      return {
-        ok: true,
-        error: null,
-        message: `No se pudo enviar la invitación automáticamente (SMTP). Copia y envía este enlace al usuario para que fije su contraseña.`,
-        recoveryUrl: linkData.properties?.action_link ?? null,
-      }
+      throw new InputError('Revisa el nombre, correo y rol.')
+    if (applicationId) {
+      const { data: app } = checked(
+        await supabase
+          .from('membership_applications')
+          .select('status, linked_user_id')
+          .eq('id', applicationId)
+          .single(),
+      )
+      if (!app || app.status !== 'approved' || role !== 'student')
+        throw new InputError(
+          'Aprueba la solicitud antes de crear la cuenta de alumno.',
+        )
+      if (app.linked_user_id)
+        throw new InputError(
+          'La solicitud ya tiene una cuenta vinculada. Continúa desde su ficha.',
+        )
     }
-
-    const invitedUser = invited?.user
-    if (!invitedUser) return { ok: false, error: 'No se recibió user en la invitación', message: null }
-
-    const { error: profErr } = await admin.from('profiles').upsert({
-      user_id: invitedUser.id,
-      full_name: fullName || null,
-      role,
-      locale,
+    const { data: invitation } = checked(
+      await supabase.rpc('admin_claim_invitation', {
+        p_email: email,
+        p_name: name,
+        p_role: role,
+        p_resend: form.get('resend') === 'true',
+      }),
+    )
+    const { url, serviceRoleKey } = requireSupabaseAdminConfig()
+    const admin = createClient(url, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
     })
-    if (profErr) {
-      const reconciliation = await rollbackAuthUser(admin, invitedUser.id)
-      return { ok: false, error: reconciliation ?? `profiles.upsert: ${profErr.message}`, message: null }
+    let userId: string | undefined = invitation.user_id ?? undefined
+    const identity = checked(
+      await supabase.rpc('admin_account_identity', { p_email: email }),
+    ).data?.[0]
+    // Only reconcile accounts created by this invitation. Existing people require explicit linking.
+    if (identity && identity.invitation_id !== invitation.id) {
+      if (invitation.status === 'sending')
+        checked(
+          await admin
+            .from('account_invitations')
+            .update({
+              status: 'failed',
+              last_error:
+                'Ya existe una cuenta. Selecciona la persona para vincularla.',
+              lease_until: null,
+              lease_token: null,
+            })
+            .eq('id', invitation.id)
+            .eq('lease_token', invitation.lease_token),
+        )
+      throw new InputError(
+        'Ya existe una cuenta con este correo. Selecciona explícitamente la persona existente para vincularla.',
+      )
     }
-
-    return {
-      ok: true,
-      error: null,
-      message: `Invitación enviada a ${email}. El usuario podrá establecer su contraseña desde el correo.`,
-      recoveryUrl: null,
+    if (invitation.status === 'sent') {
+      if (applicationId && userId)
+        checked(
+          await supabase.rpc('admin_complete_application', {
+            p_application: applicationId,
+            p_user: userId,
+          }),
+        )
+      return 'La cuenta ya existe y la invitación ya se envió. Puedes continuar con la matrícula.'
     }
-  } catch (e: any) {
-    return { ok: false, error: String(e?.message || e), message: null }
-  }
+    let mailAccepted = false
+    try {
+      if (identity) userId = identity.user_id
+      if (!userId) {
+        const { data, error } = await admin.auth.admin.createUser({
+          email,
+          password: `${crypto.randomUUID()}!Aa9`,
+          email_confirm: true,
+          user_metadata: {
+            full_name: invitation.full_name,
+            role: invitation.role,
+            locale: 'es',
+          },
+          app_metadata: { backoffice_invitation_id: invitation.id },
+        })
+        if (error || !data.user)
+          throw new InputError(
+            'No se pudo crear la cuenta. Reintenta; no se duplicará una cuenta existente.',
+          )
+        userId = data.user.id
+      }
+      const { data: existingProfile } = checked(
+        await admin
+          .from('profiles')
+          .select('user_id, active')
+          .eq('user_id', userId)
+          .maybeSingle(),
+      )
+      if (existingProfile && !existingProfile.active)
+        throw new InputError(
+          'La persona está de baja. Revisa su ficha antes de enviar una invitación.',
+        )
+      if (!existingProfile)
+        checked(
+          await admin
+            .from('profiles')
+            .insert({
+              user_id: userId,
+              full_name: invitation.full_name,
+              role: invitation.role,
+              locale: 'es',
+            }),
+        )
+      checked(
+        await admin
+          .from('account_invitations')
+          .update({ user_id: userId })
+          .eq('id', invitation.id)
+          .eq('lease_token', invitation.lease_token),
+      )
+      if (applicationId)
+        checked(
+          await supabase.rpc('admin_complete_application', {
+            p_application: applicationId,
+            p_user: userId,
+          }),
+        )
+      if (identity?.last_sign_in_at) {
+        checked(
+          await admin
+            .from('account_invitations')
+            .update({ status: 'sent', lease_until: null, lease_token: null })
+            .eq('id', invitation.id)
+            .eq('lease_token', invitation.lease_token),
+        )
+        return 'La cuenta ya ha iniciado sesión. No necesita otra invitación.'
+      }
+      // Auth handles delivery and expiring recovery credentials. No link is stored or displayed.
+      const { error: mailError } = await admin.auth.resetPasswordForEmail(
+        email,
+        { redirectTo: `${inviteOrigin()}/auth/update-password` },
+      )
+      if (mailError)
+        throw new InputError(
+          'La cuenta está creada, pero no se pudo enviar el acceso. Reintenta el envío desde la ficha de la persona.',
+        )
+      mailAccepted = true
+      checked(
+        await admin
+          .from('account_invitations')
+          .update({
+            status: 'sent',
+            sent_at: new Date().toISOString(),
+            last_error: null,
+            lease_until: null,
+            lease_token: null,
+          })
+          .eq('id', invitation.id)
+          .eq('lease_token', invitation.lease_token),
+      )
+      return 'Cuenta preparada. Se ha enviado un correo para establecer la contraseña.'
+    } catch (error) {
+      checked(
+        await admin
+          .from('account_invitations')
+          .update({
+            status: mailAccepted ? 'unknown' : 'failed',
+            last_error:
+              error instanceof InputError
+                ? error.message
+                : 'Proceso incompleto. Reintenta desde el backoffice.',
+            lease_until: null,
+            lease_token: null,
+          })
+          .eq('id', invitation.id)
+          .eq('lease_token', invitation.lease_token),
+      )
+      throw error
+    }
+  })
 }
 
-async function requireAdmin() {
-  const { supabase, user } = await authenticatedSupabase()
-  if (!user || !(await hasRole(supabase, user.id, ['admin']))) throw new Error('No autorizado')
-  return { supabase, user }
+export async function reviewApplication(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase, user } = await requireOperator()
+    const status = textField(form, 'status')
+    if (
+      !['new', 'contacted', 'approved', 'rejected', 'archived'].includes(status)
+    )
+      throw new InputError('Selecciona un estado válido.')
+    const { data } = checked(
+      await supabase
+        .from('membership_applications')
+        .update({
+          status,
+          internal_notes: textField(form, 'internal_notes') || null,
+          reviewed_by: user.id,
+          reviewed_at: new Date().toISOString(),
+        })
+        .eq('id', textField(form, 'application_id'))
+        .select('id')
+        .maybeSingle(),
+    )
+    if (!data) throw new InputError('Solicitud no encontrada.')
+    return 'Revisión guardada en el historial.'
+  })
 }
-
-const operationInitialState: ActionState = { ok: false, error: null, message: null }
-
-function operationError(error: unknown): ActionState {
-  console.error('[admin/user] operation failed', error)
-  return { ...operationInitialState, error: 'No se pudo guardar el cambio. Revisa los datos e inténtalo de nuevo.' }
+export async function completeApplication(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator()
+    checked(
+      await supabase.rpc('admin_complete_application', {
+        p_application: textField(form, 'application_id'),
+        p_user: textField(form, 'user_id'),
+        p_program: form.get('program_id')
+          ? numberField(form, 'program_id')
+          : null,
+      }),
+    )
+    return form.get('program_id')
+      ? 'Persona vinculada y matrícula activa.'
+      : 'Persona vinculada. Ya puedes matricularla.'
+  })
 }
-
-async function requireProfileRole(supabase: Awaited<ReturnType<typeof authenticatedSupabase>>['supabase'], userId: string, roles: string[]) {
-  const { data, error } = await supabase.from('profiles').select('role').eq('user_id', userId).maybeSingle()
-  if (error) throw error
-  if (!data || !roles.includes(data.role)) throw new Error('El perfil seleccionado no tiene el rol requerido')
+async function requireCoach(
+  supabase: Awaited<ReturnType<typeof requireOperator>>['supabase'],
+  id: string,
+) {
+  const { data } = checked(
+    await supabase
+      .from('profiles')
+      .select('user_id')
+      .eq('user_id', id)
+      .eq('active', true)
+      .in('role', ['coach', 'admin'])
+      .maybeSingle(),
+  )
+  if (!data) throw new InputError('Selecciona un entrenador activo.')
 }
-
-export async function reviewApplication(_: ActionState, formData: FormData): Promise<ActionState> {
-  try {
-    const { supabase, user } = await requireAdmin()
-    const id = String(formData.get('application_id') || '')
-    const status = String(formData.get('status') || '')
-    const internalNotes = String(formData.get('internal_notes') || '').trim().slice(0, 5_000)
-    if (!id || !['new', 'contacted', 'approved', 'rejected', 'archived'].includes(status)) throw new Error('Solicitud no válida')
-    const { data, error } = await supabase.from('membership_applications').update({ status, internal_notes: internalNotes || null, reviewed_by: user.id, reviewed_at: new Date().toISOString() }).eq('id', id).select('id').maybeSingle()
-    if (error) throw error
-    if (!data) throw new Error('Solicitud no encontrada')
-    revalidatePath('/admin/user')
-    return { ...operationInitialState, ok: true, message: 'Revisión guardada.' }
-  } catch (error) {
-    return operationError(error)
-  }
+export async function createProgram(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator()
+    const name = textField(form, 'name', 120),
+      coach = textField(form, 'coach_id')
+    if (!name) throw new InputError('El nombre es obligatorio.')
+    if (coach) await requireCoach(supabase, coach)
+    checked(
+      await supabase
+        .from('programs')
+        .insert({
+          name,
+          description: textField(form, 'description', 2000),
+          coach_id: coach || null,
+        }),
+    )
+    return 'Programa creado.'
+  })
 }
-
-export async function createProgram(_: ActionState, formData: FormData): Promise<ActionState> {
-  try {
-    const { supabase } = await requireAdmin()
-    const name = String(formData.get('name') || '').trim().slice(0, 120)
-    const description = String(formData.get('description') || '').trim().slice(0, 2_000)
-    const coachId = String(formData.get('coach_id') || '') || null
-    if (!name) throw new Error('El nombre del programa es obligatorio')
-    if (coachId) await requireProfileRole(supabase, coachId, ['coach', 'admin'])
-    const { error } = await supabase.from('programs').insert({ name, description: description || null, coach_id: coachId })
-    if (error) throw error
-    revalidatePath('/admin/user')
-    return { ...operationInitialState, ok: true, message: 'Programa creado.' }
-  } catch (error) {
-    return operationError(error)
-  }
+export async function assignCoach(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator()
+    const coach = textField(form, 'coach_id')
+    await requireCoach(supabase, coach)
+    checked(
+      await supabase
+        .from('coach_programs')
+        .upsert(
+          { coach_id: coach, program_id: numberField(form, 'program_id') },
+          { onConflict: 'coach_id,program_id', ignoreDuplicates: true },
+        ),
+    )
+    return 'Entrenador asignado.'
+  })
 }
-
-export async function assignCoach(_: ActionState, formData: FormData): Promise<ActionState> {
-  try {
-    const { supabase } = await requireAdmin()
-    const programId = Number(formData.get('program_id'))
-    const coachId = String(formData.get('coach_id') || '')
-    if (!Number.isSafeInteger(programId) || programId <= 0 || !coachId) throw new Error('Asignación no válida')
-    await requireProfileRole(supabase, coachId, ['coach', 'admin'])
-    const { error } = await supabase
-      .from('coach_programs')
-      .upsert({ coach_id: coachId, program_id: programId }, { onConflict: 'coach_id,program_id', ignoreDuplicates: true })
-    if (error) throw error
-    revalidatePath('/admin/user')
-    return { ...operationInitialState, ok: true, message: 'Entrenador asignado.' }
-  } catch (error) {
-    return operationError(error)
-  }
+export async function removeCoach(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator()
+    checked(
+      await supabase
+        .from('coach_programs')
+        .delete()
+        .eq('id', numberField(form, 'assignment_id')),
+    )
+    return 'Asignación retirada.'
+  })
 }
-
-export async function enrollStudent(_: ActionState, formData: FormData): Promise<ActionState> {
-  try {
-    const { supabase } = await requireAdmin()
-    const programId = Number(formData.get('program_id'))
-    const userId = String(formData.get('user_id') || '')
-    if (!Number.isSafeInteger(programId) || programId <= 0 || !userId) throw new Error('Matrícula no válida')
-    await requireProfileRole(supabase, userId, ['student'])
-    const { error } = await supabase
-      .from('enrollments')
-      .upsert({ user_id: userId, program_id: programId, status: 'active' }, { onConflict: 'user_id,program_id' })
-    if (error) throw error
-    revalidatePath('/admin/user')
-    return { ...operationInitialState, ok: true, message: 'Alumno matriculado.' }
-  } catch (error) {
-    return operationError(error)
-  }
+export async function enrollStudent(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator()
+    checked(
+      await supabase
+        .from('enrollments')
+        .upsert(
+          {
+            user_id: textField(form, 'user_id'),
+            program_id: numberField(form, 'program_id'),
+            status: 'active',
+          },
+          { onConflict: 'user_id,program_id' },
+        ),
+    )
+    return 'Matrícula activada.'
+  })
+}
+export async function updateEnrollment(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator()
+    const status = textField(form, 'status')
+    if (!['active', 'inactive'].includes(status))
+      throw new InputError('Estado no válido.')
+    const { data } = checked(
+      await supabase
+        .from('enrollments')
+        .update({ status })
+        .eq('id', numberField(form, 'enrollment_id'))
+        .select('id')
+        .maybeSingle(),
+    )
+    if (!data) throw new InputError('Matrícula no encontrada.')
+    return 'Matrícula actualizada. El historial de asistencia se conserva.'
+  })
+}
+export async function updateProfile(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator()
+    checked(
+      await supabase.rpc('admin_update_profile', {
+        p_user: textField(form, 'user_id'),
+        p_name: textField(form, 'full_name', 120),
+        p_role: textField(form, 'role'),
+        p_active: form.get('active') === 'true',
+      }),
+    )
+    return 'Persona actualizada. Las matrículas dadas de baja se reactivan individualmente.'
+  })
+}
+export async function updateProgram(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator()
+    checked(
+      await supabase.rpc('admin_update_program', {
+        p_id: numberField(form, 'program_id'),
+        p_name: textField(form, 'name', 120),
+        p_description: textField(form, 'description', 2000),
+        p_coach: textField(form, 'coach_id') || null,
+        p_active: form.get('active') === 'true',
+      }),
+    )
+    return 'Programa actualizado. El historial se conserva.'
+  })
 }

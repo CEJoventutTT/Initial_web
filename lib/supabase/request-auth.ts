@@ -33,11 +33,11 @@ export async function hasRole(
 ) {
   const { data } = await supabase
     .from('profiles')
-    .select('role')
+    .select('role, active')
     .eq('user_id', userId)
     .single()
 
-  return Boolean(data?.role && roles.includes(data.role))
+  return Boolean(data?.active && data.role && roles.includes(data.role))
 }
 
 export async function canManageProgram(

@@ -2,9 +2,9 @@
 
 import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 
-const mockGenerateLink = jest.fn()
-const mockSendPasswordRecoveryEmail = jest.fn()
-const mockConsumeRateLimit = jest.fn()
+const mockGenerateLink = jest.fn<(...args: unknown[]) => Promise<unknown>>()
+const mockSendPasswordRecoveryEmail = jest.fn<(...args: unknown[]) => Promise<unknown>>()
+const mockConsumeRateLimit = jest.fn<(...args: unknown[]) => Promise<unknown>>()
 
 jest.mock('@/lib/email/password-recovery', () => ({ sendPasswordRecoveryEmail: mockSendPasswordRecoveryEmail }))
 jest.mock('@/lib/rate-limit', () => ({ consumeRateLimit: mockConsumeRateLimit }))

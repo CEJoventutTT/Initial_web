@@ -17,11 +17,12 @@ test('contact form submits through the server endpoint without sending a real em
   await form.locator('input').nth(4).fill('Consulta de prueba')
   await form.locator('textarea').fill('Mensaje de prueba sin envío real.')
 
-  const dialog = page.waitForEvent('dialog')
+  const dialog = page.waitForEvent('dialog').then(async (contactDialog) => {
+    expect(contactDialog.message()).toContain('mensaje ha sido enviado')
+    await contactDialog.accept()
+  })
   await form.getByRole('button', { name: /enviar mensaje/i }).click()
-  const contactDialog = await dialog
-  expect(contactDialog.message()).toContain('mensaje ha sido enviado')
-  await contactDialog.accept()
+  await dialog
   await expect.poll(() => contact).toEqual({
     firstName: 'Ada',
     lastName: 'Lovelace',
