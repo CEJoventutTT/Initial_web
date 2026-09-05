@@ -14,9 +14,10 @@
     "start": "next start",
     "test": "node --experimental-strip-types --test tests/*.test.ts && npm run test:db",
     "test:jest": "jest",
-    "test:db": "supabase start && supabase test db supabase/tests/database.test.sql",
+    "test:db": "supabase start && supabase test db",
     "test:e2e": "node scripts/test-e2e.mjs",
-    "test:e2e:ui": "node scripts/test-e2e.mjs --ui"
+    "test:e2e:ui": "node scripts/test-e2e.mjs --ui",
+    "test:backoffice:local": "node scripts/backoffice-local.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.5.7",

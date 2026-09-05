@@ -1,330 +1,254 @@
-// app/coach/sessions/page.tsx
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-import { revalidatePath } from 'next/cache'
-import ConfirmDelete from '@/components/ConfirmDelete'
-import { getMissingSupabaseEnv, hasSupabaseEnv } from '@/lib/env'
-import { requireSupabaseConfig } from '@/lib/supabase/env'
+import LazyDetails from '@/components/backoffice/lazy-details'
+import Link from 'next/link'
+import { checked, requireOperator } from '@/lib/backoffice/server'
+import {
+  clubDateTime,
+  clubDayBounds,
+  clubToday,
+  clubDateRange,
+} from '@/lib/backoffice/time'
+import { listParams, param, type SearchParams } from '@/lib/backoffice/list'
+import {
+  Empty,
+  Field,
+  PageHeading,
+  Pagination,
+} from '@/components/backoffice/list'
+import { ActionForm } from '@/components/backoffice/action-form'
+import SessionForm, {
+  type SessionData,
+} from '@/components/backoffice/session-form'
+import EntitySelect from '@/components/backoffice/entity-select'
+import { cancelSession, deleteSession } from './actions'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
-type AttendanceSession = {
-  id: number
-  program_id: number | null
-  start_at: string
-  end_at: string
-  active: boolean | null
-  created_at: string
-}
-
-// ---------- helper para Supabase en Server Actions ----------
-async function getSupabaseForAction() {
-  'use server'
-  const cookieStore = await cookies()
-  const { url, anonKey } = requireSupabaseConfig()
-  const supabase = createServerClient(
-    url,
-    anonKey,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options)
-          })
-        },
-      },
-    }
+export default async function SessionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>
+}) {
+  const filters = await searchParams,
+    paging = listParams(filters)
+  const { supabase, user } = await requireOperator(false)
+  const { data: profile } = checked(
+    await supabase
+      .from('profiles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single(),
   )
-  return supabase
-}
-
-// -------------------- ACTIONS --------------------
-async function createSession(formData: FormData) {
-  'use server'
-  const supabase = await getSupabaseForAction()
-  const program_id = Number(formData.get('program_id'))
-  if (!Number.isSafeInteger(program_id) || program_id <= 0) return
-  const startDate = new Date(formData.get('start_at') as string)
-  const endDate = new Date(formData.get('end_at') as string)
-  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || endDate <= startDate) return
-  const start_at = startDate.toISOString()
-  const end_at = endDate.toISOString()
-  const active = (formData.get('active') as string) === 'on'
-
-  const { error } = await supabase.from('attendance_sessions').insert([
-    { program_id, start_at, end_at, expires_at: end_at, active },
-  ])
-  if (error) console.error('createSession error:', error.message)
-  revalidatePath('/coach/sessions')
-}
-
-async function toggleActive(formData: FormData) {
-  'use server'
-  const supabase = await getSupabaseForAction()
-  const id = formData.get('id') as string
-  const current = formData.get('current') === 'true'
-  const { error } = await supabase
-    .from('attendance_sessions')
-    .update({ active: !current })
-    .eq('id', id)
-
-  if (error) console.error('toggleActive error:', error.message)
-  revalidatePath('/coach/sessions')
-}
-
-async function updateProgramId(formData: FormData) {
-  'use server'
-  const supabase = await getSupabaseForAction()
-  const id = formData.get('id') as string
-  const program_id = Number(formData.get('program_id'))
-  if (!Number.isSafeInteger(program_id) || program_id <= 0) return
-
-  const { error } = await supabase
-    .from('attendance_sessions')
-    .update({ program_id })
-    .eq('id', id)
-
-  if (error) console.error('updateProgramId error:', error.message)
-  revalidatePath('/coach/sessions')
-}
-
-async function deleteSession(formData: FormData) {
-  'use server'
-  const supabase = await getSupabaseForAction()
-  const id = formData.get('id') as string
-
-  const { error } = await supabase.from('attendance_sessions').delete().eq('id', id)
-  if (error) console.error('deleteSession error:', error.message)
-  revalidatePath('/coach/sessions')
-}
-
-// -------------------- PAGE (RSC) --------------------
-export default async function CoachSessionsPage() {
-  if (!hasSupabaseEnv()) {
-    return (
-      <main className="min-h-[70vh] bg-brand-dark bg-panel-glow p-6">
-        <div className="mx-auto max-w-3xl">
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-5">
-            <h1 className="text-3xl font-extrabold tracking-tight">
-              Sesiones de asistencia
-            </h1>
-            <p className="mt-3 text-white/80">
-              Esta pantalla necesita configuracion de Supabase para mostrar y crear sesiones.
-            </p>
-            <p className="mt-2 text-sm text-white/70">
-              Faltan: {getMissingSupabaseEnv().join(', ')}
-            </p>
-          </div>
-        </div>
-      </main>
-    )
-  }
-
-  const cookieStore = await cookies()
-  const { url, anonKey } = requireSupabaseConfig()
-  const supabase = createServerClient(
-    url,
-    anonKey,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-      },
-    }
+  const day = param(filters, 'date'),
+    program = Number(param(filters, 'program_id')),
+    state = param(filters, 'state')
+  const coach = param(filters, 'coach_id')
+  let query = supabase.rpc(
+    'backoffice_sessions',
+    { p_coach: coach || null },
+    { count: 'exact' },
   )
-
-  const { data, error } = await supabase
-    .from('attendance_sessions')
-    .select('id, program_id, start_at, end_at, active, created_at')
-    .order('created_at', { ascending: false })
-    .limit(50)
-  const sessions = (data ?? []) as AttendanceSession[]
-
-  if (error) {
-    return (
-      <main className="min-h-[70vh] bg-brand-dark bg-panel-glow p-6">
-        <div className="mx-auto max-w-7xl">
-          <h1 className="text-3xl font-extrabold tracking-tight">
-            Sesiones de asistencia
-          </h1>
-          <div className="mt-4 rounded-md border border-red-500/30 bg-red-500/10 p-4 text-red-300 shadow-soft">
-            Error: {error.message}
-          </div>
-        </div>
-      </main>
-    )
+  if (day) {
+    try {
+      const { from, to } = clubDayBounds(day)
+      query = query.gte('start_at', from).lt('start_at', to)
+    } catch {
+      /* Invalid filters are ignored; no writes. */
+    }
   }
-
+  const range = clubDateRange(param(filters, 'from'), param(filters, 'to'))
+  if (range) query = query.gte('start_at', range.from).lt('start_at', range.to)
+  if (Number.isSafeInteger(program) && program > 0)
+    query = query.eq('program_id', program)
+  if (state === 'active' || state === 'cancelled')
+    query = query.eq('active', state === 'active')
+  const { data, count } = checked(
+    await query
+      .order('start_at', { ascending: Boolean(day) })
+      .order('id')
+      .range(paging.from, paging.to),
+  )
+  const sessions = (data ?? []) as unknown as SessionData[]
   return (
-    <main className="min-h-[70vh] bg-brand-dark bg-panel-glow p-6">
-      <div className="mx-auto max-w-7xl space-y-8">
-        <header className="rounded-xl border border-border/60 bg-muted/60 p-5 shadow-card backdrop-blur">
-          <h1 className="text-3xl font-extrabold tracking-tight">
-            Sesiones de asistencia
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Crea, edita y gestiona sesiones. Colores y acentos adaptados a la marca.
-          </p>
-        </header>
-
-        {/* Crear sesión */}
-        <section className="rounded-xl border border-border/60 bg-card/80 p-5 shadow-card backdrop-blur">
-          <h2 className="mb-4 text-lg font-semibold text-brand-white/90">
-            Crear nueva sesión
-          </h2>
-          <form action={createSession} className="grid gap-4 sm:grid-cols-5">
-            <div className="sm:col-span-1">
-              <label className="mb-1 block text-sm text-white/70">Programa</label>
-              <input
-                name="program_id"
-                type="number"
-                min="1"
-                step="1"
-                required
-                className="w-full rounded-md border border-input bg-white/5 px-3 py-2 text-white placeholder-white/40 outline-none focus:ring-2 focus:ring-accent"
-              />
-            </div>
-            <div className="sm:col-span-1">
-              <label className="mb-1 block text-sm text-white/70">Inicio</label>
-              <input
-                name="start_at"
-                type="datetime-local"
-                required
-                className="w-full rounded-md border border-input bg-white/5 px-3 py-2 text-white outline-none focus:ring-2 focus:ring-accent"
-              />
-            </div>
-            <div className="sm:col-span-1">
-              <label className="mb-1 block text-sm text-white/70">Fin</label>
-              <input
-                name="end_at"
-                type="datetime-local"
-                required
-                className="w-full rounded-md border border-input bg-white/5 px-3 py-2 text-white outline-none focus:ring-2 focus:ring-accent"
-              />
-            </div>
-            <div className="flex items-end gap-3 sm:col-span-1">
-              <label className="flex items-center gap-2 text-sm text-white/80">
-                <input name="active" type="checkbox" defaultChecked className="accent-accent" />
-                Activa
-              </label>
-            </div>
-            <div className="sm:col-span-1 flex items-end">
-              <button
-                type="submit"
-                className="w-full rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground shadow-brand transition hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-accent"
-              >
-                Crear sesión
-              </button>
-            </div>
-          </form>
-        </section>
-
-        {/* Tabla sesiones */}
-        {!sessions || sessions.length === 0 ? (
-          <p className="text-white/80">No hay sesiones creadas todavía.</p>
-        ) : (
-          <section className="rounded-xl border border-border/60 bg-card/80 p-0 shadow-card overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-white/5 text-left text-white/80">
-                  <tr className="uppercase tracking-wide text-[11px]">
-                    <th className="py-3 px-4">ID</th>
-                    <th className="px-4">Programa</th>
-                    <th className="px-4">Activa</th>
-                    <th className="px-4">Horario</th>
-                    <th className="px-4">Creada</th>
-                    <th className="px-4">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sessions.map((s) => {
-                    const isPast = new Date(s.end_at).getTime() < Date.now()
-                    return (
-                      <tr key={s.id} className="border-t border-border/60 hover:bg-white/[0.04]">
-                        <td className="py-3 px-4 font-mono text-white/90">{s.id}</td>
-                        <td className="px-4">
-                          <form action={updateProgramId} className="flex items-center gap-2">
-                            <input type="hidden" name="id" value={s.id} />
-                            <input
-                              name="program_id"
-                              defaultValue={s.program_id ?? ''}
-                              placeholder="program_id"
-                              type="number"
-                              min="1"
-                              step="1"
-                              required
-                              className="w-48 rounded-md border border-input bg-white/5 px-2 py-1 text-white outline-none focus:ring-2 focus:ring-accent"
-                            />
-                            <button
-                              type="submit"
-                              className="rounded-md border border-white/15 bg-white/5 px-3 py-1 text-white/90 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-accent"
-                              title="Guardar programa"
-                            >
-                              Guardar
-                            </button>
-                          </form>
-                        </td>
-                        <td className="px-4">
-                          <span
-                            className={
-                              'rounded-md px-2 py-0.5 text-[12px] ' +
-                              (s.active
-                                ? 'bg-emerald-500/15 text-emerald-300'
-                                : 'bg-white/8 text-white/70 border border-white/10')
-                            }
-                          >
-                            {s.active ? 'Sí' : 'No'}
-                          </span>
-                        </td>
-                        <td className="px-4">
-                          <span className="whitespace-nowrap">
-                            {new Date(s.start_at).toLocaleString()} → {new Date(s.end_at).toLocaleString()}
-                          </span>
-                          {isPast && <span className="ml-2 rounded-sm bg-red-500/15 px-2 py-0.5 text-[11px] text-red-300">finalizada</span>}
-                        </td>
-                        <td className="px-4">
-                          {s.created_at ? new Date(s.created_at).toLocaleString() : '—'}
-                        </td>
-                        <td className="px-4">
-                          <div className="flex flex-wrap gap-2">
-                            <a
-                              href={`/coach/sessions/${s.id}/qr`}
-                              className="rounded-md bg-accent/15 px-3 py-1 text-accent-foreground transition hover:bg-accent/25"
-                              title="Mostrar QR"
-                            >
-                              Mostrar QR
-                            </a>
-                            <form action={toggleActive}>
-                              <input type="hidden" name="id" value={s.id} />
-                              <input type="hidden" name="current" value={String(!!s.active)} />
-                              <button
-                                type="submit"
-                                className="rounded-md border border-white/15 bg-white/5 px-3 py-1 text-white/90 transition hover:bg-white/10"
-                                title={s.active ? 'Desactivar' : 'Activar'}
-                              >
-                                {s.active ? 'Desactivar' : 'Activar'}
-                              </button>
-                            </form>
-                            <ConfirmDelete
-                              id={s.id}
-                              action={deleteSession}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
+    <div className="space-y-6">
+      <PageHeading
+        title="Sesiones de asistencia"
+        description="Organiza las sesiones y consulta su asistencia. Horario de Madrid."
+      />
+      <div className="flex flex-wrap gap-4">
+        <Link
+          className="bo-button"
+          href={`/coach/sessions?date=${clubToday()}`}
+        >
+          Sesiones de hoy
+        </Link>
+        <Link className="bo-link py-2" href="/coach/sessions">
+          Todas las sesiones
+        </Link>
       </div>
-    </main>
+      <LazyDetails className="bo-panel" title="Crear nueva sesión">
+        <div className="mt-5 max-w-xl">
+          <SessionForm />
+        </div>
+      </LazyDetails>
+      <form
+        action="/coach/sessions"
+        className="bo-panel grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        <Field name="from" label="Desde">
+          <input
+            className="bo-input"
+            type="date"
+            id="from"
+            name="from"
+            defaultValue={param(filters, 'from')}
+          />
+        </Field>
+        <Field name="to" label="Hasta">
+          <input
+            className="bo-input"
+            type="date"
+            id="to"
+            name="to"
+            defaultValue={param(filters, 'to')}
+          />
+        </Field>
+        <Field name="date" label="Fecha">
+          <input
+            type="date"
+            className="bo-input"
+            id="date"
+            name="date"
+            defaultValue={day}
+          />
+        </Field>
+        <EntitySelect
+          kind="programs"
+          name="program_id"
+          label="Programa"
+          required={false}
+          initial={
+            program > 0
+              ? {
+                  id: String(program),
+                  label: sessions[0]?.programs?.name ?? 'Programa seleccionado',
+                }
+              : undefined
+          }
+        />
+        {profile?.role === 'admin' && (
+          <EntitySelect
+            kind="coaches"
+            name="coach_id"
+            label="Entrenador/a"
+            required={false}
+            initial={
+              coach
+                ? { id: coach, label: 'Entrenador seleccionado' }
+                : undefined
+            }
+          />
+        )}
+        <Field name="state" label="Estado">
+          <select
+            className="bo-input"
+            id="state"
+            name="state"
+            defaultValue={state}
+          >
+            <option value="">Todos</option>
+            <option value="active">Activas</option>
+            <option value="cancelled">Canceladas</option>
+          </select>
+        </Field>
+        <button className="bo-button">Filtrar sesiones</button>
+      </form>
+      {sessions.length ? (
+        <div className="space-y-4">
+          {sessions.map((session) => (
+            <section className="bo-panel" key={session.id}>
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold">
+                    {session.programs?.name ?? 'Programa anterior'}
+                  </h3>
+                  <p className="mt-1 text-sm text-white/65">
+                    {clubDateTime(session.start_at)} —{' '}
+                    {clubDateTime(session.end_at)}
+                  </p>
+                  <p className="mt-1 text-sm">
+                    {session.active
+                      ? session.end_at &&
+                        Date.parse(session.end_at) < Date.now()
+                        ? 'Finalizada'
+                        : 'Activa'
+                      : 'Cancelada'}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-4">
+                  <Link
+                    className="bo-link"
+                    href={`/coach/attendance?session=${session.id}`}
+                  >
+                    Ver asistencia
+                  </Link>
+                  {profile?.role === 'admin' && (
+                    <Link
+                      className="bo-link"
+                      href={`/admin/history?entity=attendance_sessions&id=${session.id}`}
+                    >
+                      Historial
+                    </Link>
+                  )}
+                  {session.active && (
+                    <Link
+                      className="bo-link"
+                      href={`/coach/sessions/${session.id}/qr`}
+                    >
+                      Mostrar QR
+                    </Link>
+                  )}
+                </div>
+              </div>
+              <div className="mt-5 grid gap-5 lg:grid-cols-2">
+                <LazyDetails title="Editar sesión">
+                  <div className="mt-4">
+                    <SessionForm session={session} />
+                  </div>
+                </LazyDetails>
+                <LazyDetails title="Duplicar con otra fecha">
+                  <div className="mt-4">
+                    <SessionForm session={session} duplicate />
+                  </div>
+                </LazyDetails>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-4">
+                {session.active && (
+                  <ActionForm
+                    action={cancelSession}
+                    submit="Cancelar sesión"
+                    confirm="¿Cancelar esta sesión? Se conservará su asistencia."
+                  >
+                    <input type="hidden" name="session_id" value={session.id} />
+                  </ActionForm>
+                )}
+                <ActionForm
+                  action={deleteSession}
+                  submit="Eliminar si está vacía"
+                  confirm="¿Eliminar esta sesión? Solo se permite si no tiene asistencia."
+                >
+                  <input type="hidden" name="session_id" value={session.id} />
+                </ActionForm>
+              </div>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <Empty />
+      )}
+      <Pagination
+        path="/coach/sessions"
+        params={filters}
+        count={count ?? 0}
+        page={paging.page}
+      />
+    </div>
   )
 }

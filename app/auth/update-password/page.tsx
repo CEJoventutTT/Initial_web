@@ -29,6 +29,20 @@ export default function UpdatePasswordPage() {
         return
       }
 
+      // Admin-generated Auth emails use an implicit callback. Exchange its
+      // credentials explicitly because the shared SSR client uses PKCE.
+      const hash = new URLSearchParams(window.location.hash.slice(1))
+      const accessToken = hash.get('access_token')
+      const refreshToken = hash.get('refresh_token')
+      if (accessToken && refreshToken) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search)
+        const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+        if (error) {
+          setErr('Este enlace no es válido o ha caducado. Solicita uno nuevo.')
+          setLoading(false)
+          return
+        }
+      }
       const { data: { session } } = await supabase.auth.getSession()
       setHasSession(Boolean(session))
       setLoading(false)

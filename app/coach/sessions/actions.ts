@@ -1,47 +1,99 @@
-// app/coach/sessions/actions.ts
 'use server'
+import {
+  checked,
+  InputError,
+  numberField,
+  operation,
+  requireOperator,
+  textField,
+} from '@/lib/backoffice/server'
+import { canManageProgram } from '@/lib/supabase/request-auth'
+import { clubLocalToISO } from '@/lib/backoffice/time'
+import type { ActionState } from '@/lib/backoffice/state'
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import { supabaseServer } from '@/lib/supabase/server'
-
-async function getAuthenticatedClient() {
-  const supabase = await supabaseServer()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('unauthorized')
-  return supabase
-}
-
-export async function createSessionAction(formData: FormData) {
-  const program_id = Number(formData.get('program_id'))
-  const start_at = new Date(String(formData.get('starts_at') || ''))
-  const end_at = new Date(String(formData.get('ends_at') || ''))
-  if (!Number.isSafeInteger(program_id) || program_id <= 0) throw new Error('invalid_program')
-  if (Number.isNaN(start_at.getTime()) || Number.isNaN(end_at.getTime()) || end_at <= start_at) {
-    throw new Error('invalid_dates')
-  }
-
-  const supabase = await getAuthenticatedClient()
-  const { error } = await supabase.from('attendance_sessions').insert({
-    program_id,
-    start_at: start_at.toISOString(),
-    end_at: end_at.toISOString(),
-    active: true,
+export async function saveSession(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator(false)
+    const programId = numberField(form, 'program_id')
+    if (!(await canManageProgram(supabase, programId)))
+      throw new InputError('No puedes gestionar este programa.')
+    const { data: program } = checked(
+      await supabase
+        .from('programs')
+        .select('active')
+        .eq('id', programId)
+        .single(),
+    )
+    if (!program?.active) throw new InputError('El programa está archivado.')
+    let start: string, end: string
+    try {
+      start = clubLocalToISO(textField(form, 'start_at'))
+      end = clubLocalToISO(textField(form, 'end_at'))
+    } catch (error) {
+      throw new InputError((error as Error).message)
+    }
+    if (end <= start)
+      throw new InputError('El fin debe ser posterior al inicio.')
+    const values = {
+      program_id: programId,
+      start_at: start,
+      end_at: end,
+      expires_at: end,
+      active: form.get('active') === 'true',
+    }
+    if (form.get('session_id')) {
+      const id = numberField(form, 'session_id')
+      const { data: previous } = checked(
+        await supabase
+          .from('attendance_sessions')
+          .select('program_id')
+          .eq('id', id)
+          .single(),
+      )
+      if (!previous || !(await canManageProgram(supabase, previous.program_id)))
+        throw new InputError('No puedes modificar esta sesión.')
+      const { data } = checked(
+        await supabase
+          .from('attendance_sessions')
+          .update(values)
+          .eq('id', id)
+          .select('id')
+          .maybeSingle(),
+      )
+      if (!data) throw new InputError('La sesión ya no está disponible.')
+      return 'Sesión actualizada. Horario de Madrid.'
+    }
+    checked(await supabase.from('attendance_sessions').insert(values))
+    return 'Sesión creada. Horario de Madrid.'
   })
-  if (error) throw new Error('session_create_failed')
-
-  revalidatePath('/coach/sessions')
-  redirect('/coach/sessions')
 }
-
-export async function deleteSessionAction(formData: FormData) {
-  const id = Number(formData.get('session_id'))
-
-  if (!Number.isSafeInteger(id) || id <= 0) throw new Error('invalid_session')
-  const supabase = await getAuthenticatedClient()
-  const { error } = await supabase.from('attendance_sessions').delete().eq('id', id)
-  if (error) throw new Error('session_delete_failed')
-
-  revalidatePath('/coach/sessions')
-  redirect('/coach/sessions')
+export async function cancelSession(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator(false)
+    const { data } = checked(
+      await supabase
+        .from('attendance_sessions')
+        .update({ active: false })
+        .eq('id', numberField(form, 'session_id'))
+        .select('id')
+        .maybeSingle(),
+    )
+    if (!data) throw new InputError('No puedes gestionar esta sesión.')
+    return 'Sesión cancelada. La asistencia histórica se conserva.'
+  })
+}
+export async function deleteSession(_: ActionState, form: FormData) {
+  return operation(async () => {
+    const { supabase } = await requireOperator(false)
+    const { data } = checked(
+      await supabase
+        .from('attendance_sessions')
+        .delete()
+        .eq('id', numberField(form, 'session_id'))
+        .select('id')
+        .maybeSingle(),
+    )
+    if (!data) throw new InputError('La sesión no existe o no tienes permiso.')
+    return 'Sesión vacía eliminada.'
+  })
 }

@@ -46,3 +46,16 @@ body { font-family: var(--font-inter); background: var(--color-dark); color: var
       linear-gradient(to bottom, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
   }
 }
+
+/* Shared backoffice controls. */
+.bo-input { width: 100%; margin-top: .375rem; border: 1px solid #ffffff40; border-radius: .5rem; background: white; color: #18181b; padding: .625rem .75rem; }
+.bo-input:focus-visible, .bo-button:focus-visible, .bo-link:focus-visible { outline: 3px solid #b1e346; outline-offset: 3px; }
+.bo-input:disabled { opacity: .55; }
+.bo-button { display: inline-flex; justify-content: center; align-items: center; border-radius: .5rem; padding: .625rem 1rem; background: #b1e346; color: #13200a; font-size: .875rem; font-weight: 650; }
+.bo-button:hover { filter: brightness(1.08); }
+.bo-button:disabled { opacity: .5; cursor: not-allowed; }
+.bo-link { color: #c9ef8b; text-decoration: underline; text-underline-offset: 3px; }
+.bo-panel { border: 1px solid #ffffff26; background: #ffffff06; border-radius: 1rem; padding: 1.5rem; }
+.bo-table { width: 100%; text-align: left; font-size: .875rem; }
+.bo-table th { color: #ffffffaa; font-weight: 500; }
+.bo-table th, .bo-table td { padding: .875rem; border-bottom: 1px solid #ffffff18; }

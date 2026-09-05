@@ -59,7 +59,7 @@ export default async function DashboardPage() {
     recentAttendanceRes,
   ] = await Promise.all([
     supabase.from('profiles')
-      .select('full_name, role')
+      .select('full_name, role, active')
       .eq('user_id', uid)
       .single(),
 
@@ -93,6 +93,8 @@ export default async function DashboardPage() {
       .order('checked_at', { ascending: false })
       .limit(10),
   ])
+
+  if (profileRes.data?.active === false) return <main className="min-h-screen bg-brand-dark p-8 text-white"><section className="bo-panel mx-auto max-w-xl"><h1 className="text-2xl font-bold">Cuenta de baja</h1><p className="mt-4">Tu cuenta está de baja. Contacta con el club para solicitar la reactivación.</p></section></main>
 
   const profile      = profileRes.data
   const xpRows       = xpRowsRes.data ?? []

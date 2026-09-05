@@ -22,7 +22,7 @@ test.describe('authentication and role authorization', () => {
   test('administrator can open the user administration screen', async ({ page }) => {
     test.skip(!credentials('admin').configured, 'ADMIN/ADMIN_PASS are not configured')
     await login(page, 'admin', '/admin/user')
-    await expect(page.getByRole('heading', { name: 'Crear cuenta' })).toBeVisible()
+    await expect(page.getByText('Crear cuenta', { exact: true })).toBeVisible()
   })
 
   test('coach can open session management but not admin', async ({ page }) => {

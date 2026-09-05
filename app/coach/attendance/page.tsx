@@ -1,26 +1,235 @@
-import { supabaseServer } from '@/lib/supabase/server'
-import { markAttendanceManually } from './actions'
+import Link from 'next/link'
+import { checked, requireOperator } from '@/lib/backoffice/server'
+import { clubDateTime, clubToday } from '@/lib/backoffice/time'
+import {
+  listParams,
+  param,
+  searchPattern,
+  type SearchParams,
+} from '@/lib/backoffice/list'
+import { ActionForm } from '@/components/backoffice/action-form'
+import {
+  Empty,
+  Field,
+  PageHeading,
+  Pagination,
+} from '@/components/backoffice/list'
+import { markAttendanceManually, correctAttendance } from './actions'
 
-type Session = { id: number; program_id: number; start_at: string; end_at: string | null; programs: { name: string } | null }
-
-export const dynamic = 'force-dynamic'
-
-export default async function CoachAttendancePage() {
-  const supabase = await supabaseServer()
-  const { data: sessionsData } = await supabase.from('attendance_sessions').select('id, program_id, start_at, end_at, programs(name)').order('start_at', { ascending: false }).limit(30)
-  const sessions = (sessionsData ?? []) as unknown as Session[]
-  const studentsBySession = await Promise.all(sessions.map(async (session) => {
-    const { data } = await supabase.from('enrollments').select('user_id, profiles!inner(full_name)').eq('program_id', session.program_id).eq('status', 'active')
-    return [session.id, data ?? []] as const
-  }))
-  const students = new Map(studentsBySession)
-
-  return <main className="space-y-6">
-    <header><h2 className="text-2xl font-bold">Asistencia manual</h2><p className="mt-1 text-white/70">Marca a un alumno matriculado cuando no pueda usar el QR.</p></header>
-    {sessions.length === 0 && <p className="rounded border border-white/15 p-4 text-white/70">No hay sesiones disponibles.</p>}
-    <div className="space-y-4">{sessions.map((session) => {
-      const sessionStudents = students.get(session.id) ?? []
-      return <section key={session.id} className="rounded border border-white/15 p-4"><div className="mb-3"><h3 className="font-semibold">{session.programs?.name ?? `Programa ${session.program_id}`}</h3><p className="text-sm text-white/70">{new Date(session.start_at).toLocaleString()} {session.end_at ? `— ${new Date(session.end_at).toLocaleString()}` : ''}</p></div>{sessionStudents.length === 0 ? <p className="text-sm text-white/60">No hay alumnos activos en este programa.</p> : <div className="flex flex-wrap gap-2">{sessionStudents.map((row: any) => <form action={markAttendanceManually} key={row.user_id}><input type="hidden" name="session_id" value={session.id} /><input type="hidden" name="student_id" value={row.user_id} /><button type="submit" className="rounded border border-white/20 px-3 py-2 text-sm hover:bg-white/10">Marcar: {Array.isArray(row.profiles) ? row.profiles[0]?.full_name : row.profiles?.full_name || row.user_id}</button></form>)}</div>}</section>
-    })}</div>
-  </main>
+export default async function AttendancePage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>
+}) {
+  const filters = await searchParams,
+    paging = listParams(filters)
+  const { supabase } = await requireOperator(false)
+  const sessionId = Number(param(filters, 'session'))
+  if (!Number.isSafeInteger(sessionId) || sessionId <= 0)
+    return (
+      <>
+        <PageHeading
+          title="Asistencia"
+          description="Selecciona una sesión para ver presentes y pendientes."
+        />
+        <Link
+          className="bo-button"
+          href={`/coach/sessions?date=${clubToday()}`}
+        >
+          Elegir sesión de hoy
+        </Link>
+        <Link className="bo-link ml-4" href="/coach/sessions">
+          Ver todas las sesiones
+        </Link>
+      </>
+    )
+  const { data: session } = checked(
+    await supabase
+      .from('attendance_sessions')
+      .select('id, active, start_at, end_at, programs(name)')
+      .eq('id', sessionId)
+      .maybeSingle(),
+  )
+  if (!session)
+    return (
+      <Empty>
+        La sesión no está disponible.{' '}
+        <Link className="bo-link" href="/coach/sessions">
+          Elegir otra sesión
+        </Link>
+      </Empty>
+    )
+  let query = supabase.rpc(
+    'coach_attendance_roster',
+    { p_session: sessionId },
+    { count: 'exact' },
+  )
+  if (paging.q) query = query.ilike('full_name', searchPattern(paging.q))
+  const state = param(filters, 'state')
+  if (state === 'present' || state === 'pending')
+    query = query.eq('present', state === 'present')
+  const [rosterRes, totalRes, presentRes] = await Promise.all([
+    query.order('full_name').order('student_id').range(paging.from, paging.to),
+    supabase.rpc(
+      'coach_attendance_roster',
+      { p_session: sessionId },
+      { count: 'exact', head: true },
+    ),
+    supabase
+      .rpc(
+        'coach_attendance_roster',
+        { p_session: sessionId },
+        { count: 'exact', head: true },
+      )
+      .eq('present', true),
+  ])
+  const roster = checked(rosterRes),
+    total = checked(totalRes).count ?? 0,
+    present = checked(presentRes).count ?? 0
+  const rows = (roster.data ?? []) as {
+    student_id: string
+    full_name: string
+    present: boolean
+    checked_at: string | null
+    enrolled: boolean
+  }[]
+  return (
+    <div className="space-y-6">
+      <Link className="bo-link" href="/coach/sessions">
+        ← Elegir otra sesión
+      </Link>
+      <PageHeading
+        title={`Asistencia · ${(session.programs as unknown as { name: string })?.name ?? 'Sesión'}`}
+        description={`${clubDateTime(session.start_at)} — ${clubDateTime(session.end_at)}`}
+      />
+      <div className="bo-panel flex flex-wrap gap-6">
+        <p>
+          <strong className="text-xl">{present}</strong> presentes
+        </p>
+        <p>
+          <strong className="text-xl">{total - present}</strong> pendientes
+        </p>
+        <p>
+          <strong className="text-xl">{total}</strong> alumnos en la lista
+        </p>
+        {!session.active && (
+          <p className="text-amber-200">
+            Sesión cancelada: se conserva el historial.
+          </p>
+        )}
+      </div>
+      <form
+        action="/coach/attendance"
+        className="bo-panel flex flex-wrap items-end gap-4"
+      >
+        <input type="hidden" name="session" value={sessionId} />
+        <Field name="q" label="Buscar alumno/a">
+          <input className="bo-input" id="q" name="q" defaultValue={paging.q} />
+        </Field>
+        <Field name="state" label="Asistencia">
+          <select
+            className="bo-input"
+            id="state"
+            name="state"
+            defaultValue={state}
+          >
+            <option value="">Todos</option>
+            <option value="present">Presentes</option>
+            <option value="pending">Pendientes</option>
+          </select>
+        </Field>
+        <button className="bo-button">Filtrar</button>
+      </form>
+      <div className="bo-panel">
+        {rows.length ? (
+          <ul className="space-y-5">
+            {rows.map((row) => (
+              <li
+                key={row.student_id}
+                className="border-b border-white/10 pb-5"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h3 className="font-semibold">
+                      {row.full_name || 'Alumno/a'}
+                    </h3>
+                    <p
+                      className={`mt-1 text-sm ${row.present ? 'text-emerald-200' : 'text-white/60'}`}
+                    >
+                      {row.present
+                        ? `Presente · ${clubDateTime(row.checked_at)}`
+                        : 'Pendiente'}
+                      {!row.enrolled && ' · Matrícula ya no activa'}
+                    </p>
+                  </div>
+                  {!row.present && row.enrolled && session.active && (
+                    <ActionForm
+                      action={markAttendanceManually}
+                      submit="Marcar presente"
+                    >
+                      <input
+                        type="hidden"
+                        name="session_id"
+                        value={sessionId}
+                      />
+                      <input
+                        type="hidden"
+                        name="student_id"
+                        value={row.student_id}
+                      />
+                    </ActionForm>
+                  )}
+                </div>
+                {row.present && (
+                  <details className="mt-3">
+                    <summary className="cursor-pointer text-sm text-white/65">
+                      Corregir asistencia
+                    </summary>
+                    <ActionForm
+                      className="mt-3"
+                      action={correctAttendance}
+                      submit="Retirar asistencia"
+                      confirm="¿Retirar esta asistencia? Se recalcularán XP, misiones y la insignia de primera asistencia."
+                    >
+                      <input
+                        type="hidden"
+                        name="session_id"
+                        value={sessionId}
+                      />
+                      <input
+                        type="hidden"
+                        name="student_id"
+                        value={row.student_id}
+                      />
+                      <Field
+                        name={`reason-${row.student_id}`}
+                        label="Motivo de la corrección"
+                      >
+                        <textarea
+                          id={`reason-${row.student_id}`}
+                          name="reason"
+                          className="bo-input"
+                          minLength={5}
+                          maxLength={500}
+                          required
+                        />
+                      </Field>
+                    </ActionForm>
+                  </details>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Empty />
+        )}
+        <Pagination
+          path="/coach/attendance"
+          params={filters}
+          page={paging.page}
+          count={roster.count ?? 0}
+        />
+      </div>
+    </div>
+  )
 }
