@@ -6,5 +6,8 @@ export const revalidate = 0
 
 export async function GET() {
   const items = await getNews()
-  return NextResponse.json(items)
+  return NextResponse.json(
+    items.map((item) => ({ ...item, body: undefined })),
+    { headers: { 'Cache-Control': 'no-store' } },
+  )
 }

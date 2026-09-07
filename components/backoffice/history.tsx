@@ -4,6 +4,16 @@ import { clubDateTime } from '@/lib/backoffice/time'
 import { Pagination, Empty } from './list'
 
 const labels: Record<string, string> = {
+  title: 'Título',
+  excerpt: 'Resumen',
+  lang: 'Idioma',
+  kind: 'Tipo',
+  image: 'Portada',
+  image_alt: 'Descripción de portada',
+  external_url: 'Enlace original',
+  categories: 'Categorías',
+  date: 'Fecha editorial',
+  read_time: 'Tiempo de lectura',
   status: 'Estado',
   internal_notes: 'Notas',
   linked_user_id: 'Persona vinculada',
@@ -105,6 +115,8 @@ export default async function History({
                   {change}
                 </p>
               ))}
+              {row.before_data?.body_hash !== row.after_data?.body_hash &&
+                entity === 'news_articles' && <p>Contenido modificado.</p>}
               {row.reason && <p className="mt-1">Motivo: {row.reason}</p>}
             </li>
           ))}

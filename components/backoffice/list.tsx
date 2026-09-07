@@ -79,9 +79,11 @@ export function Filters({
   path,
   q,
   children,
+  placeholder = 'Nombre o correo',
 }: {
   path: string
   q: string
+  placeholder?: string
   children?: ReactNode
 }) {
   return (
@@ -96,7 +98,7 @@ export function Filters({
           defaultValue={q}
           maxLength={120}
           className="bo-input"
-          placeholder="Nombre o correo"
+          placeholder={placeholder}
         />
       </Field>
       {children}

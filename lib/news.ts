@@ -2,6 +2,11 @@ export type Lang = 'es' | 'en' | 'ca'
 export type NewsCategory = 'all' | 'training' | 'championships' | 'events' | 'news'
 
 export type NewsArticle = {
+  slug?: string
+  kind?: 'external' | 'internal'
+  body?: string
+  imageAlt?: string
+  updatedAt?: string
   id: string
   title: string
   excerpt: string
@@ -32,7 +37,8 @@ function getArticleIdSuffix(article: Pick<NewsArticle, 'id' | 'externalUrl'>) {
   return match ? match[1].toLowerCase() : ''
 }
 
-export function getArticleSlug(article: Pick<NewsArticle, 'id' | 'title' | 'externalUrl'>) {
+export function getArticleSlug(article: Pick<NewsArticle, 'id' | 'title' | 'externalUrl' | 'slug'>) {
+  if (article.slug) return article.slug
   const base = slugify(article.title) || 'article'
   const suffix = getArticleIdSuffix(article)
   return suffix ? `${base}-${suffix}` : base

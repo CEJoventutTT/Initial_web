@@ -12,6 +12,7 @@ export default function BackofficeNavigation({ admin }: { admin: boolean }) {
           ['/admin/people', 'Personas'],
           ['/admin/programs', 'Programas'],
           ['/admin/emails', 'Correos'],
+          ['/admin/news', 'Noticias'],
         ]
       : []),
     ['/coach/sessions', 'Sesiones'],

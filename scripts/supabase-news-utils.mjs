@@ -36,11 +36,12 @@ export function getSupabaseAdminClient() {
     env.NEXT_PUBLIC_CEJTT_SUPABASE_URL ||
     env.NEXT_PUBLIC_SUPABASE_URL
   const serviceRoleKey =
-    env.CEJTT_SUPABASE_SERVICE_ROLE_KEY ||
-    env.SUPABASE_SERVICE_ROLE_KEY
+    env.CEJTT_SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!url || !serviceRoleKey) {
-    throw new Error('Missing CEJTT_SUPABASE_URL or CEJTT_SUPABASE_SERVICE_ROLE_KEY')
+    throw new Error(
+      'Missing CEJTT_SUPABASE_URL or CEJTT_SUPABASE_SERVICE_ROLE_KEY',
+    )
   }
 
   return createClient(url, serviceRoleKey, {
@@ -73,15 +74,16 @@ export function toNewsRow(article) {
     categories: article.categories,
     external_url: article.externalUrl,
     lang: article.lang,
-    published: article.published ?? true,
+    status: 'draft',
   }
 }
 
 export async function loadNewsFromSupabase(supabase) {
   const { data, error } = await supabase
     .from('news_articles')
-    .select('id, title, excerpt, date, read_time, image, categories, external_url, lang')
-    .eq('published', true)
+    .select(
+      'id, title, excerpt, date, read_time, image, categories, external_url, lang',
+    )
     .order('date', { ascending: false })
 
   if (error) throw error
@@ -90,12 +92,10 @@ export async function loadNewsFromSupabase(supabase) {
 
 export async function upsertNewsToSupabase(supabase, articles) {
   if (articles.length === 0) return []
-
-  const { data, error } = await supabase
-    .from('news_articles')
-    .upsert(articles.map(toNewsRow), { onConflict: 'id' })
-    .select('id')
-
+  const { data, error } = await supabase.rpc('import_news', {
+    p_articles: articles.map(toNewsRow),
+    p_source: 'csv',
+  })
   if (error) throw error
-  return data || []
+  return Array.from({ length: data || 0 }, () => ({}))
 }

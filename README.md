@@ -71,3 +71,13 @@ detalle completo en [`docs/pr05.md`](docs/pr05.md).
 El panel operativo está en `/admin`, con solicitudes, personas, programas y seguimiento de correos. Los entrenadores gestionan sesiones y asistencia desde `/coach/sessions` y `/coach/attendance`.
 
 Consulta [implementación, pruebas y orden de despliegue](docs/backoffice-implementacion.md). Las mejoras requieren la migración `20260905120000_backoffice_operations.sql`. Para probar el circuito con datos locales: `npm run test:backoffice:local`.
+
+## Gestión de noticias
+
+El módulo editorial está en `/admin/news`: artículos propios y enlaces externos, borradores,
+vista previa privada, publicación, retirada, archivo, portadas e importación RSS revisable.
+Solo pueden gestionarlo administradores activos. Las importaciones conservan las ediciones
+y estados existentes; las entradas nuevas requieren publicación manual.
+
+Consulta [implementación y despliegue del módulo editorial](docs/noticias-implementacion.md).
+Las dos migraciones de noticias deben aplicarse antes de desplegar esta versión.

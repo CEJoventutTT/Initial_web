@@ -42,7 +42,7 @@ export default function NewsEvents() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('/api/news')
+        const response = await fetch('/api/news', { cache: 'no-store' })
         if (!response.ok) {
           throw new Error('Failed to fetch news')
         }
@@ -84,7 +84,7 @@ export default function NewsEvents() {
               <div className="relative overflow-hidden h-56 md:h-64 lg:h-72">
                 <Image
                   src={article.image || '/placeholder.svg'}
-                  alt={article.title}
+                  alt={article.imageAlt || article.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 768px"
                   unoptimized
