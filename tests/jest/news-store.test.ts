@@ -1,74 +1,77 @@
 /// <reference types="jest" />
-
 import { createClient } from '@supabase/supabase-js'
-import { getNews } from '@/lib/news-store'
-import { getRedis } from '@/lib/redis'
-
+import { getNews, getPublishedArticle } from '@/lib/news-store'
 jest.mock('@supabase/supabase-js', () => ({ createClient: jest.fn() }))
-jest.mock('@/lib/redis', () => ({ getRedis: jest.fn() }))
 jest.mock('@/lib/supabase/env', () => ({
-  requireSupabaseConfig: () => ({ url: 'https://supabase.example', anonKey: 'anon-key' }),
+  requireSupabaseConfig: () => ({
+    url: 'https://supabase.example',
+    anonKey: 'anon',
+  }),
 }))
-
-const article = {
-  id: 'article-1',
-  title: 'Noticia de prueba',
+const row = {
+  id: '1',
+  title: 'Noticia',
   excerpt: 'Resumen',
-  date: '2026-01-01T00:00:00.000Z',
-  readTime: '1 min read',
-  image: '/image.jpg',
+  date: '2026-09-06',
+  read_time: '1 min',
+  image: '/placeholder.svg',
+  image_alt: '',
   categories: ['news'],
-  externalUrl: 'https://example.test/article-1',
+  external_url: null,
   lang: 'es',
-} as const
-
-describe('getNews Redis cache', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-
-  it('returns cached news without querying Supabase', async () => {
-    const get = jest.fn().mockResolvedValue([article])
-    jest.mocked(getRedis).mockReturnValue({ get } as never)
-
-    await expect(getNews()).resolves.toEqual([article])
-    expect(createClient).not.toHaveBeenCalled()
-  })
-
-  it('uses Supabase and populates Redis after a cache miss', async () => {
-    const get = jest.fn().mockResolvedValue(null)
-    const set = jest.fn().mockResolvedValue('OK')
-    const order = jest.fn().mockResolvedValue({
-      data: [{
-        id: article.id,
-        title: article.title,
-        excerpt: article.excerpt,
-        date: article.date,
-        read_time: article.readTime,
-        image: article.image,
-        categories: article.categories,
-        external_url: article.externalUrl,
-        lang: article.lang,
-      }],
-      error: null,
-    })
-    const eq = jest.fn().mockReturnValue({ order })
-    const select = jest.fn().mockReturnValue({ eq })
-    jest.mocked(getRedis).mockReturnValue({ get, set } as never)
-    jest.mocked(createClient).mockReturnValue({ from: jest.fn().mockReturnValue({ select }) } as never)
-
-    await expect(getNews()).resolves.toEqual([article])
-    expect(set).toHaveBeenCalledWith('news:published:v1', [article], { ex: 300 })
-  })
-
-  it('falls back to Supabase when Redis is unavailable', async () => {
-    const order = jest.fn().mockResolvedValue({ data: [], error: null })
-    const eq = jest.fn().mockReturnValue({ order })
-    const select = jest.fn().mockReturnValue({ eq })
-    jest.mocked(getRedis).mockReturnValue(null)
-    jest.mocked(createClient).mockReturnValue({ from: jest.fn().mockReturnValue({ select }) } as never)
-
-    await expect(getNews()).resolves.toEqual([])
-    expect(createClient).toHaveBeenCalled()
-  })
+  slug: 'noticia-1',
+  kind: 'internal',
+  body: 'Contenido',
+  updated_at: '2026-09-06',
+}
+function client(pages: unknown[][], error: unknown = null) {
+  const query = {
+    select: jest.fn(),
+    eq: jest.fn(),
+    order: jest.fn(),
+    range: jest.fn(),
+    maybeSingle: jest.fn(),
+  }
+  for (const name of ['select', 'eq', 'order'] as const)
+    query[name].mockReturnValue(query)
+  for (const data of pages) query.range.mockResolvedValueOnce({ data, error })
+  query.maybeSingle.mockResolvedValue({ data: pages[0]?.[0] || null, error })
+  jest
+    .mocked(createClient)
+    .mockReturnValue({ from: jest.fn().mockReturnValue(query) } as never)
+  return query
+}
+afterEach(() => jest.clearAllMocks())
+it('reads fresh visibility on every call, including after a withdrawal', async () => {
+  const query = client([[row], []])
+  expect(await getNews()).toEqual([
+    expect.objectContaining({
+      slug: 'noticia-1',
+      body: 'Contenido',
+      externalUrl: '',
+    }),
+  ])
+  expect(await getNews()).toEqual([])
+  expect(query.eq).toHaveBeenCalledWith('published', true)
+})
+it('loads all pages beyond the API default row limit', async () => {
+  const query = client([Array.from({ length: 500 }, () => row), [row]])
+  expect(await getNews()).toHaveLength(501)
+  expect(query.range).toHaveBeenLastCalledWith(500, 999)
+})
+it('fails closed when the database cannot verify publication', async () => {
+  client([[]], new Error('database unavailable'))
+  await expect(getNews()).rejects.toThrow('database unavailable')
+})
+it('queries a published detail by its stable slug', async () => {
+  const query = client([[row]])
+  expect(await getPublishedArticle('noticia-1')).toEqual(
+    expect.objectContaining({ kind: 'internal' }),
+  )
+  expect(query.eq).toHaveBeenCalledWith('slug', 'noticia-1')
+  expect(query.eq).toHaveBeenCalledWith('published', true)
+})
+it('returns null for a withdrawn or missing detail', async () => {
+  client([[]])
+  expect(await getPublishedArticle('missing')).toBeNull()
 })

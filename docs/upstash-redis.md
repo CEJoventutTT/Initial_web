@@ -1,9 +1,7 @@
 # Upstash Redis
 
-El proyecto usa Upstash Redis exclusivamente desde el servidor para dos tareas:
-
-- Limitar las solicitudes a `POST /api/center-activity`.
-- Cachear las noticias públicas obtenidas desde Supabase.
+El proyecto usa Upstash Redis desde el servidor para limitar las solicitudes a
+`POST /api/center-activity`.
 
 ## Configuración
 
@@ -38,20 +36,17 @@ procesar una inscripción sin protección contra abuso.
 
 ## Caché de noticias
 
-`getNews()` busca primero `news:published:v1` en Redis. Si no existe, o si Redis
-devuelve un error, consulta Supabase y continúa respondiendo normalmente. Las
-lecturas correctas se guardan durante cinco minutos.
-
-Una sincronización RSS que inserta noticias invalida la clave inmediatamente.
-El TTL cubre cualquier actualización realizada fuera de esa sincronización.
+Desde la incorporación del editor de noticias, `getNews()` y la lectura del detalle
+consultan Supabase sin caché compartida. Una noticia retirada deja de servirse aunque
+Redis no esté disponible. La antigua clave `news:published:v1` ya no se consulta y
+caduca por su TTL. Las demás funciones de Redis se mantienen.
 
 ## Operación
 
 - Verifica que los cuatro nombres aparezcan como `Secret / Production` con
   `vercel env ls production`.
 - Despliega de nuevo tras crear o modificar una variable de Production.
-- Monitoriza errores con los prefijos `[news]` y `[center-activity]` en los logs
-  de Vercel.
+- Monitoriza errores de `[center-activity]` en los logs de Vercel.
 
 ## Pruebas
 
@@ -63,5 +58,5 @@ npm run test:jest
 
 - `tests/jest/rate-limit.test.ts` cubre el contador, el TTL inicial, el bloqueo
   al superar el límite y el fallo seguro sin configuración Redis.
-- `tests/jest/news-store.test.ts` cubre aciertos de caché, carga desde Supabase
-  ante un miss y el fallback cuando Redis no está disponible.
+- `tests/jest/news-store.test.ts` verifica lecturas públicas actualizadas, paginación
+  y rechazo de la lectura cuando no puede comprobarse el estado de publicación.

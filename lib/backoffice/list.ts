@@ -41,6 +41,10 @@ export function backUrl(value: string, path: string) {
   return value === path || value.startsWith(`${path}?`) ? value : path
 }
 export const statuses: Record<string, string> = {
+  draft: 'Borrador',
+  published: 'Publicada',
+  internal: 'Artículo propio',
+  external: 'Noticia externa',
   new: 'Nueva',
   contacted: 'Contactada',
   approved: 'Aprobada',

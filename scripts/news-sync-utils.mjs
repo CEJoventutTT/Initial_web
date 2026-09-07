@@ -151,17 +151,14 @@ export function normalizedTitle(title = '') {
 export function articleExists(existing, candidate) {
   const candidateId = candidate.id || extractMediumId(candidate.externalUrl)
   const candidateUrl = (candidate.externalUrl || '').trim()
-  const candidateTitle = normalizedTitle(candidate.title)
 
   return existing.some((article) => {
     const articleId = article.id || extractMediumId(article.externalUrl)
     const articleUrl = (article.externalUrl || '').trim()
-    const articleTitle = normalizedTitle(article.title)
 
     return (
       (candidateId && articleId === candidateId) ||
-      (candidateUrl && articleUrl === candidateUrl) ||
-      (candidateTitle && articleTitle === candidateTitle)
+      (candidateUrl && articleUrl === candidateUrl)
     )
   })
 }
