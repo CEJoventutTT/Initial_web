@@ -22,11 +22,17 @@ npx tsc --noEmit
 npm run build
 npm run test:jest
 node --experimental-strip-types --test tests/*.test.ts
+npm run test:db
 npm run test:e2e
+npm run test:backoffice:local
 ```
 
-Las pruebas E2E requieren un `.env.test.local` con un proyecto y cuentas dedicadas;
-las variables necesarias están documentadas en [`.env.test.example`](.env.test.example).
+`test:e2e` usa el proyecto y las cuentas dedicadas de `.env.test.local`; las pruebas
+que modifican el backoffice se omiten fuera del ejecutor local. Con Docker y
+Supabase local, `test:backoffice:local` prepara los datos de prueba, configura la
+aplicación para esa instancia y ejecuta las 21 pruebas E2E. Consulta
+[`docs/database-local.md`](docs/database-local.md) antes de ejecutarlas.
+Las variables del entorno de pruebas están en [`.env.test.example`](.env.test.example).
 Las pruebas de Redis están aisladas mediante mocks de Jest y no necesitan
 credenciales de Upstash.
 
@@ -46,7 +52,8 @@ Nunca commits `.env`, claves de Supabase ni credenciales de pruebas.
 ## Mejoras recientes
 
 La inscripción se procesa mediante `/api/center-activity`, en servidor, usando
-Resend. El navegador ya no envía solicitudes directamente a EmailJS. El endpoint
+EmailJS por defecto o Resend si `EMAIL_PROVIDER=resend` (con fallback a EmailJS).
+El navegador ya no envía solicitudes directamente a EmailJS. El endpoint
 valida el contenido, limita peticiones por IP mediante Upstash Redis, rechaza cuerpos
 grandes incluso cuando se envían por streaming y escapa los datos antes de
 insertarlos en HTML de correo. Cada formulario genera y reutiliza un encabezado
@@ -54,8 +61,13 @@ insertarlos en HTML de correo. Cada formulario genera y reutiliza un encabezado
 club y un acuse al usuario, con estado y reintento independientes. Las
 reclamaciones de correo caducan a los quince minutos para poder recuperar un
 proceso interrumpido; esto mantiene una semántica al menos una vez ante una
-respuesta ambigua del proveedor. Aplica también las migraciones de Supabase antes
-de desplegar el cambio.
+respuesta ambigua del proveedor. Contacto e inscripción leen el cuerpo con un
+límite de 12 KB y 20 KB, respectivamente, también para solicitudes en streaming.
+La recuperación de contraseña limita el cuerpo a 2 KB y cuenta cada petición
+antes de deduplicar por `Idempotency-Key`; repetir una clave completada no genera
+otro enlace durante una hora. Si Supabase o el proveedor de correo falla, se
+libera la clave para permitir un reintento. Redis es obligatorio para estos límites.
+Aplica también las migraciones de Supabase antes de desplegar el cambio.
 
 El alta de usuarios se realiza exclusivamente desde `/admin/user`, con sesión y rol
 de administrador. Cuando Supabase no puede enviar la invitación, el panel muestra
@@ -72,6 +84,10 @@ El panel operativo está en `/admin`, con solicitudes, personas, programas y seg
 
 Consulta [implementación, pruebas y orden de despliegue](docs/backoffice-implementacion.md). Las mejoras requieren la migración `20260905120000_backoffice_operations.sql`. Para probar el circuito con datos locales: `npm run test:backoffice:local`.
 
+Una sesión con asistencia se cancela para conservar el historial. La interfaz y
+la API rechazan su borrado con una indicación específica; la base de datos también
+protege ese historial. Solo se pueden eliminar sesiones sin asistencia.
+
 ## Gestión de noticias
 
 El módulo editorial está en `/admin/news`: artículos propios y enlaces externos, borradores,
@@ -81,3 +97,12 @@ y estados existentes; las entradas nuevas requieren publicación manual.
 
 Consulta [implementación y despliegue del módulo editorial](docs/noticias-implementacion.md).
 Las dos migraciones de noticias deben aplicarse antes de desplegar esta versión.
+El listado público solicita `/api/news?page=0&lang=es` (o `ca`/`en`) y carga
+más páginas de 24 artículos del idioma elegido mediante el botón «Cargar más».
+La respuesta tiene la forma `{ items, hasMore, lang }`; `page` empieza en cero
+y `lang` indica el idioma efectivo, que será `es` si no hay artículos en el
+idioma solicitado. Una carga fallida permite reintentar la misma página. El
+inicio solo carga la primera página del idioma activo. Las imágenes locales
+habituales usan la optimización de Next.js; las
+portadas servidas por `/api/news/images/` conservan la carga directa para que la
+vista previa privada pueda enviar la sesión del administrador.

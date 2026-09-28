@@ -97,6 +97,7 @@ test('editorial lifecycle, private images, stable URL, preview and history', asy
     preview.getByRole('heading', { name: 'Actividad del club' }),
   ).toBeVisible()
   await expect(preview.getByAltText('Portada de prueba')).toBeVisible()
+  await expect.poll(() => preview.getByAltText('Portada de prueba').evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0)
   await expect(preview.locator('article script')).toHaveCount(0)
   expect((await page.request.get(image)).status()).toBe(200)
   await preview.close()
@@ -113,7 +114,7 @@ test('editorial lifecycle, private images, stable URL, preview and history', asy
     publicPage.getByText('Contenido completo del artículo.'),
   ).toBeVisible()
   const list = await (await anonymous.request.get('/api/news')).json()
-  expect(list.find((item: { slug: string }) => item.slug === slug)).toBeTruthy()
+  expect(list.items.find((item: { slug: string }) => item.slug === slug)).toBeTruthy()
   expect(await (await anonymous.request.get('/sitemap.xml')).text()).toContain(
     `/news/${slug}`,
   )
@@ -136,7 +137,7 @@ test('editorial lifecycle, private images, stable URL, preview and history', asy
     await (await anonymous.request.get('/sitemap.xml')).text(),
   ).not.toContain(`/news/${slug}`)
   expect(
-    (await (await anonymous.request.get('/api/news')).json()).some(
+    (await (await anonymous.request.get('/api/news')).json()).items.some(
       (item: { slug: string }) => item.slug === slug,
     ),
   ).toBe(false)

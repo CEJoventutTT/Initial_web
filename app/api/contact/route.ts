@@ -4,19 +4,12 @@ import { ZodError } from 'zod'
 import { acknowledgementParams, contactSchema, contactTemplateParams } from '@/lib/email/contracts'
 import { submitEmail } from '@/lib/email/submit'
 import { consumeRateLimit } from '@/lib/rate-limit'
+import { readJsonLimited } from '@/lib/read-json-limited'
 
 const WINDOW_MS = 60 * 60 * 1000
 const MAX_REQUESTS_PER_WINDOW = 5
 const MAX_BODY_BYTES = 12_000
 const REQUEST_ID_PATTERN = /^[A-Za-z0-9_-]{16,128}$/
-
-async function getBody(request: Request) {
-  const contentLength = Number(request.headers.get('content-length') || 0)
-  if (contentLength > MAX_BODY_BYTES) throw new RangeError('Request too large')
-  const text = await request.text()
-  if (new TextEncoder().encode(text).byteLength > MAX_BODY_BYTES) throw new RangeError('Request too large')
-  return JSON.parse(text) as unknown
-}
 
 async function isRateLimited(request: Request, requestId: string) {
   const ip = request.headers.get('x-vercel-forwarded-for')
@@ -36,7 +29,7 @@ export async function POST(request: Request) {
     if (await isRateLimited(request, requestId)) {
       return NextResponse.json({ ok: false, error: 'Too many requests' }, { status: 429 })
     }
-    const contact = contactSchema.parse(await getBody(request))
+    const contact = contactSchema.parse(await readJsonLimited(request, MAX_BODY_BYTES))
     const notice = contactTemplateParams(contact)
     const result = await submitEmail('contact', notice, acknowledgementParams('contact', notice), requestId)
     return NextResponse.json(

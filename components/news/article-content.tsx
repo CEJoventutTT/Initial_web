@@ -81,7 +81,7 @@ export default function ArticleContent({ article }: { article: NewsArticle }) {
           alt={article.imageAlt || article.title}
           fill
           sizes="(max-width: 900px) 100vw, 900px"
-          unoptimized
+          unoptimized={/^https?:\/\//.test(article.image) || article.image.startsWith('/api/news/images/')}
           className="object-cover"
         />
       </div>

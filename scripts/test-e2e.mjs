@@ -31,6 +31,21 @@ if (process.env.E2E_TEST_ENV !== '1' || missing.length > 0) {
   process.exit(1)
 }
 
+if (
+  process.env.E2E_BACKOFFICE_LOCAL === '1' &&
+  process.env.NEXT_PUBLIC_CEJTT_SUPABASE_URL !== 'http://127.0.0.1:54321'
+) {
+  console.error('E2E_BACKOFFICE_LOCAL requires local Supabase at http://127.0.0.1:54321.')
+  process.exit(1)
+}
+if (process.env.E2E_BACKOFFICE_LOCAL === '1' && process.env.E2E_BASE_URL) {
+  const host = new URL(process.env.E2E_BASE_URL).hostname
+  if (!['127.0.0.1', 'localhost', '::1'].includes(host)) {
+    console.error('E2E_BACKOFFICE_LOCAL requires a local E2E_BASE_URL.')
+    process.exit(1)
+  }
+}
+
 for (const [target, source] of credentialAliases) {
   process.env[target] = process.env[source]
 }

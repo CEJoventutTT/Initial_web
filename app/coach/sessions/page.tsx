@@ -232,7 +232,7 @@ export default async function SessionsPage({
                 <ActionForm
                   action={deleteSession}
                   submit="Eliminar si está vacía"
-                  confirm="¿Eliminar esta sesión? Solo se permite si no tiene asistencia."
+                  confirm="¿Eliminar esta sesión vacía? Si tiene asistencia, cancélala para conservar el historial."
                 >
                   <input type="hidden" name="session_id" value={session.id} />
                 </ActionForm>

@@ -2,6 +2,8 @@ import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 import { requireSupabaseConfig } from '@/lib/supabase/env'
 import { editorialToArticle, type EditorialArticle } from '@/lib/news/editorial'
+import { cache } from 'react'
+import type { Lang } from '@/lib/news'
 
 function publicClient() {
   const { url, anonKey } = requireSupabaseConfig()
@@ -33,7 +35,33 @@ export async function getNews() {
     if (!data || data.length < 500) return articles
   }
 }
-export async function getPublishedArticle(slug: string) {
+export async function getNewsPage(page: number, lang: Lang, pageSize = 24) {
+  const from = page * pageSize
+  const supabase = publicClient()
+  const readPage = (language: Lang) => supabase
+    .from('news_articles')
+    .select(fields)
+    .eq('published', true)
+    .eq('lang', language)
+    .order('date', { ascending: false })
+    .order('id')
+    .range(from, from + pageSize)
+  let effectiveLang = lang
+  let { data, error } = await readPage(lang)
+  if (error) throw error
+  if (page === 0 && !data?.length && lang !== 'es') {
+    effectiveLang = 'es'
+    ;({ data, error } = await readPage('es'))
+    if (error) throw error
+  }
+  const rows = data ?? []
+  return {
+    items: rows.slice(0, pageSize).map((row) => editorialToArticle(row as EditorialArticle)),
+    hasMore: rows.length > pageSize,
+    lang: effectiveLang,
+  }
+}
+export const getPublishedArticle = cache(async (slug: string) => {
   const { data, error } = await publicClient()
     .from('news_articles')
     .select(`${fields},body`)
@@ -42,4 +70,4 @@ export async function getPublishedArticle(slug: string) {
     .maybeSingle()
   if (error) throw error
   return data ? editorialToArticle(data as EditorialArticle) : null
-}
+})

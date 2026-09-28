@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 import { createClient } from '@supabase/supabase-js'
-import { getNews, getPublishedArticle } from '@/lib/news-store'
+import { getNews, getNewsPage, getPublishedArticle } from '@/lib/news-store'
 jest.mock('@supabase/supabase-js', () => ({ createClient: jest.fn() }))
 jest.mock('@/lib/supabase/env', () => ({
   requireSupabaseConfig: () => ({
@@ -58,6 +58,23 @@ it('loads all pages beyond the API default row limit', async () => {
   const query = client([Array.from({ length: 500 }, () => row), [row]])
   expect(await getNews()).toHaveLength(501)
   expect(query.range).toHaveBeenLastCalledWith(500, 999)
+})
+it('returns a bounded page and a continuation flag', async () => {
+  const query = client([Array.from({ length: 25 }, () => row)])
+  const page = await getNewsPage(2, 'ca')
+  expect(page.items).toHaveLength(24)
+  expect(page.hasMore).toBe(true)
+  expect(query.range).toHaveBeenCalledWith(48, 72)
+  expect(query.eq).toHaveBeenCalledWith('lang', 'ca')
+  expect(page.lang).toBe('ca')
+})
+it('falls back to Spanish only when the selected language has no articles', async () => {
+  const query = client([[], [row]])
+  const page = await getNewsPage(0, 'ca')
+  expect(page.items).toHaveLength(1)
+  expect(page.lang).toBe('es')
+  expect(query.eq).toHaveBeenCalledWith('lang', 'ca')
+  expect(query.eq).toHaveBeenCalledWith('lang', 'es')
 })
 it('fails closed when the database cannot verify publication', async () => {
   client([[]], new Error('database unavailable'))
