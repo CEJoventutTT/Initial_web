@@ -95,14 +95,21 @@ describe('POST /api/auth/reset-password', () => {
     expect(mockGenerateLink).not.toHaveBeenCalled()
   })
 
-  it('counts repeated keys but generates only one recovery link', async () => {
+  it('deduplicates before consuming rate limits so retries do not spend quota', async () => {
     mockSet.mockResolvedValueOnce('OK').mockResolvedValueOnce(null)
     const key = 'recovery-request-0001'
     expect((await post(request({ email: 'user@example.com' }, key))).status).toBe(200)
     expect((await post(request({ email: 'user@example.com' }, key))).status).toBe(200)
-    expect(mockConsumeRateLimit).toHaveBeenCalledTimes(4)
+    expect(mockConsumeRateLimit).toHaveBeenCalledTimes(2)
     expect(mockConsumeRateLimit).toHaveBeenCalledWith(expect.stringContaining('password-reset:ip:'), 5, 3600)
     expect(mockGenerateLink).toHaveBeenCalledTimes(1)
+  })
+
+  it('still rate limits new keys even when callers provide idempotency keys', async () => {
+    mockConsumeRateLimit.mockResolvedValueOnce({ limited: true, remaining: 0 })
+    expect((await post(request({ email: 'user@example.com' }, 'recovery-request-0004'))).status).toBe(429)
+    expect(mockGenerateLink).not.toHaveBeenCalled()
+    expect(mockDel).not.toHaveBeenCalled()
   })
 
   it('rejects oversized streamed requests before invoking Supabase', async () => {

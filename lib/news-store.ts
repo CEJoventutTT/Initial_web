@@ -35,29 +35,37 @@ export async function getNews() {
     if (!data || data.length < 500) return articles
   }
 }
-export async function getNewsPage(page: number, lang: Lang, pageSize = 24) {
-  const from = page * pageSize
+export type NewsCursor = { date: string; id: string }
+
+export async function getNewsPage(cursor: NewsCursor | null, lang: Lang, pageSize = 24) {
   const supabase = publicClient()
-  const readPage = (language: Lang) => supabase
-    .from('news_articles')
-    .select(fields)
-    .eq('published', true)
-    .eq('lang', language)
-    .order('date', { ascending: false })
-    .order('id')
-    .range(from, from + pageSize)
+  const readPage = (language: Lang) => {
+    const base = supabase
+      .from('news_articles')
+      .select(fields)
+      .eq('published', true)
+      .eq('lang', language)
+    const filtered = cursor
+      ? base.or(`date.lt.${cursor.date},and(date.eq.${cursor.date},id.gt.${cursor.id})`)
+      : base
+    return filtered.order('date', { ascending: false }).order('id').limit(pageSize + 1)
+  }
   let effectiveLang = lang
   let { data, error } = await readPage(lang)
   if (error) throw error
-  if (page === 0 && !data?.length && lang !== 'es') {
+  if (!cursor && !data?.length && lang !== 'es') {
     effectiveLang = 'es'
     ;({ data, error } = await readPage('es'))
     if (error) throw error
   }
   const rows = data ?? []
+  const pageRows = rows.slice(0, pageSize)
   return {
-    items: rows.slice(0, pageSize).map((row) => editorialToArticle(row as EditorialArticle)),
+    items: pageRows.map((row) => editorialToArticle(row as EditorialArticle)),
     hasMore: rows.length > pageSize,
+    nextCursor: rows.length > pageSize && pageRows.length
+      ? { date: String((pageRows[pageRows.length - 1] as EditorialArticle).date), id: String((pageRows[pageRows.length - 1] as EditorialArticle).id) }
+      : null,
     lang: effectiveLang,
   }
 }

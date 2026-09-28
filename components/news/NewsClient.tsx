@@ -43,7 +43,7 @@ export default function NewsPage() {
   useEffect(() => { setMounted(true); }, []);
 
   const [allArticles, setAllArticles] = useState<NewsArticle[]>([]);
-  const [page, setPage] = useState(0);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [feedLang, setFeedLang] = useState<Lang>(lang);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,17 +59,18 @@ export default function NewsPage() {
       setLoading(true);
       setLoadError(false);
       setAllArticles([]);
-      setPage(0);
+      setNextCursor(null);
       setHasMore(false);
       try {
-        const response = await fetch(`/api/news?page=0&lang=${lang}`, { cache: 'no-store', signal: controller.signal });
+        const response = await fetch(`/api/news?lang=${lang}`, { cache: 'no-store', signal: controller.signal });
         if (!response.ok) {
           throw new Error('Failed to fetch news');
         }
-        const result = await response.json() as { items: NewsArticle[]; hasMore: boolean; lang: Lang };
+        const result = await response.json() as { items: NewsArticle[]; hasMore: boolean; nextCursor: string | null; lang: Lang };
         if (controller.signal.aborted || currentGeneration !== generation.current) return;
         setAllArticles(result.items);
         setHasMore(result.hasMore);
+        setNextCursor(result.nextCursor);
         setFeedLang(result.lang);
       } catch (err: unknown) {
         if (!controller.signal.aborted && currentGeneration === generation.current) {
@@ -91,22 +92,22 @@ export default function NewsPage() {
     if (loadingMore.current || loading) return;
     const currentGeneration = generation.current;
     const currentLang = feedLang;
-    const nextPage = page + 1;
+    if (!nextCursor) return;
     const controller = new AbortController();
     loadingMore.current = true;
     setLoading(true);
     setLoadError(false);
     try {
-      const response = await fetch(`/api/news?page=${nextPage}&lang=${currentLang}`, {
+      const response = await fetch(`/api/news?cursor=${encodeURIComponent(nextCursor)}&lang=${currentLang}`, {
         cache: 'no-store',
         signal: controller.signal,
       });
       if (!response.ok) throw new Error('Failed to fetch news');
-      const result = await response.json() as { items: NewsArticle[]; hasMore: boolean };
+      const result = await response.json() as { items: NewsArticle[]; hasMore: boolean; nextCursor: string | null };
       if (controller.signal.aborted || currentGeneration !== generation.current) return;
       setAllArticles((current) => [...current, ...result.items]);
-      setPage(nextPage);
       setHasMore(result.hasMore);
+      setNextCursor(result.nextCursor);
     } catch (error) {
       if (!controller.signal.aborted && currentGeneration === generation.current) {
         console.error('Failed to fetch news', error);

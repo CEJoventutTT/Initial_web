@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from 'node:crypto'
+import { createHash } from 'node:crypto'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { sendPasswordRecoveryEmail } from '@/lib/email/password-recovery'
@@ -46,24 +46,22 @@ export async function POST(request: Request) {
     if (suppliedId && !REQUEST_ID_PATTERN.test(suppliedId)) {
       return NextResponse.json({ ok: false, error: 'Invalid Idempotency-Key' }, { status: 400 })
     }
-    const requestId = suppliedId || randomUUID()
+    // Claim supplied idempotency keys before consuming the IP/email budgets.
+    // Retries of a completed request stay neutral and do not spend more quota.
+    if (suppliedId) {
+      const redis = getRedis()
+      if (!redis) throw new Error('Redis idempotency is not configured')
+      const key = `password-reset:request:${hash(`${body.email}:${suppliedId}`)}`
+      const claimed = await redis.set(key, '1', { nx: true, ex: WINDOW_SECONDS })
+      if (claimed === null) return okResponse()
+      reservation = { redis, key }
+    }
+
     const [ipRate, emailRate] = await Promise.all([
       consumeRateLimit(`rate-limit:password-reset:ip:${hash(clientIp(request))}`, IP_LIMIT, WINDOW_SECONDS),
       consumeRateLimit(`rate-limit:password-reset:email:${hash(body.email)}`, EMAIL_LIMIT, WINDOW_SECONDS),
     ])
     if (ipRate.limited || emailRate.limited) return NextResponse.json({ ok: false, error: 'Too many requests' }, { status: 429 })
-    if (suppliedId) {
-      const redis = getRedis()
-      if (!redis) throw new Error('Redis idempotency is not configured')
-      const key = `password-reset:request:${hash(`${body.email}:${requestId}`)}`
-      const claimed = await redis.set(key, '1', {
-        nx: true,
-        ex: WINDOW_SECONDS,
-      })
-      if (claimed === null) return okResponse()
-      reservation = { redis, key }
-    }
-
     const { url, serviceRoleKey } = requireSupabaseAdminConfig()
     const admin = createClient(url, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } })
     const { data, error } = await admin.auth.admin.generateLink({ type: 'recovery', email: body.email })

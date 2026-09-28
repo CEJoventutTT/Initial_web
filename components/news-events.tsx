@@ -43,7 +43,7 @@ export default function NewsEvents() {
     const controller = new AbortController()
     const fetchNews = async () => {
       try {
-        const response = await fetch(`/api/news?page=0&lang=${lang}`, { cache: 'no-store', signal: controller.signal })
+        const response = await fetch(`/api/news?lang=${lang}`, { cache: 'no-store', signal: controller.signal })
         if (!response.ok) {
           throw new Error('Failed to fetch news')
         }

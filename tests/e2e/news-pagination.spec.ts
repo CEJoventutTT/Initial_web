@@ -15,17 +15,17 @@ test('news loads the selected language and retries the same page after a failure
   let secondPageAttempts = 0
   await page.route('**/api/news?*', async (route) => {
     const url = new URL(route.request().url())
-    requested.push(`${url.searchParams.get('lang')}:${url.searchParams.get('page')}`)
-    if (url.searchParams.get('page') === '1') {
+    requested.push(`${url.searchParams.get('lang')}:${url.searchParams.get('cursor') ?? 'first'}`)
+    if (url.searchParams.has('cursor')) {
       secondPageAttempts += 1
       if (secondPageAttempts === 1) {
         await route.fulfill({ status: 503, body: '{}' })
         return
       }
-      await route.fulfill({ json: { items: [article('ca-two', 'Segona notícia')], hasMore: false, lang: 'ca' } })
+        await route.fulfill({ json: { items: [article('ca-two', 'Segona notícia')], hasMore: false, nextCursor: null, lang: 'ca' } })
       return
     }
-    await route.fulfill({ json: { items: [article('ca-one', 'Primera notícia')], hasMore: true, lang: 'ca' } })
+    await route.fulfill({ json: { items: [article('ca-one', 'Primera notícia')], hasMore: true, nextCursor: 'eyJkYXRlIjoiMjAyNi0wOS0yOFQxMjowMDowMFoiLCJpZCI6ImNhLW9uZSJ9', lang: 'ca' } })
   })
 
   await page.goto('/news')
@@ -34,6 +34,7 @@ test('news loads the selected language and retries the same page after a failure
   await expect(page.getByRole('button', { name: 'Torna-ho a provar' })).toBeVisible()
   await page.getByRole('button', { name: 'Torna-ho a provar' }).click()
   await expect(page.getByRole('heading', { name: 'Segona notícia' })).toBeVisible()
-  expect(requested).toContain('ca:0')
-  expect(requested.slice(-2)).toEqual(['ca:1', 'ca:1'])
+  expect(requested).toContain('ca:first')
+  expect(requested.slice(-2)[0]).toMatch(/^ca:eyJ/)
+  expect(requested.slice(-2)[1]).toBe(requested.slice(-2)[0])
 })

@@ -97,11 +97,11 @@ y estados existentes; las entradas nuevas requieren publicación manual.
 
 Consulta [implementación y despliegue del módulo editorial](docs/noticias-implementacion.md).
 Las dos migraciones de noticias deben aplicarse antes de desplegar esta versión.
-El listado público solicita `/api/news?page=0&lang=es` (o `ca`/`en`) y carga
-más páginas de 24 artículos del idioma elegido mediante el botón «Cargar más».
-La respuesta tiene la forma `{ items, hasMore, lang }`; `page` empieza en cero
-y `lang` indica el idioma efectivo, que será `es` si no hay artículos en el
-idioma solicitado. Una carga fallida permite reintentar la misma página. El
+El listado público solicita `/api/news?lang=es` (o `ca`/`en`) y carga
+artículos en bloques de 24 con un cursor estable mediante «Cargar más».
+La respuesta tiene la forma `{ items, hasMore, nextCursor, lang }` y `lang`
+indica el idioma efectivo, que será `es` si no hay artículos en el idioma
+solicitado. Una carga fallida permite reintentar el mismo cursor. El
 inicio solo carga la primera página del idioma activo. Las imágenes locales
 habituales usan la optimización de Next.js; las
 portadas servidas por `/api/news/images/` conservan la carga directa para que la
