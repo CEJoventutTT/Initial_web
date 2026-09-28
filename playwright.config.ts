@@ -5,6 +5,19 @@ import { defineConfig, devices } from '@playwright/test'
 // Playwright deliberately never loads `.env`: E2E must target a dedicated project.
 if (existsSync('.env.test.local')) loadEnvFile('.env.test.local')
 
+if (
+  process.env.E2E_BACKOFFICE_LOCAL === '1' &&
+  process.env.NEXT_PUBLIC_CEJTT_SUPABASE_URL !== 'http://127.0.0.1:54321'
+) {
+  throw new Error('E2E_BACKOFFICE_LOCAL requires local Supabase at http://127.0.0.1:54321.')
+}
+if (process.env.E2E_BACKOFFICE_LOCAL === '1' && process.env.E2E_BASE_URL) {
+  const host = new URL(process.env.E2E_BASE_URL).hostname
+  if (!['127.0.0.1', 'localhost', '::1'].includes(host)) {
+    throw new Error('E2E_BACKOFFICE_LOCAL requires a local E2E_BASE_URL.')
+  }
+}
+
 for (const [target, source] of [['ADMIN', 'ADMIN2'], ['ADMIN_PASS', 'ADMIN_PASS2'], ['COACH', 'COACH2'], ['COACH_PASS', 'COACH_PASS2']] as const) {
   if (process.env[source]) process.env[target] = process.env[source]
 }

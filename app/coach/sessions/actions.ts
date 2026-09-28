@@ -85,11 +85,16 @@ export async function cancelSession(_: ActionState, form: FormData) {
 export async function deleteSession(_: ActionState, form: FormData) {
   return operation(async () => {
     const { supabase } = await requireOperator(false)
+    const sessionId = numberField(form, 'session_id')
+    const { count } = checked(
+      await supabase.from('attendance_logs').select('id', { count: 'exact', head: true }).eq('session_id', sessionId),
+    )
+    if (count) throw new InputError('La sesión tiene asistencia. Cancélala para conservar el historial.')
     const { data } = checked(
       await supabase
         .from('attendance_sessions')
         .delete()
-        .eq('id', numberField(form, 'session_id'))
+        .eq('id', sessionId)
         .select('id')
         .maybeSingle(),
     )

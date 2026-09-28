@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 import { getArticleSlug, getPrimaryCategory, type Lang, type NewsArticle } from '@/lib/news'
 import Image from 'next/image'
@@ -38,28 +38,25 @@ export default function NewsEvents() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
-  const [allArticles, setAllArticles] = useState<NewsArticle[]>([])
+  const [news, setNews] = useState<NewsArticle[]>([])
   useEffect(() => {
+    const controller = new AbortController()
     const fetchNews = async () => {
       try {
-        const response = await fetch('/api/news', { cache: 'no-store' })
+        const response = await fetch(`/api/news?page=0&lang=${lang}`, { cache: 'no-store', signal: controller.signal })
         if (!response.ok) {
           throw new Error('Failed to fetch news')
         }
-        const items = (await response.json()) as NewsArticle[]
-        setAllArticles(items)
+        const result = (await response.json()) as { items: NewsArticle[] }
+        if (!controller.signal.aborted) setNews(result.items.slice(0, 4))
       } catch (err: unknown) {
-        console.error('Failed to fetch news', err)
+        if (!controller.signal.aborted) console.error('Failed to fetch news', err)
       }
     }
 
     fetchNews()
-  }, [])
-
-  const news = useMemo(() => {
-    const byLang = allArticles.filter((article) => article.lang === lang)
-    return byLang.length ? byLang.slice(0, 4) : allArticles.filter((article) => article.lang === 'es').slice(0, 4)
-  }, [lang, allArticles])
+    return () => controller.abort()
+  }, [lang])
 
   const formatDate = (dateStr: string) => {
     if (!mounted) return ''
@@ -87,7 +84,7 @@ export default function NewsEvents() {
                   alt={article.imageAlt || article.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 768px"
-                  unoptimized
+                  unoptimized={/^https?:\/\//.test(article.image) || article.image.startsWith('/api/news/images/')}
                   className="object-cover object-[center_20%]"
                 />
                 <div className="absolute top-4 left-4">

@@ -16,14 +16,11 @@ supabase db reset
 `db reset` recrea la base, aplica todas las migraciones en orden y carga
 `supabase/seed.sql`.
 
-Para conectar Next.js a la instancia local, copia de `supabase status` la URL y
-la anon key a `.env.local`, usando:
+Para conectar Next.js a la instancia local, configura la URL y las claves de
+esa misma instancia en `.env.local`, usando estos nombres:
 
-```text
-CEJTT_SUPABASE_URL=...
-NEXT_PUBLIC_CEJTT_SUPABASE_ANON_KEY=...
-CEJTT_SUPABASE_SERVICE_ROLE_KEY=...
-```
+`CEJTT_SUPABASE_URL`, `NEXT_PUBLIC_CEJTT_SUPABASE_ANON_KEY` y
+`CEJTT_SUPABASE_SERVICE_ROLE_KEY`.
 
 No deben copiarse usuarios de `auth.users` desde producción. Las cuentas de
 prueba se crean localmente desde Supabase Studio o mediante la API de Auth.
@@ -48,9 +45,26 @@ administrativos se reservan para la creación autenticada de usuarios.
 
 ## Pruebas end-to-end
 
-Las pruebas E2E cargan `.env` y, si existe, `.env.test.local`, cuyas variables
-tienen prioridad. Para aislar las pruebas, copia `.env.test.example` a
-`.env.test.local` y rellénalo con un proyecto Supabase y cuentas dedicadas.
-En CI las seis variables de credenciales `ADMIN`, `ADMIN_PASS`, `COACH`,
-`COACH_PASS`, `STUDENT` y `STUDENT_PASS` son obligatorias y la ejecución falla
-si falta alguna.
+`npm run test:e2e` carga `.env.test.local` y exige `E2E_TEST_ENV=1`, la URL y
+clave pública del proyecto Supabase de pruebas y las seis credenciales descritas
+en `.env.test.example`. El runner mapea `ADMIN2`/`ADMIN_PASS2` y
+`COACH2`/`COACH_PASS2` a los nombres que usan las pruebas. Comprueba el destino
+antes de ejecutarlo: este comando no cambia una URL remota por la instancia de
+Docker. Las 11 pruebas que escriben en el backoffice se activan con
+`E2E_BACKOFFICE_LOCAL=1`; ese indicador por sí solo no cambia el proyecto de
+destino. El runner aborta antes de iniciar Playwright si la URL de Supabase no
+es la local. No lo añadas a `.env.test.local` si la URL sigue siendo remota.
+
+Para ejecutar las 21 pruebas contra Docker sin editar claves ni cuentas de prueba
+en el archivo de entorno, usa:
+
+```bash
+npm run test:backoffice:local
+```
+
+Este script obtiene las claves de `supabase status`, crea cuentas y datos de
+prueba en la instancia local, y pasa a Next y Playwright las variables locales
+durante la ejecución. No hace falta definir `SUPABASE_DB_URL`: las pruebas SQL
+usan la CLI de Supabase y el runner local de backoffice accede al contenedor
+local. El script establece `E2E_BACKOFFICE_LOCAL=1` solo para ese proceso y
+sustituye la URL y las claves por las de Docker.
