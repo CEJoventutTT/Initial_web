@@ -73,7 +73,7 @@
     "recharts": "3.10.1",
     "resend": "^6.18.0",
     "rss-parser": "^3.13.0",
-    "sharp": "0.35.3",
+    "sharp": "0.35.5",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
@@ -102,10 +102,11 @@
   "overrides": {
     "minimatch": "10.2.4",
     "postcss": "^8.5.23",
-    "sharp": "0.35.3"
+    "sharp": "0.35.5"
   },
   "allowScripts": {
     "unrs-resolver@1.12.2": true,
-    "fsevents@2.3.2": true
+    "fsevents@2.3.2": true,
+    "fsevents@2.3.3": true
   }
 }
