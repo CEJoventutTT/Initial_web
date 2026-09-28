@@ -39,6 +39,8 @@ test.describe('coach and attendance flow', () => {
     await page.getByRole('button', { name: 'Entrar' }).click()
 
     await expect(page).toHaveURL(new RegExp(`/attend\\?s=${sessionId}&k=e2e-invalid-key$`))
-    await expect(page.getByText(/Error: (invalid_key|session_expired|session_closed)/)).toBeVisible()
+    // The RPC checks the session state before the QR key, so the rejection
+    // depends on whether the selected session is active and within its time window.
+    await expect(page.getByText(/^Error: (invalid_key|session_inactive|session_not_started|session_expired|session_closed)$/)).toBeVisible()
   })
 })
