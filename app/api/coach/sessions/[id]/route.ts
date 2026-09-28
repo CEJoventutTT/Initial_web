@@ -28,6 +28,13 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
 
+  const { count, error: attendanceError } = await supabase
+    .from('attendance_logs')
+    .select('id', { count: 'exact', head: true })
+    .eq('session_id', sessionId)
+  if (attendanceError) return NextResponse.json({ error: 'attendance_check_failed' }, { status: 500 })
+  if (count) return NextResponse.json({ error: 'session_has_attendance', message: 'Cancela la sesión para conservar el historial.' }, { status: 409 })
+
   const { error } = await supabase
     .from('attendance_sessions')
     .delete()

@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 import { getArticleSlug, type Lang, type NewsArticle, type NewsCategory } from '@/lib/news'
 import Image from 'next/image'
@@ -43,28 +43,83 @@ export default function NewsPage() {
   useEffect(() => { setMounted(true); }, []);
 
   const [allArticles, setAllArticles] = useState<NewsArticle[]>([]);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [feedLang, setFeedLang] = useState<Lang>(lang);
+  const [hasMore, setHasMore] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [retryToken, setRetryToken] = useState(0);
+  const generation = useRef(0);
+  const loadingMore = useRef(false);
   useEffect(() => {
+    const currentGeneration = ++generation.current;
+    const controller = new AbortController();
+    loadingMore.current = false;
     const fetchNews = async () => {
+      setLoading(true);
+      setLoadError(false);
+      setAllArticles([]);
+      setNextCursor(null);
+      setHasMore(false);
       try {
-        const response = await fetch('/api/news', { cache: 'no-store' });
+        const response = await fetch(`/api/news?lang=${lang}`, { cache: 'no-store', signal: controller.signal });
         if (!response.ok) {
           throw new Error('Failed to fetch news');
         }
-        const items = await response.json() as NewsArticle[];
-        setAllArticles(items);
+        const result = await response.json() as { items: NewsArticle[]; hasMore: boolean; nextCursor: string | null; lang: Lang };
+        if (controller.signal.aborted || currentGeneration !== generation.current) return;
+        setAllArticles(result.items);
+        setHasMore(result.hasMore);
+        setNextCursor(result.nextCursor);
+        setFeedLang(result.lang);
       } catch (err: unknown) {
-        console.error('Failed to fetch news', err);
+        if (!controller.signal.aborted && currentGeneration === generation.current) {
+          console.error('Failed to fetch news', err);
+          setLoadError(true);
+        }
+      } finally {
+        if (!controller.signal.aborted && currentGeneration === generation.current) setLoading(false);
       }
     };
 
     fetchNews();
-  }, []);
+    return () => controller.abort();
+  }, [lang, retryToken]);
 
-  const articlesByLang = useMemo(
-    () => allArticles.filter(a => a.lang === lang),
-    [lang, allArticles]
-  );
-  const articles = articlesByLang.length ? articlesByLang : allArticles.filter(a => a.lang === 'es');
+  const articles = allArticles;
+
+  async function loadMore() {
+    if (loadingMore.current || loading) return;
+    const currentGeneration = generation.current;
+    const currentLang = feedLang;
+    if (!nextCursor) return;
+    const controller = new AbortController();
+    loadingMore.current = true;
+    setLoading(true);
+    setLoadError(false);
+    try {
+      const response = await fetch(`/api/news?cursor=${encodeURIComponent(nextCursor)}&lang=${currentLang}`, {
+        cache: 'no-store',
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new Error('Failed to fetch news');
+      const result = await response.json() as { items: NewsArticle[]; hasMore: boolean; nextCursor: string | null };
+      if (controller.signal.aborted || currentGeneration !== generation.current) return;
+      setAllArticles((current) => [...current, ...result.items]);
+      setHasMore(result.hasMore);
+      setNextCursor(result.nextCursor);
+    } catch (error) {
+      if (!controller.signal.aborted && currentGeneration === generation.current) {
+        console.error('Failed to fetch news', error);
+        setLoadError(true);
+      }
+    } finally {
+      if (currentGeneration === generation.current) {
+        loadingMore.current = false;
+        setLoading(false);
+      }
+    }
+  }
 
   // Categorías presentes + "All"
   const categories = useMemo(() => {
@@ -151,7 +206,7 @@ export default function NewsPage() {
                         alt={article.imageAlt || article.title}
                         fill
                         sizes="(max-width: 640px) 100vw, 640px"
-                        unoptimized
+                        unoptimized={/^https?:\/\//.test(article.image) || article.image.startsWith('/api/news/images/')}
                         className="object-cover object-[center_20%]"
                       />
                     </div>
@@ -173,6 +228,14 @@ export default function NewsPage() {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+            )}
+            {loadError && <p role="alert" className="mt-6 text-center text-red-300">{lang === 'ca' ? 'No s’han pogut carregar les notícies.' : lang === 'en' ? 'News could not be loaded.' : 'No se han podido cargar las noticias.'}</p>}
+            {(hasMore || loadError) && (
+              <div className="mt-10 text-center">
+                <Button disabled={loading} onClick={allArticles.length === 0 && loadError ? () => setRetryToken((current) => current + 1) : loadMore}>
+                  {loading ? 'Cargando…' : loadError ? (lang === 'ca' ? 'Torna-ho a provar' : lang === 'en' ? 'Retry' : 'Reintentar') : lang === 'ca' ? 'Carregar més' : lang === 'en' ? 'Load more' : 'Cargar más'}
+                </Button>
               </div>
             )}
           </div>

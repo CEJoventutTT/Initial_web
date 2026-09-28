@@ -31,6 +31,8 @@ Una URL externa depende de los permisos y disponibilidad de su servidor de orige
 - El estado editorial determina el booleano `published` existente. La escritura administrativa utiliza `admin_save_news`; no se conceden escrituras directas a usuarios autenticados.
 - El público solo puede consultar noticias publicadas mediante RLS. La API de listado no entrega el cuerpo completo. Los artículos inexistentes o retirados devuelven 404 y se excluyen del sitemap.
 - Se ha retirado la caché Redis de noticias. Listado, detalle y sitemap consultan el estado actual en Supabase sin caché compartida; si falla la base, no se devuelve una copia antigua. Redis sigue utilizándose para las inscripciones.
+- El listado público usa `GET /api/news?lang=es|ca|en` y un cursor opaco de fecha e ID para cargar bloques estables de 24 artículos filtrados por idioma, con respuesta `{ items, hasMore, nextCursor, lang }`. Las páginas posteriores no usan desplazamiento, así que publicaciones nuevas no desplazan los artículos pendientes. Si no hay artículos en el idioma solicitado, la primera respuesta usa español e indica el idioma efectivo. `/news` reintenta el mismo cursor si falla la carga; la portada solo pide el primer bloque. El detalle comparte su consulta entre metadatos y contenido dentro de la misma petición.
+- Next.js optimiza las imágenes locales habituales. Las portadas de `/api/news/images/` se cargan directamente: el optimizador no transmite la sesión necesaria para previsualizar un borrador privado. La prueba E2E comprueba que la imagen privada se haya cargado, además de que exista su etiqueta.
 
 ## RSS y scripts
 

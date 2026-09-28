@@ -5,35 +5,12 @@ import { acknowledgementParams, applicationSchema, joinTemplateParams } from '@/
 import { submitEmail } from '@/lib/email/submit'
 import { consumeRateLimit } from '@/lib/rate-limit'
 import { saveMembershipApplication } from '@/lib/membership-applications'
+import { readJsonLimited } from '@/lib/read-json-limited'
 
 const WINDOW_MS = 60 * 60 * 1000
 const MAX_REQUESTS_PER_WINDOW = 5
 const MAX_BODY_BYTES = 20_000
 const REQUEST_ID_PATTERN = /^[A-Za-z0-9_-]{16,128}$/
-
-async function readJsonWithLimit(request: Request) {
-  if (!request.body) throw new SyntaxError('Missing request body')
-  const reader = request.body.getReader()
-  const chunks: Uint8Array[] = []
-  let totalBytes = 0
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) break
-    totalBytes += value.byteLength
-    if (totalBytes > MAX_BODY_BYTES) {
-      await reader.cancel()
-      throw new RangeError('Request too large')
-    }
-    chunks.push(value)
-  }
-  const body = new Uint8Array(totalBytes)
-  let offset = 0
-  for (const chunk of chunks) {
-    body.set(chunk, offset)
-    offset += chunk.byteLength
-  }
-  return JSON.parse(new TextDecoder().decode(body)) as unknown
-}
 
 async function isRateLimited(request: Request, requestId: string) {
   const ip = request.headers.get('x-vercel-forwarded-for')
@@ -61,7 +38,7 @@ export async function POST(request: Request) {
     if (await isRateLimited(request, requestId)) {
       return NextResponse.json({ ok: false, error: 'Too many requests' }, { status: 429 })
     }
-    const body = await readJsonWithLimit(request)
+    const body = await readJsonLimited(request, MAX_BODY_BYTES)
     const application = applicationSchema.parse(body)
     await saveMembershipApplication(application, requestId)
     const notice = joinTemplateParams(application)

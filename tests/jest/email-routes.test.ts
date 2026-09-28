@@ -87,4 +87,17 @@ describe('email form routes', () => {
     expect(response.status).toBe(202)
     await expect(response.json()).resolves.toEqual({ ok: true, id: 'notice-1', provider: 'resend', duplicate: false, pending: true })
   })
+
+  it('rejects streamed bodies over the limit without saving or sending', async () => {
+    const contact = await contactPost(new Request('http://localhost/api/contact', {
+      method: 'POST', headers: { 'idempotency-key': 'oversized-contact-0001' }, body: 'x'.repeat(12_001),
+    }))
+    const join = await joinPost(new Request('http://localhost/api/center-activity', {
+      method: 'POST', headers: { 'idempotency-key': 'oversized-join-000001' }, body: 'x'.repeat(20_001),
+    }))
+    expect(contact.status).toBe(413)
+    expect(join.status).toBe(413)
+    expect(submitEmail).not.toHaveBeenCalled()
+    expect(saveMembershipApplication).not.toHaveBeenCalled()
+  })
 })
